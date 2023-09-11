@@ -17,11 +17,24 @@
 
 package love.forte.simbot.miyoushe.api
 
+import io.ktor.client.*
+
 /**
- * 一个米游社大别野API。
+ * 一个由平台决定内容的 [MiyousheApi] 父级抽象类，
+ * 用于向 [MiyousheApi] 中提供更多平台API。
  *
- * @author ForteScarlet
+ * 不要直接使用 [PlatformMiyousheApi] 类型本身，你应当使用 [MiyousheApi] 类型。
+ *
+ * @see MiyousheApi
+ *
  */
-public abstract class VillaApi {
-    // TODO api
+public actual abstract class PlatformMiyousheApi<out R> {
+    /**
+     * 使用当前API发起一个请求，并得到一个[HTTP响应][HttpResponse].
+     */
+    public actual abstract suspend fun request(
+        client: HttpClient,
+        token: MiyousheApiToken
+    ): io.ktor.client.statement.HttpResponse
+
 }

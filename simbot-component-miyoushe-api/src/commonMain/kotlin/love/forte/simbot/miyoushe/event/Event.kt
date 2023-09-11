@@ -17,6 +17,9 @@
 
 package love.forte.simbot.miyoushe.event
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 /**
  *
  * 机器人事件结构体。
@@ -62,10 +65,85 @@ package love.forte.simbot.miyoushe.event
  * }
  * ```
  *
+ * 然而 [Event] 类型的类型结构与上述结构有些许不同：`extend_data` （[extendData]）会跳过其下的 `"EventData"` 和 `"SendMessage"` (或其他对应的事件Key)
+ * 而直接使用一个具体的 [EventExtendData] 类型结果。
+ *
+ * 因此 [Event] 类型并不能**直接**作为事件的反序列化目标（实际上从它有一个泛型开始就不可以了）。
+ * 如果你希望使用一个与示例JSON的结构完全匹配的类型，参考 [RawEvent]。
+ *
  * 更多参考：[http 事件回调](https://webstatic.mihoyo.com/vila/bot/doc/callback.html)
  *
  * @author ForteScarlet
  */
-public class Event {
-    // TODO event
+public data class Event<out E : EventExtendData>(
+    /**
+     * 事件 id
+     */
+    val id: String,
+    /**
+     * 机器人相关信息
+     */
+    val robot: Robot,
+    /**
+     * 事件类型
+     *
+     * 参考: [文档](https://webstatic.mihoyo.com/vila/bot/doc/callback.html##%E4%BA%8B%E4%BB%B6%E7%B1%BB%E5%9E%8B)
+     */
+    val type: Int,
+
+    /**
+     * 扩展数据，保存事件的具体信息。
+     *
+     * [Event.extendData] 与示例中的JSON结构有所不同：[extendData] 数据结构跳过了 `"EventData"` 和其中的子事件类型Key（比如说 `"SendMessage"`），
+     * 取而代之的则是直接的事件体。
+     */
+    @SerialName("extend_data")
+    val extendData: E,
+
+    /**
+     * 	事件创建时间的时间戳
+     */
+    @SerialName("created_at")
+    val createdAt: Long,
+
+    /**
+     * 事件回调时间的时间戳
+     */
+    @SerialName("send_at")
+    val sendAt: Long
+)
+
+/**
+ * 机器人相关信息
+ */
+@Serializable
+public data class Robot(
+    /**
+     * 机器人模板信息
+     */
+    val template: Template,
+
+    /**
+     * 事件所属的大别野 id
+     */
+    @SerialName("villa_id")
+    val villaId: ULong
+) {
+    /**
+     * 机器人模板信息
+     */
+    @Serializable
+    public data class Template(
+        val id: String,
+        val name: String,
+        val desc: String,
+        val icon: String,
+        val commands: List<TemplateCommand>
+    )
+
+    /**
+     * 机器人模板指令
+     */
+    @Serializable
+    public data class TemplateCommand(val name: String, val desc: String)
 }

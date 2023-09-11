@@ -7,9 +7,9 @@ repositories {
     gradlePluginPortal()
 }
 
-val kotlinVersion = "1.8.21"
+val kotlinVersion = "1.9.10"
 val dokkaVersion = "1.8.10"
-val suspendTransformVersion = "0.3.1"
+val suspendTransformVersion = "0.5.1"
 val gradleCommon = "0.1.1"
 
 dependencies {
