@@ -1,22 +1,29 @@
 plugins {
-    kotlin("jvm") version "1.9.0"
+    `simbot-miyoushe-nexus-publish`
+    `simbot-miyoushe-changelog-generator`
+    `simbot-miyoushe-dokka-multi-module`
 }
 
-group = "love.forte.simbot"
-version = "1.0-SNAPSHOT"
+buildscript {
+    repositories {
+        mavenCentral()
+    }
 
-repositories {
-    mavenCentral()
+    dependencies {
+        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:${libs.versions.atomicfu.get()}")
+    }
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
+allprojects {
+    repositories {
+        mavenCentral()
+        love.forte.gradle.common.core.repository.Repositories.Snapshot.Default.apply {
+            configMaven {
+                mavenContent {
+                    snapshotsOnly()
+                }
+            }
+        }
+    }
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(8)
-}
