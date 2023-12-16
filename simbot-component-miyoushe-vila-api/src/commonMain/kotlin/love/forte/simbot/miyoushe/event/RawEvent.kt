@@ -96,5 +96,18 @@ public data class ExtendDataContainer(
         @ProtoNumber(5) @SerialName(AddQuickEmoticon.NAME) val addQuickEmoticon: AddQuickEmoticon? = null,
         @ProtoNumber(6) @SerialName(AuditCallback.NAME) val auditCallback: AuditCallback? = null,
         @ProtoNumber(7) @SerialName(ClickMsgComponent.NAME) val clickMsgComponent: ClickMsgComponent? = null,
-    )
+    ) {
+        val oneOfValue: EventExtendData
+            get() {
+                return joinVilla
+                    ?: sendMessage
+                    ?: createRobot
+                    ?: deleteRobot
+                    ?: addQuickEmoticon
+                    ?: auditCallback
+                    ?: clickMsgComponent
+                    ?: error("Non-null not found")
+            }
+
+    }
 }
