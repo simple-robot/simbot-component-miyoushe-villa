@@ -8,8 +8,15 @@
 
 了解**simbot3**: [simbot3官网](https://simbot.forte.love)
 
-> **Warning**
-> ⚠️ 施工中。
+
+目标：
+- 全部API的定义于实现
+  - 所有定义中，无符号类型均会直接使用 Kotlin unsigned number
+- 基于 WS 的事件订阅
+- 实现 simbot3 API
+
+> [!warning]
+> ⚠️ 施工中
 
 
 ## License
