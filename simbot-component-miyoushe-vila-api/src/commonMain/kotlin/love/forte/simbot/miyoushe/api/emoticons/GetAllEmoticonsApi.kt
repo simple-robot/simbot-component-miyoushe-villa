@@ -17,9 +17,11 @@
 
 package love.forte.simbot.miyoushe.api.emoticons
 
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.MiyousheGetApi
 import kotlin.jvm.JvmStatic
 
@@ -32,6 +34,7 @@ public class GetAllEmoticonsApi private constructor() : MiyousheGetApi<EmoticonL
     public companion object Factory {
         private val INSTANCE = GetAllEmoticonsApi()
         private const val API_PATH = "/vila/api/bot/platform/getAllEmoticons"
+        private val apiResultSer = ApiResult.serializer(EmoticonList.serializer())
 
         /**
          * 构建 [GetAllEmoticonsApi] 实例。
@@ -46,6 +49,9 @@ public class GetAllEmoticonsApi private constructor() : MiyousheGetApi<EmoticonL
 
     override val resultSerializer: KSerializer<EmoticonList>
         get() = EmoticonList.serializer()
+
+    override val apiResultSerializer: DeserializationStrategy<ApiResult<EmoticonList>>
+        get() = apiResultSer
 }
 
 

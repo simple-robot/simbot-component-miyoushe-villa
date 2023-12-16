@@ -17,6 +17,9 @@
 
 package love.forte.simbot.miyoushe
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  *
  * 一些与米游社大别野机器人相关的信息或常量等。
@@ -24,6 +27,8 @@ package love.forte.simbot.miyoushe
  * 参考: [米游社大别野机器人](https://webstatic.mihoyo.com/vila/bot/doc/)。
  *
  */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
 public object Miyoushe {
 
     /**

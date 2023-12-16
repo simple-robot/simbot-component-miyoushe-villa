@@ -59,7 +59,7 @@ public expect abstract class PlatformMiyousheApi<out R>() {
  *
  * @author ForteScarlet
  */
-public abstract class MiyousheApi<out R> : PlatformMiyousheApi<R>() {
+public abstract class MiyousheApi<out R> {
 
     /**
      * API的请求 `method`。例如 [HttpMethod.Get]
@@ -79,7 +79,19 @@ public abstract class MiyousheApi<out R> : PlatformMiyousheApi<R>() {
     /**
      * 基于 Kotlin serialization 的反序列化器，可用于将API的请求结果反序列化为预期的结果 [R]。
      */
-    public abstract val resultSerializer: KSerializer<@UnsafeVariance R>
+    public abstract val resultSerializer: DeserializationStrategy<R>
+
+    /**
+     * 基于 Kotlin serialization 的反序列化器，可用于将API的请求结果反序列化为预期的结果 [ApiResult]<[R]>。
+     */
+    public abstract val apiResultSerializer: DeserializationStrategy<ApiResult<R>>
+
+    // TODO @JST?
+    /**
+     * 使用当前API发起一个请求，并得到一个[HTTP响应][HttpResponse].
+     */
+    @JvmSynthetic
+    public abstract suspend fun request(client: HttpClient, token: MiyousheApiToken): HttpResponse
 
 
     public companion object {
@@ -154,7 +166,7 @@ public abstract class StandardMiyousheApi<out R> : MiyousheApi<R>() {
 
             headers[Miyoushe.Headers.BOT_ID_KEY] = token.botId
             headers[Miyoushe.Headers.BOT_SECRET_KEY] = token.botSecret
-            headers[Miyoushe.Headers.BOT_VILLA_ID_KEY] = token.botVillaId
+            token.botVillaId?.also { headers[Miyoushe.Headers.BOT_VILLA_ID_KEY] = it }
 
             postRequestBuilder(this)
         }
@@ -194,7 +206,7 @@ public data class MiyousheApiToken(
     /**
      * @see Miyoushe.Headers.BOT_VILLA_ID_KEY
      */
-    val botVillaId: String,
+    val botVillaId: String?,
 )
 
 //region Ktor ContentNegotiation guessSerializer

@@ -16,7 +16,6 @@
  */
 
 
-import gradle.kotlin.dsl.accessors._1157938bdbf343539a21d9fc479421ba.nexusPublishing
 import love.forte.gradle.common.core.project.setup
 import love.forte.gradle.common.core.repository.Repositories
 import util.checkPublishConfigurable

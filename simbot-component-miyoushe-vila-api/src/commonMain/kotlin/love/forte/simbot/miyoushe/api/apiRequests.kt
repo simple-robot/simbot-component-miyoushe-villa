@@ -17,15 +17,23 @@
 
 package love.forte.simbot.miyoushe.api
 
-import kotlinx.serialization.Serializable
+import io.ktor.client.*
+import io.ktor.client.statement.*
+import kotlinx.serialization.StringFormat
+import kotlinx.serialization.decodeFromString
 
-@Serializable
-public data class ApiResult<out D>(
-    val message: String,
-    val retcode: Int,
-    val data: D
-) {
-    public companion object {
-        public const val RETCODE_DEFAULT_SUCCESS: Int = 0
-    }
+
+public suspend fun <R> MiyousheApi<R>.requestResult(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): ApiResult<R> {
+    val response = request(client, token)
+    val text = response.bodyAsText()
+    return decoder.decodeFromString(apiResultSerializer, text)
+}
+
+@Suppress("UNCHECKED_CAST")
+public suspend fun <R> MiyousheApi<R>.requestData(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): R {
+    val apiResult = requestResult(client, token, decoder)
+
+    // TODO check result?
+
+    return apiResult.data as R
 }
