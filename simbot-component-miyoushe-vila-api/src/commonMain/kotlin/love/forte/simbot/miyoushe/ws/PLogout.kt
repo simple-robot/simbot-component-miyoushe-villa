@@ -14,20 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-miyoushe,
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
 package love.forte.simbot.miyoushe.ws
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
+import kotlin.js.JsExport
 
 
 /**
  * ## 登出
  * 登录成功后，机器人可以通过 LogoutRequest 协议请求登出长连接。
  *
- * 客户端收到 [LogoutReply] 回复成功后，代表该长连接的用户 `session` 信息已注销，
+ * 客户端收到 [PLogoutReply] 回复成功后，代表该长连接的用户 `session` 信息已注销，
  * 此时客户端需要主动断链，服务器兜底1分钟心跳超时后也会被动断开
  *
  * `bizType = 8`

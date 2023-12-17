@@ -14,11 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-miyoushe,
  * If not, see <https://www.gnu.org/licenses/>.
  */
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
 
 package love.forte.simbot.miyoushe.ws
 
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import kotlin.js.JsExport
+import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
@@ -57,6 +61,7 @@ public class ProtoPacket {
          */
         @JvmStatic
         @JvmName("create")
+        @JsName("createByBizType")
         public fun create(bizType: BizType, id: ULong, appid: UInt, flag: Flag, body: ByteArray): ProtoPacket {
             return ProtoPacket().apply {
                 this.appId = appid
@@ -93,6 +98,7 @@ public class ProtoPacket {
          */
         @JvmStatic
         @JvmName("response")
+        @JsName("responseByBizType")
         public fun response(bizType: BizType, id: ULong, appid: UInt, body: ByteArray): ProtoPacket {
             return create(bizType, id, appid, Flag.RESPONSE, body)
         }
@@ -102,6 +108,7 @@ public class ProtoPacket {
          */
         @JvmStatic
         @JvmName("request")
+        @JsName("requestByBizType")
         public fun request(bizType: BizType, id: ULong, appid: UInt, body: ByteArray): ProtoPacket {
             return create(bizType, id, appid, Flag.REQUEST, body)
         }
@@ -224,6 +231,7 @@ public class ProtoPacket {
 /**
  * Read [ProtoPacket] from given [ByteReadChannel].
  */
+@JsExport.Ignore
 public suspend fun ByteReadChannel.readToProtoPacket(): ProtoPacket {
     return ProtoPacket().apply {
         suspend fun readUIntLittleEndian(): UInt = readIntLittleEndian().toUInt()

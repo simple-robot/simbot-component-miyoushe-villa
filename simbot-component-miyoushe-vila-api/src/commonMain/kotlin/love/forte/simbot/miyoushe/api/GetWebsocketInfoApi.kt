@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-miyoushe,
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
 package love.forte.simbot.miyoushe.api
 
 import kotlinx.serialization.DeserializationStrategy
@@ -22,6 +23,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.emoticons.GetAllEmoticonsApi
+import kotlin.js.JsExport
 import kotlin.jvm.JvmStatic
 
 
@@ -89,14 +91,3 @@ public data class WebsocketInfo(
     @SerialName("device_id") val deviceId: String,
 )
 
-// {
-// "retcode":0,
-// "message":"OK",
-// "data":{
-//     "websocket_url":"wss://ws-mysbot-hulk.mihoyo.com:443/ws",
-//     "uid":"59",
-//     "app_id":104,
-//     "platform":3,
-//     "device_id":"bot_uyoiEQHXtqFgBLHdoBJg"
-//   }
-// }

@@ -15,8 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
+
 package love.forte.simbot.miyoushe.ws
 
+import kotlin.js.JsExport
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
@@ -25,6 +29,7 @@ import kotlin.jvm.JvmStatic
  *
  * @author ForteScarlet
  */
+
 public enum class BizType(@get:JvmName("getValue") public val value: UInt, public val protobuf: Boolean) {
     /** 上行	出现了必然是bug或数据异常 */
     UPLINK(0u, false),

@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License along with simbot-component-miyoushe,
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
 package love.forte.simbot.miyoushe.ws
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
+import kotlin.js.JsExport
 
 /**
  * 心跳请求命令字

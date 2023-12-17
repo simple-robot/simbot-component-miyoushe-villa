@@ -4,15 +4,15 @@ plugins {
     `simbot-miyoushe-dokka-multi-module`
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:${libs.versions.atomicfu.get()}")
-    }
-}
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//    }
+//
+//    dependencies {
+//        //classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:${libs.versions.atomicfu.get()}")
+//    }
+//}
 
 allprojects {
     repositories {

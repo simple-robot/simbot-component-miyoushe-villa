@@ -15,12 +15,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
+
 package love.forte.simbot.miyoushe.event
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
+import kotlin.js.JsExport
 
 /**
  * 与 [http 事件回调](https://webstatic.mihoyo.com/vila/bot/doc/callback.html) 中描述的事件结构完全一致的结构体。

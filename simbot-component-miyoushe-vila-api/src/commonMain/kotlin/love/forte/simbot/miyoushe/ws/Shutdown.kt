@@ -17,8 +17,8 @@
 
 package love.forte.simbot.miyoushe.ws
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
 /**
  * Shutdown
@@ -34,4 +34,5 @@ import kotlinx.serialization.Serializable
  * @author ForteScarlet
  */
 @Serializable
+@JsExport
 public object Shutdown

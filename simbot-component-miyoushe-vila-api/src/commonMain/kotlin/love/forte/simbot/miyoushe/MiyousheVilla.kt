@@ -18,6 +18,7 @@
 package love.forte.simbot.miyoushe
 
 import kotlinx.serialization.json.Json
+import kotlin.js.JsExport
 import kotlin.jvm.JvmField
 
 /**
@@ -27,6 +28,8 @@ import kotlin.jvm.JvmField
  * 参考: [米游社大别野机器人](https://webstatic.mihoyo.com/vila/bot/doc/)。
  *
  */
+@Suppress("NON_EXPORTABLE_TYPE")
+@JsExport
 public object MiyousheVilla {
 
     /**

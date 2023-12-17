@@ -25,7 +25,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import love.forte.simbot.miyoushe.api.ApiResult.Companion.EMPTY_SUCCESS_RESULT
 import love.forte.simbot.miyoushe.api.ApiResult.Companion.RETCODE_DEFAULT_SUCCESS
-import love.forte.simbot.miyoushe.api.EmptyApiResultSerializer.EMPTY_RESULT
+import kotlin.js.JsExport
 
 /**
  * 基本的数据响应结果.
@@ -37,7 +37,9 @@ import love.forte.simbot.miyoushe.api.EmptyApiResultSerializer.EMPTY_RESULT
  * @param D 预期中的响应结果。不应为 nullable 类型，
  * 如果想要代表无数据，考虑使用 [Unit] 等 `object` 类型。
  */
+@Suppress("NON_EXPORTABLE_TYPE")
 @Serializable
+@JsExport
 public data class ApiResult<out D : Any>(
     val retcode: Int = RETCODE_DEFAULT_SUCCESS,
     val message: String? = null,

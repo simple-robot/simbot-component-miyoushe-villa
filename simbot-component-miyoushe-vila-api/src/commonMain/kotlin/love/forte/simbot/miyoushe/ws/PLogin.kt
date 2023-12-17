@@ -15,32 +15,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
 package love.forte.simbot.miyoushe.ws
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
-
-/*
-// 登录命令
-message PLogin {
-    // 长连接侧唯一id，uint64格式
-    uint64 uid = 1;
-    // 用于业务后端验证的token
-    string token = 2;
-    // 客户端操作平台枚举
-    int32 platform = 3;
-    // 业务所在客户端应用标识，用于在同一个客户端隔离不同业务的长连接通道。
-    int32 app_id = 4;
-    string device_id = 5;
-    // 区域划分字段，通过uid+app_id+platform+region四个字段唯一确定一条长连接
-    string region = 6;
-    // 长连内部的扩展字段，是个map
-    map<string, string> meta = 7;
-}
-bizType = 7
- */
+import kotlin.js.JsExport
 
 /**
  * WebSocket建连成功后，需要通过 LoginRequest 协议携带 token 发起登录。

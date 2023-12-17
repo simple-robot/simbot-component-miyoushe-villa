@@ -16,6 +16,8 @@
  */
 
 @file:OptIn(ExperimentalSerializationApi::class)
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
 
 package love.forte.simbot.miyoushe.event
 
@@ -23,6 +25,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
+import kotlin.js.JsExport
 import kotlin.jvm.JvmName
 
 /**

@@ -1,9 +1,4 @@
 import love.forte.gradle.common.core.project.setup
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.utils.`is`
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.memberProperties
 
 plugins {
     kotlin("multiplatform")
@@ -34,6 +29,7 @@ kotlin {
     sourceSets.configureEach {
         languageSettings {
 //            optIn("love.forte.simbot.qguild.InternalApi")
+            optIn("kotlin.js.ExperimentalJsExport")
         }
     }
 
@@ -54,22 +50,12 @@ kotlin {
     js(IR) {
         useEsModules()
         nodejs()
-
+        generateTypeScriptDefinitions()
         binaries.library()
-        // Exclude declarations from DCE
-        // see https://kotlinlang.org/docs/javascript-dce.html
-
         compilations.all {
             // Enables ES6 classes generation
             kotlinOptions {
-//                // TODO ?
-                val useEsClassesProp = this::class.memberProperties.find { it.name == "useEsClasses" && it.returnType.classifier == Boolean::class }
-                if (useEsClassesProp != null && useEsClassesProp is KMutableProperty1) {
-                    @Suppress("UNCHECKED_CAST")
-                    useEsClassesProp as KMutableProperty1<KotlinJsOptions, Boolean>
-                    useEsClassesProp.set(this, true)
-                }
-//                useEsClasses = true
+                useEsClasses = true
             }
         }
     }

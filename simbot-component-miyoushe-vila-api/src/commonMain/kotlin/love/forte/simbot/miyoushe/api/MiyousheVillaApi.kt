@@ -15,6 +15,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("NON_EXPORTABLE_TYPE")
+@file:JsExport
+
 package love.forte.simbot.miyoushe.api
 
 import io.ktor.client.*
@@ -29,6 +32,7 @@ import kotlinx.serialization.builtins.*
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.miyoushe.MiyousheVilla
 import kotlin.concurrent.Volatile
+import kotlin.js.JsExport
 import kotlin.jvm.JvmSynthetic
 
 
@@ -71,6 +75,7 @@ public abstract class MiyousheVillaApi<out R : Any> {
      * 使用当前API发起一个请求，并得到一个[HTTP响应][HttpResponse].
      */
     @JvmSynthetic
+    @JsExport.Ignore
     public abstract suspend fun request(client: HttpClient, token: MiyousheVillaApiToken): HttpResponse
 
 }
@@ -102,6 +107,7 @@ public abstract class StandardMiyousheVillaApi<out R : Any> : MiyousheVillaApi<R
         return URLBuilder(urlStr).prepareUrl().build()
     }
 
+    @JsExport.Ignore
     override suspend fun request(client: HttpClient, token: MiyousheVillaApiToken): HttpResponse {
         val method = this@StandardMiyousheVillaApi.method
         val body = this@StandardMiyousheVillaApi.body
