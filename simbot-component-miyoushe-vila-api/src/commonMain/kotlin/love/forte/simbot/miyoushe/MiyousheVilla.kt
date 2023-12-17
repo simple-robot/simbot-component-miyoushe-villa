@@ -17,8 +17,7 @@
 
 package love.forte.simbot.miyoushe
 
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
+import kotlinx.serialization.json.Json
 
 /**
  *
@@ -27,9 +26,18 @@ import kotlin.js.JsExport
  * 参考: [米游社大别野机器人](https://webstatic.mihoyo.com/vila/bot/doc/)。
  *
  */
-@OptIn(ExperimentalJsExport::class)
-@JsExport
-public object Miyoushe {
+public object MiyousheVilla {
+
+    /**
+     * 一些需要格式化JSON时使用的默认 [Json] 序列化器。
+     *
+     */
+    public val DefaultJson: Json = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+        allowSpecialFloatingPointValues = true
+    }
 
     /**
      * 机器人调用接口的开放接口访问域名。

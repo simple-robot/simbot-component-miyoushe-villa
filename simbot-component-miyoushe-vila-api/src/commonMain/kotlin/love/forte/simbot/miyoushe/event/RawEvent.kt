@@ -66,6 +66,16 @@ public data class RawEvent(
 )
 
 /**
+ * 使用 [ExtendDataContainer.Data.oneOfValue] 作为 [Event.extendData]，将 [RawEvent] 转化为 [Event]。
+ *
+ * @throws IllegalStateException 如果 [ExtendDataContainer.Data.oneOfValue] 无法获取任意事件结果
+ */
+public fun RawEvent.toEvent(): Event<*> {
+    return Event(robot, type, extendData.eventData.oneOfValue, createdAt, id, sendAt)
+}
+
+
+/**
  * EventData of [RawEvent.extendData]
  *
  * @see RawEvent

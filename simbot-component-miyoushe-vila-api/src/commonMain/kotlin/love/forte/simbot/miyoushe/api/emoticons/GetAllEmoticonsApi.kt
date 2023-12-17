@@ -22,7 +22,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.ApiResult
-import love.forte.simbot.miyoushe.api.MiyousheGetApi
+import love.forte.simbot.miyoushe.api.MiyousheVillaGetApi
 import kotlin.jvm.JvmStatic
 
 
@@ -30,7 +30,7 @@ import kotlin.jvm.JvmStatic
  * [获取全量表情](https://webstatic.mihoyo.com/vila/bot/doc/emoticon_api/get_all_emoticons.html)
  * @author ForteScarlet
  */
-public class GetAllEmoticonsApi private constructor() : MiyousheGetApi<EmoticonList>() {
+public class GetAllEmoticonsApi private constructor() : MiyousheVillaGetApi<EmoticonList>() {
     public companion object Factory {
         private val INSTANCE = GetAllEmoticonsApi()
         private const val API_PATH = "/vila/api/bot/platform/getAllEmoticons"
@@ -52,6 +52,10 @@ public class GetAllEmoticonsApi private constructor() : MiyousheGetApi<EmoticonL
 
     override val apiResultSerializer: DeserializationStrategy<ApiResult<EmoticonList>>
         get() = apiResultSer
+
+    override fun toString(): String {
+        return "GetAllEmoticonsApi()"
+    }
 }
 
 

@@ -15,22 +15,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:JvmName("MiyousheApis")
 package love.forte.simbot.miyoushe.api
 
 import io.ktor.client.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.StringFormat
-import kotlinx.serialization.decodeFromString
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmSynthetic
 
-
-public suspend fun <R> MiyousheApi<R>.requestResult(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): ApiResult<R> {
+@JvmSynthetic
+public suspend fun <R : Any> MiyousheVillaApi<R>.requestResult(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): ApiResult<R> {
     val response = request(client, token)
     val text = response.bodyAsText()
     return decoder.decodeFromString(apiResultSerializer, text)
 }
 
-@Suppress("UNCHECKED_CAST")
-public suspend fun <R> MiyousheApi<R>.requestData(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): R {
+@JvmSynthetic
+public suspend fun <R : Any> MiyousheVillaApi<R>.requestData(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): R {
     val apiResult = requestResult(client, token, decoder)
 
     // TODO check result?

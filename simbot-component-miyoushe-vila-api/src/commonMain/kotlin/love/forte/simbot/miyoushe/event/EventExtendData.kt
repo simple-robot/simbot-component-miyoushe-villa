@@ -41,7 +41,7 @@ public abstract class EventExtendDataMeta {
     public abstract val type: Int
 
     /**
-     * 事件名称
+     * 事件名称。会作为此事件在 [ExtendDataContainer.Data] 中的反序列化字段名。
      */
     public abstract val name: String
 }

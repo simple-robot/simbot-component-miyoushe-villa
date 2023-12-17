@@ -32,7 +32,7 @@ import kotlin.jvm.JvmStatic
  *
  * @author ForteScarlet
  */
-public class GetWebsocketInfoApi private constructor() : MiyousheGetApi<WebsocketInfo>() {
+public class GetWebsocketInfoApi private constructor() : MiyousheVillaGetApi<WebsocketInfo>() {
     public companion object Factory {
         private val INSTANCE = GetWebsocketInfoApi()
         private const val API_PATH = "/vila/api/bot/platform/getWebsocketInfo"
@@ -54,6 +54,12 @@ public class GetWebsocketInfoApi private constructor() : MiyousheGetApi<Websocke
 
     override val apiResultSerializer: DeserializationStrategy<ApiResult<WebsocketInfo>>
         get() = apiResultSer
+
+    override fun toString(): String {
+        return "GetWebsocketInfoApi()"
+    }
+
+
 }
 
 /**

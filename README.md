@@ -1,6 +1,7 @@
 # Simple Robot 米游社组件
 
-此为 [Simple Robot v3][simbot3] （以下简称为 `simbot3` ） 下基于simbot标准API对 [米游社 API](https://webstatic.mihoyo.com/vila/bot/doc/) 的组件支持。
+此为 [Simple Robot v3][simbot3] （以下简称为 `simbot3` ）
+下基于simbot标准API对 [米游社 API](https://webstatic.mihoyo.com/vila/bot/doc/) 的组件支持。
 
 [simbot3]: https://github.com/simple-robot/simpler-robot
 
@@ -8,16 +9,28 @@
 
 了解**simbot3**: [simbot3官网](https://simbot.forte.love)
 
-
 目标：
+
 - 全部API的定义于实现
-  - 所有定义中，无符号类型均会直接使用 Kotlin unsigned number
+    - 所有定义中，无符号类型均会直接使用 Kotlin unsigned number
 - 基于 WS 的事件订阅
 - 实现 simbot3 API
 
+API 进度：
+
+- [x] WebSocket API
+- [x] 鉴权 API
+- [x] 大别野 API
+- [x] 用户 API
+- [x] 消息 API
+- [ ] 房间 API
+- [ ] 身份组 API
+- [ ] 表态表情 API
+- [ ] 审核 API
+- [ ] 图片 API
+
 > [!warning]
 > ⚠️ 施工中
-
 
 ## License
 

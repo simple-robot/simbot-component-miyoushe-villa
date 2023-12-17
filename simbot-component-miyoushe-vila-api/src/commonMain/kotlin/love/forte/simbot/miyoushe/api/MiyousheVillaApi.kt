@@ -28,29 +28,11 @@ import kotlinx.serialization.*
 import kotlinx.serialization.builtins.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import love.forte.simbot.miyoushe.Miyoushe
+import love.forte.simbot.miyoushe.MiyousheVilla
 import kotlin.concurrent.Volatile
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmSynthetic
 
-/**
- * 一个由平台决定内容的 [MiyousheApi] 父级抽象类，
- * 用于向 [MiyousheApi] 中提供更多平台API，例如 JVM 平台中的阻塞与异步API。
- *
- * 不要直接使用 [PlatformMiyousheApi] 类型本身，你应当使用 [MiyousheApi] 类型。
- *
- * @see MiyousheApi
- *
- */
-public expect abstract class PlatformMiyousheApi<out R>() {
-
-    /**
-     * 使用当前API发起一个请求，并得到一个[HTTP响应][HttpResponse].
-     */
-    @JvmSynthetic
-    public abstract suspend fun request(client: HttpClient, token: MiyousheApiToken): HttpResponse
-
-}
 
 /**
  * 一个米游社大别野API。
@@ -59,7 +41,7 @@ public expect abstract class PlatformMiyousheApi<out R>() {
  *
  * @author ForteScarlet
  */
-public abstract class MiyousheApi<out R> {
+public abstract class MiyousheVillaApi<out R : Any> {
 
     /**
      * API的请求 `method`。例如 [HttpMethod.Get]
@@ -108,31 +90,37 @@ public abstract class MiyousheApi<out R> {
     }
 }
 
-public abstract class StandardMiyousheApi<out R> : MiyousheApi<R>() {
+public abstract class StandardMiyousheVillaApi<out R : Any> : MiyousheVillaApi<R>() {
+
+    abstract override fun toString(): String
+
     protected open fun postRequestBuilder(builder: HttpRequestBuilder) {}
 
     @Volatile
     private lateinit var _url: Url
-    protected open val url: Url
+
+    internal open val url: Url
         get() = if (::_url.isInitialized) _url else createUrl().also { _url = it }
+
+    protected open fun URLBuilder.prepareUrl(): URLBuilder = this
 
     private fun createUrl(): Url {
         val missPrefix = !this.path.startsWith('/')
-        val urlStr = buildString(Miyoushe.API_PATH.length + this.path.length + if (missPrefix) 1 else 0) {
-            append(Miyoushe.API_PATH)
+        val urlStr = buildString(MiyousheVilla.API_PATH.length + this.path.length + if (missPrefix) 1 else 0) {
+            append(MiyousheVilla.API_PATH)
             if (missPrefix) {
                 append('/')
             }
-            append(this@StandardMiyousheApi.path)
+            append(this@StandardMiyousheVillaApi.path)
         }
 
-        return Url(urlStr)
+        return URLBuilder(urlStr).prepareUrl().build()
     }
 
     override suspend fun request(client: HttpClient, token: MiyousheApiToken): HttpResponse {
-        val method = this@StandardMiyousheApi.method
-        val body = this@StandardMiyousheApi.body
-        val url = this@StandardMiyousheApi.url
+        val method = this@StandardMiyousheVillaApi.method
+        val body = this@StandardMiyousheVillaApi.body
+        val url = this@StandardMiyousheVillaApi.url
 
         return client.request {
             this.method = method
@@ -164,9 +152,9 @@ public abstract class StandardMiyousheApi<out R> : MiyousheApi<R>() {
                 }
             }
 
-            headers[Miyoushe.Headers.BOT_ID_KEY] = token.botId
-            headers[Miyoushe.Headers.BOT_SECRET_KEY] = token.botSecret
-            token.botVillaId?.also { headers[Miyoushe.Headers.BOT_VILLA_ID_KEY] = it }
+            headers[MiyousheVilla.Headers.BOT_ID_KEY] = token.botId
+            headers[MiyousheVilla.Headers.BOT_SECRET_KEY] = token.botSecret
+            token.botVillaId?.also { headers[MiyousheVilla.Headers.BOT_VILLA_ID_KEY] = it }
 
             postRequestBuilder(this)
         }
@@ -176,10 +164,10 @@ public abstract class StandardMiyousheApi<out R> : MiyousheApi<R>() {
 /**
  * 使用 Get 请求的API。
  *
- * @see MiyousheApi
+ * @see MiyousheVillaApi
  *
  */
-public abstract class MiyousheGetApi<out R> : StandardMiyousheApi<R>() {
+public abstract class MiyousheVillaGetApi<out R : Any> : StandardMiyousheVillaApi<R>() {
     override val method: HttpMethod
         get() = HttpMethod.Get
 
@@ -187,24 +175,34 @@ public abstract class MiyousheGetApi<out R> : StandardMiyousheApi<R>() {
         get() = null
 }
 
+/**
+ * 使用 Post 请求的API。
+ *
+ * @see MiyousheVillaApi
+ *
+ */
+public abstract class MiyousheVillaPostApi<out R : Any> : StandardMiyousheVillaApi<R>() {
+    override val method: HttpMethod
+        get() = HttpMethod.Post
+}
 
 /**
- * 请求 [MiyousheApi] 时所需的机器人凭证请求头信息。
+ * 请求 [MiyousheVillaApi] 时所需的机器人凭证请求头信息。
  *
- * @see Miyoushe.Headers
+ * @see MiyousheVilla.Headers
  *
  */
 public data class MiyousheApiToken(
     /**
-     * @see Miyoushe.Headers.BOT_ID_KEY
+     * @see MiyousheVilla.Headers.BOT_ID_KEY
      */
     val botId: String,
     /**
-     * @see Miyoushe.Headers.BOT_SECRET_KEY
+     * @see MiyousheVilla.Headers.BOT_SECRET_KEY
      */
     val botSecret: String,
     /**
-     * @see Miyoushe.Headers.BOT_VILLA_ID_KEY
+     * @see MiyousheVilla.Headers.BOT_VILLA_ID_KEY
      */
     val botVillaId: String?,
 )

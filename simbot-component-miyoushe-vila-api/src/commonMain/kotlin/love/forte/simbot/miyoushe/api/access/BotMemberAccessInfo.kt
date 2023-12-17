@@ -15,26 +15,34 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.miyoushe.api
+package love.forte.simbot.miyoushe.api.access
 
-import io.ktor.client.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmName
 
 /**
- * 一个由平台决定内容的 [MiyousheApi] 父级抽象类，
- * 用于向 [MiyousheApi] 中提供更多平台API。
+ * 用户机器人访问信息
  *
- * 不要直接使用 [PlatformMiyousheApi] 类型本身，你应当使用 [MiyousheApi] 类型。
+ * @property uid 用户 id
+ * @property villaId 大别野 id
+ * @property memberAccessToken 用户机器人访问凭证
+ * @property botTplId 机器人模板 id
  *
- * @see MiyousheApi
- *
+ * @see CheckMemberBotAccessTokenApi
  */
-public actual abstract class PlatformMiyousheApi<out R> {
-    /**
-     * 使用当前API发起一个请求，并得到一个[HTTP响应][HttpResponse].
-     */
-    public actual abstract suspend fun request(
-        client: HttpClient,
-        token: MiyousheApiToken
-    ): io.ktor.client.statement.HttpResponse
-
+@Serializable
+public data class BotMemberAccessInfo(
+    @get:JvmName("getUid")
+    val uid: ULong,
+    @SerialName("villa_id")
+    @get:JvmName("getVillaId")
+    val villaId: ULong,
+    @SerialName("member_access_token")
+    val memberAccessToken: String,
+    @SerialName("bot_tpl_id")
+    val botTplId: String
+) {
+    val uidStrValue: String get() = uid.toString()
+    val villaIdStrValue: String get() = villaId.toString()
 }
