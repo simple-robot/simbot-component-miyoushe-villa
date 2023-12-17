@@ -26,11 +26,9 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.*
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import love.forte.simbot.miyoushe.MiyousheVilla
 import kotlin.concurrent.Volatile
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmSynthetic
 
 
@@ -73,21 +71,8 @@ public abstract class MiyousheVillaApi<out R : Any> {
      * 使用当前API发起一个请求，并得到一个[HTTP响应][HttpResponse].
      */
     @JvmSynthetic
-    public abstract suspend fun request(client: HttpClient, token: MiyousheApiToken): HttpResponse
+    public abstract suspend fun request(client: HttpClient, token: MiyousheVillaApiToken): HttpResponse
 
-
-    public companion object {
-        @JvmField
-        internal val DEFAULT_JSON = Json {
-            isLenient = true
-            encodeDefaults = true
-            ignoreUnknownKeys = true
-            allowSpecialFloatingPointValues = true
-            allowStructuredMapKeys = true
-            prettyPrint = false
-            useArrayPolymorphism = false
-        }
-    }
 }
 
 public abstract class StandardMiyousheVillaApi<out R : Any> : MiyousheVillaApi<R>() {
@@ -117,7 +102,7 @@ public abstract class StandardMiyousheVillaApi<out R : Any> : MiyousheVillaApi<R
         return URLBuilder(urlStr).prepareUrl().build()
     }
 
-    override suspend fun request(client: HttpClient, token: MiyousheApiToken): HttpResponse {
+    override suspend fun request(client: HttpClient, token: MiyousheVillaApiToken): HttpResponse {
         val method = this@StandardMiyousheVillaApi.method
         val body = this@StandardMiyousheVillaApi.body
         val url = this@StandardMiyousheVillaApi.url
@@ -137,8 +122,8 @@ public abstract class StandardMiyousheVillaApi<out R : Any> : MiyousheVillaApi<R
                         setBody(body)
                     } else {
                         try {
-                            val ser = guessSerializer(body, DEFAULT_JSON.serializersModule)
-                            val bodyJson = DEFAULT_JSON.encodeToString(ser, body)
+                            val ser = guessSerializer(body, MiyousheVilla.DefaultJson.serializersModule)
+                            val bodyJson = MiyousheVilla.DefaultJson.encodeToString(ser, body)
                             setBody(bodyJson)
                         } catch (e: Throwable) {
                             try {
@@ -187,12 +172,26 @@ public abstract class MiyousheVillaPostApi<out R : Any> : StandardMiyousheVillaA
 }
 
 /**
+ * 使用 Post 请求的API, 且结果返回值为 [Unit]
+ *
+ * @see MiyousheVillaApi
+ *
+ */
+public abstract class MiyousheVillaPostEmptyResultApi : MiyousheVillaPostApi<Unit>() {
+    override val apiResultSerializer: DeserializationStrategy<ApiResult<Unit>>
+        get() = ApiResult.emptySerializer()
+
+    override val resultSerializer: DeserializationStrategy<Unit>
+        get() = Unit.serializer()
+}
+
+/**
  * 请求 [MiyousheVillaApi] 时所需的机器人凭证请求头信息。
  *
  * @see MiyousheVilla.Headers
  *
  */
-public data class MiyousheApiToken(
+public data class MiyousheVillaApiToken(
     /**
      * @see MiyousheVilla.Headers.BOT_ID_KEY
      */

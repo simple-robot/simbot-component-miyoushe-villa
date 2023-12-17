@@ -74,6 +74,112 @@ public data class MemberRole(
 }
 
 /**
+ * 大别野内的某身份组
+ *
+ * ```json
+ * {
+ *     "retcode": 0,
+ *     "message": "OK",
+ *     "data": {
+ *         "role": {
+ *             "id": "368630049",  // 身份组 id
+ *             "name": "管理员",    // 身份组名称
+ *             "color": "#59A1EA", // 颜色
+ *             "villa_id": "90002344", // 所属大别野 id
+ *             "role_type": "MEMBER_ROLE_TYPE_ADMIN", // 身份组类型
+ *             "member_num": "1",  // 身份组下成员数量
+ *             "permissions": [    // 身份组拥有的权限列表
+ *                 {
+ *                     "key": "black_out",   // 权限 key 字符串
+ *                     "name": "拉黑",        // 权限名称
+ *                     "describe": "允许成员能够拉黑和将其他人移出大别野" // 权限描述
+ *                 },
+ *                 {
+ *                     "key": "manage_chat_room",
+ *                     "name": "聊天房间管理",
+ *                     "describe": "允许成员开启聊天辩论、编辑房间权限、房间信息"
+ *                 }
+ *             ]
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * ```json
+ * {
+ *     "retcode": 0,
+ *     "message": "OK",
+ *     "data": {
+ *         "list": [
+ *             {
+ *                 "id": "3684",   // 身份组 id
+ *                 "name": "所有人", // 身份组名称
+ *                 "color": "#8F9BBF", // 颜色
+ *                 "role_type": "MEMBER_ROLE_TYPE_ALL_MEMBER", // 身份组类型
+ *                 "villa_id": "900001", // 所属大别野 id
+ *                 "member_num": "2" // 身份组下的成员数量
+ *             },
+ *             {
+ *                 "id": "3686",
+ *                 "name": "管理员",
+ *                 "color": "#59A1EA",
+ *                 "role_type": "MEMBER_ROLE_TYPE_ADMIN",
+ *                 "villa_id": "900001",
+ *                 "member_num": "0"
+ *             }
+ *         ]
+ *     }
+ * }
+ * ```
+ *
+ */
+@Serializable
+public data class VillaRole(
+    @get:JvmName("getId")
+    val id: ULong,
+    val name: String,
+    val color: String,
+    @SerialName("role_type")
+    val roleTypeValue: String,
+    @get:JvmName("getVillaId")
+    @SerialName("villa_id")
+    val villaId: ULong,
+    @SerialName("member_num")
+    val memberNum: Long = 0L,
+    val permissions: List<Permission>? = null
+) {
+    public val idStrValue: String get() = id.toString()
+    public val villaIdStrValue: String get() = villaId.toString()
+
+    /**
+     * 根据 [roleTypeValue] 转化为 [RoleType]
+     * @throws NoSuchElementException 如果没有匹配结果
+     */
+    public val roleType: RoleType
+        get() = RoleType.valueOf(roleTypeValue)
+
+    /**
+     * 身份组拥有的权限列表
+     *
+     * @property key 权限 key 字符串
+     * @property name 权限名称
+     * @property describe 权限描述
+     *
+     */
+    @Serializable
+    public data class Permission(@SerialName("key") val keyValue: String, val name: String, val describe: String) {
+
+        /**
+         * 根据 [keyValue] 转化为 [RolePermission]
+         * @throws NoSuchElementException 如果没有匹配结果
+         */
+        @Suppress("MemberVisibilityCanBePrivate")
+        public val key: RolePermission
+            get() = RolePermission.valueOf(keyValue.uppercase())
+    }
+}
+
+/**
  * [身份组类型](https://webstatic.mihoyo.com/vila/bot/doc/role_api/#%E8%BA%AB%E4%BB%BD%E7%BB%84%E7%B1%BB%E5%9E%8B)
  *
  * @see MemberRole.roleType

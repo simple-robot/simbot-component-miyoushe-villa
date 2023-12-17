@@ -15,9 +15,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.miyoushe.api.msg
+package love.forte.simbot.miyoushe.api.role
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.MiyousheVillaPostEmptyResultApi
 import kotlin.jvm.JvmName
@@ -25,58 +24,55 @@ import kotlin.jvm.JvmStatic
 
 
 /**
- * [置顶消息](https://webstatic.mihoyo.com/vila/bot/doc/message_api/pin_message.html)
+ * [删除身份组](https://webstatic.mihoyo.com/vila/bot/doc/role_api/delete_member_role.html)
  *
- * `POST /vila/api/bot/platform/pinMessage`
+ * 删除身份组
+ *
+ * `POST /vila/api/bot/platform/deleteMemberRole`
  *
  * @author ForteScarlet
  */
-public class PinMessageApi private constructor(override val body: Body) : MiyousheVillaPostEmptyResultApi() {
+public class DeleteMemberRoleApi private constructor(override val body: Body) : MiyousheVillaPostEmptyResultApi() {
     public companion object Factory {
-        private const val PATH = "/vila/api/bot/platform/pinMessage"
+        private const val PATH = "/vila/api/bot/platform/deleteMemberRole"
 
         /**
-         * Create an instance of [PinMessageApi]
+         * Create an instance of [DeleteMemberRoleApi]
          *
-         * @param msgUid 消息 id
-         * @param isCancel 是否取消置顶
-         * @param roomId 房间 id
-         * @param sendAt 发送时间
-         *
+         * @param id 身份组 id
          */
-        @JvmName("create")
         @JvmStatic
-        public fun create(
-            msgUid: String, isCancel: Boolean, roomId: ULong, sendAt: Long
-        ): PinMessageApi = PinMessageApi(Body(msgUid, isCancel, roomId, sendAt))
+        @JvmName("create")
+        public fun create(id: ULong): DeleteMemberRoleApi = DeleteMemberRoleApi(Body(id))
+
+        /**
+         * Create an instance of [DeleteMemberRoleApi]
+         *
+         * @param idString 身份组 id
+         *
+         * @throws NumberFormatException 如果 [idString] 无法转化为 [ULong]
+         */
+        @JvmStatic
+        public fun create(idString: String): DeleteMemberRoleApi = create(idString.toULong())
     }
 
     override val path: String
         get() = PATH
 
-
     /**
-     * @property msgUid 消息 id
-     * @property isCancel 是否取消置顶
-     * @property roomId 房间 id
-     * @property sendAt 发送时间
-     *
+     * Body of [DeleteMemberRoleApi]
+     * @property id 身份组 id
      */
     @Serializable
-    public data class Body(
-        @SerialName("msg_uid") val msgUid: String,
-        @SerialName("is_cancel") val isCancel: Boolean,
-        @SerialName("room_id") val roomId: ULong,
-        @SerialName("send_at") val sendAt: Long
-    )
+    public data class Body(val id: ULong)
 
     override fun toString(): String {
-        return "PinMessageApi(body=$body)"
+        return "DeleteMemberRoleApi(body=$body)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is PinMessageApi) return false
+        if (other !is DeleteMemberRoleApi) return false
 
         if (body != other.body) return false
 
@@ -86,11 +82,6 @@ public class PinMessageApi private constructor(override val body: Body) : Miyous
     override fun hashCode(): Int {
         return body.hashCode()
     }
-}
 
-/*
-msg_uid	string	消息 id
-is_cancel	bool	是否取消置顶
-room_id	uint64	房间 id
-send_at	int64	发送时间
- */
+
+}

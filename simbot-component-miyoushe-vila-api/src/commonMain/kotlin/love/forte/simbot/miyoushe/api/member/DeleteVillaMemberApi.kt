@@ -17,11 +17,8 @@
 
 package love.forte.simbot.miyoushe.api.member
 
-import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
-import love.forte.simbot.miyoushe.api.ApiResult
-import love.forte.simbot.miyoushe.api.MiyousheVillaPostApi
+import love.forte.simbot.miyoushe.api.MiyousheVillaPostEmptyResultApi
 import kotlin.jvm.JvmStatic
 
 
@@ -34,7 +31,7 @@ import kotlin.jvm.JvmStatic
  *
  * @author ForteScarlet
  */
-public class DeleteVillaMemberApi private constructor(override val body: Body) : MiyousheVillaPostApi<Unit>() {
+public class DeleteVillaMemberApi private constructor(override val body: Body) : MiyousheVillaPostEmptyResultApi() {
     public companion object Factory {
         private const val PATH = "/vila/api/bot/platform/deleteVillaMember"
 
@@ -59,10 +56,6 @@ public class DeleteVillaMemberApi private constructor(override val body: Body) :
 
     override val path: String
         get() = PATH
-    override val resultSerializer: DeserializationStrategy<Unit>
-        get() = Unit.serializer()
-    override val apiResultSerializer: DeserializationStrategy<ApiResult<Unit>>
-        get() = ApiResult.emptySerializer()
 
 
 

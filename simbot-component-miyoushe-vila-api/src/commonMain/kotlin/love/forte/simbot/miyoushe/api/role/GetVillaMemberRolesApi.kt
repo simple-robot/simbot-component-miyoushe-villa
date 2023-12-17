@@ -15,10 +15,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.miyoushe.api.emoticons
+package love.forte.simbot.miyoushe.api.role
 
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.MiyousheVillaGetApi
@@ -26,40 +25,46 @@ import kotlin.jvm.JvmStatic
 
 
 /**
- * [获取全量表情](https://webstatic.mihoyo.com/vila/bot/doc/emoticon_api/get_all_emoticons.html)
+ * [获取大别野下所有身份组](https://webstatic.mihoyo.com/vila/bot/doc/role_api/get_villa_member_roles.html)
+ *
+ * 获取大别野下所有身份组
+ *
+ * `GET /vila/api/bot/platform/getVillaMemberRoles`
+ *
  * @author ForteScarlet
  */
-public class GetAllEmoticonsApi private constructor() : MiyousheVillaGetApi<EmoticonList>() {
+public class GetVillaMemberRolesApi private constructor() : MiyousheVillaGetApi<GetVillaMemberRolesResult>() {
     public companion object Factory {
-        private val INSTANCE = GetAllEmoticonsApi()
-        private const val API_PATH = "/vila/api/bot/platform/getAllEmoticons"
-        private val apiResultSer = ApiResult.serializer(EmoticonList.serializer())
+        private const val PATH = "/vila/api/bot/platform/getVillaMemberRoles"
+        private val RESULT_RES = ApiResult.serializer(GetVillaMemberRolesResult.serializer())
+        private val INSTANCE = GetVillaMemberRolesApi()
 
         /**
-         * 构建 [GetAllEmoticonsApi] 实例。
+         * Get instance of [GetVillaMemberRolesApi].
          */
         @JvmStatic
-        public fun create(): GetAllEmoticonsApi = INSTANCE
-
+        public fun create(): GetVillaMemberRolesApi = INSTANCE
     }
 
     override val path: String
-        get() = API_PATH
-
-    override val resultSerializer: KSerializer<EmoticonList>
-        get() = EmoticonList.serializer()
-
-    override val apiResultSerializer: DeserializationStrategy<ApiResult<EmoticonList>>
-        get() = apiResultSer
+        get() = PATH
+    override val resultSerializer: DeserializationStrategy<GetVillaMemberRolesResult>
+        get() = GetVillaMemberRolesResult.serializer()
+    override val apiResultSerializer: DeserializationStrategy<ApiResult<GetVillaMemberRolesResult>>
+        get() = RESULT_RES
 
     override fun toString(): String {
-        return "GetAllEmoticonsApi()"
+        return "GetVillaMemberRolesApi()"
     }
+
+
 }
 
 /**
- * Result of [GetAllEmoticonsApi]
+ * Result of [GetVillaMemberRolesApi]
+ *
+ * @property list role list
+ *
  */
 @Serializable
-public data class EmoticonList(val list: List<Emoticon> = emptyList())
-
+public data class GetVillaMemberRolesResult(val list: List<VillaRole> = emptyList())

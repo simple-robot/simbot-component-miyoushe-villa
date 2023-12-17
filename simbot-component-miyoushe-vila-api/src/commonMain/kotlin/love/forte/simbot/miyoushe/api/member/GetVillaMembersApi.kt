@@ -17,6 +17,7 @@
 
 package love.forte.simbot.miyoushe.api.member
 
+import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.DeserializationStrategy
@@ -105,6 +106,13 @@ size	uint64	分页大小
                     emit(member)
                 }
             } while (result.list.isNotEmpty())
+        }
+    }
+
+    override fun URLBuilder.prepareUrl(): URLBuilder = apply {
+        with(parameters) {
+            append("offset", offset)
+            append("size", size.toString())
         }
     }
 

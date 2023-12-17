@@ -18,6 +18,7 @@
 package love.forte.simbot.miyoushe
 
 import kotlinx.serialization.json.Json
+import kotlin.jvm.JvmField
 
 /**
  *
@@ -32,11 +33,15 @@ public object MiyousheVilla {
      * 一些需要格式化JSON时使用的默认 [Json] 序列化器。
      *
      */
+    @JvmField
     public val DefaultJson: Json = Json {
         isLenient = true
-        ignoreUnknownKeys = true
         encodeDefaults = true
+        ignoreUnknownKeys = true
         allowSpecialFloatingPointValues = true
+        allowStructuredMapKeys = true
+        prettyPrint = false
+        useArrayPolymorphism = false
     }
 
     /**

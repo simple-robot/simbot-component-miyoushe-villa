@@ -28,10 +28,10 @@ import kotlin.jvm.JvmName
  * Room 房间信息
  *
  * @property roomId 房间 id
- * @property roomName [房间名称](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#%E6%88%BF%E9%97%B4%E7%B1%BB%E5%9E%8B). See [RoomType]
+ * @property roomName See [RoomType]: [房间名称](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#%E6%88%BF%E9%97%B4%E7%B1%BB%E5%9E%8B).
  * @property roomTypeValue 房间类型
  * @property groupId 分组 id
- * @property roomDefaultNotifyTypeValue [房间默认通知类型](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#%E6%88%BF%E9%97%B4%E9%BB%98%E8%AE%A4%E9%80%9A%E7%9F%A5%E7%B1%BB%E5%9E%8B). See [RoomDefaultNotifyType]
+ * @property roomDefaultNotifyTypeValue See [RoomDefaultNotifyType]: [房间默认通知类型](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#%E6%88%BF%E9%97%B4%E9%BB%98%E8%AE%A4%E9%80%9A%E7%9F%A5%E7%B1%BB%E5%9E%8B).
  * @property sendMsgAuthRange 房间消息发送权限范围设置
  *
  * @author ForteScarlet
@@ -146,7 +146,7 @@ public data class GroupRoom(
     @SerialName("group_name")
     val groupName: String,
     @SerialName("room_list")
-    val roomList: ListRoom
+    val roomList: List<ListRoom>
 ) {
     val groupIdStrValue: String get() = groupId.toString()
 }
@@ -157,7 +157,7 @@ public data class GroupRoom(
  *
  * @property roomId 房间 id
  * @property roomName 房间名称
- * @property roomType [房间类型](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#%E6%88%BF%E9%97%B4%E7%B1%BB%E5%9E%8B). See [RoomType]
+ * @property roomTypeValue See [RoomType]: [房间类型](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#%E6%88%BF%E9%97%B4%E7%B1%BB%E5%9E%8B).
  * @property groupId 分组 id
  */
 @Serializable

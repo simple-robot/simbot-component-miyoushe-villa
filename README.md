@@ -23,9 +23,9 @@ API 进度：
 - [x] 大别野 API
 - [x] 用户 API
 - [x] 消息 API
-- [ ] 房间 API
-- [ ] 身份组 API
-- [ ] 表态表情 API
+- [x] 房间 API
+- [x] 身份组 API
+- [x] 表态表情 API
 - [ ] 审核 API
 - [ ] 图片 API
 

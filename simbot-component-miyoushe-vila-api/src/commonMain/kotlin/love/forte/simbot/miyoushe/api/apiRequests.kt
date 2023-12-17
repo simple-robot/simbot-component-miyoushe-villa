@@ -16,23 +16,33 @@
  */
 
 @file:JvmName("MiyousheApis")
+
 package love.forte.simbot.miyoushe.api
 
 import io.ktor.client.*
 import io.ktor.client.statement.*
-import kotlinx.serialization.StringFormat
+import kotlinx.serialization.json.Json
+import love.forte.simbot.miyoushe.MiyousheVilla
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmSynthetic
 
 @JvmSynthetic
-public suspend fun <R : Any> MiyousheVillaApi<R>.requestResult(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): ApiResult<R> {
+public suspend fun <R : Any> MiyousheVillaApi<R>.requestResult(
+    client: HttpClient,
+    token: MiyousheVillaApiToken,
+    decoder: Json = MiyousheVilla.DefaultJson
+): ApiResult<R> {
     val response = request(client, token)
     val text = response.bodyAsText()
     return decoder.decodeFromString(apiResultSerializer, text)
 }
 
 @JvmSynthetic
-public suspend fun <R : Any> MiyousheVillaApi<R>.requestData(client: HttpClient, token: MiyousheApiToken, decoder: StringFormat): R {
+public suspend fun <R : Any> MiyousheVillaApi<R>.requestData(
+    client: HttpClient,
+    token: MiyousheVillaApiToken,
+    decoder: Json = MiyousheVilla.DefaultJson
+): R {
     val apiResult = requestResult(client, token, decoder)
 
     // TODO check result?

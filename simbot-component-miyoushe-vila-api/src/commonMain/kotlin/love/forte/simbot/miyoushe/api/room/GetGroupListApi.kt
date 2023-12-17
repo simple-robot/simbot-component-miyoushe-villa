@@ -15,10 +15,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.miyoushe.api.emoticons
+package love.forte.simbot.miyoushe.api.room
 
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.MiyousheVillaGetApi
@@ -26,40 +25,44 @@ import kotlin.jvm.JvmStatic
 
 
 /**
- * [获取全量表情](https://webstatic.mihoyo.com/vila/bot/doc/emoticon_api/get_all_emoticons.html)
+ * [获取分组列表](https://webstatic.mihoyo.com/vila/bot/doc/room_api/get_group_list.html)
+ *
+ * 获取大别野下的所有分组的列表，只返回分组的基本信息，不包含分组内的房间信息。
+ *
+ * `GET /vila/api/bot/platform/getGroupList`
+ *
  * @author ForteScarlet
  */
-public class GetAllEmoticonsApi private constructor() : MiyousheVillaGetApi<EmoticonList>() {
+public class GetGroupListApi private constructor() : MiyousheVillaGetApi<GetGroupListResult>() {
     public companion object Factory {
-        private val INSTANCE = GetAllEmoticonsApi()
-        private const val API_PATH = "/vila/api/bot/platform/getAllEmoticons"
-        private val apiResultSer = ApiResult.serializer(EmoticonList.serializer())
+        private const val PATH = "/vila/api/bot/platform/getGroupList"
+        private val INSTANCE = GetGroupListApi()
+        private val RESULT_RES = ApiResult.serializer(GetGroupListResult.serializer())
 
         /**
-         * 构建 [GetAllEmoticonsApi] 实例。
+         * Get instance of [GetGroupListApi].
          */
         @JvmStatic
-        public fun create(): GetAllEmoticonsApi = INSTANCE
+        public fun create(): GetGroupListApi = INSTANCE
 
     }
 
     override val path: String
-        get() = API_PATH
-
-    override val resultSerializer: KSerializer<EmoticonList>
-        get() = EmoticonList.serializer()
-
-    override val apiResultSerializer: DeserializationStrategy<ApiResult<EmoticonList>>
-        get() = apiResultSer
+        get() = PATH
+    override val resultSerializer: DeserializationStrategy<GetGroupListResult>
+        get() = GetGroupListResult.serializer()
+    override val apiResultSerializer: DeserializationStrategy<ApiResult<GetGroupListResult>>
+        get() = RESULT_RES
 
     override fun toString(): String {
-        return "GetAllEmoticonsApi()"
+        return "GetGroupListApi()"
     }
 }
 
 /**
- * Result of [GetAllEmoticonsApi]
+ * Result of [GetGroupListApi].
+ *
+ * @property list 分组列表
  */
 @Serializable
-public data class EmoticonList(val list: List<Emoticon> = emptyList())
-
+public data class GetGroupListResult(val list: Group)

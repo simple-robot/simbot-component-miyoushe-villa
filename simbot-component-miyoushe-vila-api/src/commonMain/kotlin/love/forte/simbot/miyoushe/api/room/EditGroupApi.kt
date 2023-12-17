@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.miyoushe.api.msg
+package love.forte.simbot.miyoushe.api.room
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -25,58 +25,59 @@ import kotlin.jvm.JvmStatic
 
 
 /**
- * [置顶消息](https://webstatic.mihoyo.com/vila/bot/doc/message_api/pin_message.html)
+ * [编辑分组](https://webstatic.mihoyo.com/vila/bot/doc/room_api/edit_group.html)
  *
- * `POST /vila/api/bot/platform/pinMessage`
+ * 编辑分组，只允许编辑分组的名称
+ *
+ * `POST /vila/api/bot/platform/editGroup`
  *
  * @author ForteScarlet
  */
-public class PinMessageApi private constructor(override val body: Body) : MiyousheVillaPostEmptyResultApi() {
+public class EditGroupApi private constructor(override val body: Body) : MiyousheVillaPostEmptyResultApi() {
     public companion object Factory {
-        private const val PATH = "/vila/api/bot/platform/pinMessage"
+        private const val PATH = "/vila/api/bot/platform/editGroup"
 
         /**
-         * Create an instance of [PinMessageApi]
+         * Create an instance of [EditGroupApi].
          *
-         * @param msgUid 消息 id
-         * @param isCancel 是否取消置顶
-         * @param roomId 房间 id
-         * @param sendAt 发送时间
-         *
+         * @param groupId 分组 id
+         * @param groupName 大别野 名称
          */
-        @JvmName("create")
         @JvmStatic
-        public fun create(
-            msgUid: String, isCancel: Boolean, roomId: ULong, sendAt: Long
-        ): PinMessageApi = PinMessageApi(Body(msgUid, isCancel, roomId, sendAt))
+        @JvmName("create")
+        public fun create(groupId: ULong, groupName: String): EditGroupApi = EditGroupApi(Body(groupId, groupName))
+
+        /**
+         * Create an instance of [EditGroupApi].
+         *
+         * @param groupIdString 分组 id 字符串值
+         * @param groupName 大别野 名称
+         *
+         * @throws NumberFormatException 如果 [groupIdString] 不能转化为 [ULong]
+         */
+        @JvmStatic
+        public fun create(groupIdString: String, groupName: String): EditGroupApi =
+            create(groupIdString.toULong(), groupName)
     }
 
     override val path: String
         get() = PATH
 
-
     /**
-     * @property msgUid 消息 id
-     * @property isCancel 是否取消置顶
-     * @property roomId 房间 id
-     * @property sendAt 发送时间
-     *
+     * Body of [EditGroupApi]
+     * @property groupId 分组 id
+     * @property groupName 大别野 名称
      */
     @Serializable
-    public data class Body(
-        @SerialName("msg_uid") val msgUid: String,
-        @SerialName("is_cancel") val isCancel: Boolean,
-        @SerialName("room_id") val roomId: ULong,
-        @SerialName("send_at") val sendAt: Long
-    )
+    public data class Body(@SerialName("group_id") val groupId: ULong, @SerialName("group_name") val groupName: String)
 
     override fun toString(): String {
-        return "PinMessageApi(body=$body)"
+        return "EditGroupApi(body=$body)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is PinMessageApi) return false
+        if (other !is EditGroupApi) return false
 
         if (body != other.body) return false
 
@@ -87,10 +88,3 @@ public class PinMessageApi private constructor(override val body: Body) : Miyous
         return body.hashCode()
     }
 }
-
-/*
-msg_uid	string	消息 id
-is_cancel	bool	是否取消置顶
-room_id	uint64	房间 id
-send_at	int64	发送时间
- */
