@@ -77,6 +77,8 @@ ktor-client-winhttp = { group = "io.ktor", name = "ktor-client-winhttp", version
 # see https://ktor.io/docs/http-client-engines.html#darwin
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+
 
 # slf4j
 slf4j-api = "org.slf4j:slf4j-api:1.7.36"

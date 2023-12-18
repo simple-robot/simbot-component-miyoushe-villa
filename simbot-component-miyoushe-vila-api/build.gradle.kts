@@ -116,6 +116,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.ktor.client.ws)
+                implementation(libs.ktor.client.logging)
                 implementation(libs.okio)
             }
         }
@@ -130,10 +131,13 @@ kotlin {
         jvmTest {
             dependencies {
                 implementation(libs.ktor.client.cio)
+                implementation(libs.ktor.server.cio)
                 implementation(simbotApi) // use @Api4J annotation
-                implementation(libs.log4j.api)
-                implementation(libs.log4j.core)
-                implementation(libs.log4j.slf4j2Impl)
+                implementation(simbotLoggerSlf4j)
+//                // use @Api4J annotation
+//                implementation(libs.log4j.api)
+//                implementation(libs.log4j.core)
+//                implementation(libs.log4j.slf4j2Impl)
             }
         }
 

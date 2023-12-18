@@ -34,6 +34,14 @@ public suspend fun <R : Any> MiyousheVillaApi<R>.requestResult(
     return decoder.decodeFromString(apiResultSerializer, text)
 }
 
+/**
+ * 请求目标API并将结果解析为预期类型。
+ * 如果响应结果代表了失败，则会抛出 [ApiResultNotSuccessException]。
+ *
+ * @receiver 需要请求的 API
+ * @see ApiResult.dataIfSuccess
+ * @throws ApiResultNotSuccessException 如果结果不是成功
+ */
 @JvmSynthetic
 public suspend fun <R : Any> MiyousheVillaApi<R>.requestData(
     client: HttpClient,
@@ -42,7 +50,6 @@ public suspend fun <R : Any> MiyousheVillaApi<R>.requestData(
 ): R {
     val apiResult = requestResult(client, token, decoder)
 
-    // TODO check result?
-
-    return apiResult.data as R
+    // check if success and return
+    return apiResult.dataIfSuccess
 }

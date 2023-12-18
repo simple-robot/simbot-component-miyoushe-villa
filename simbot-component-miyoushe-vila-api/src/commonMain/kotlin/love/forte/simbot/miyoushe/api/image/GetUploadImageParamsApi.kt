@@ -27,6 +27,7 @@ import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.MiyousheVillaGetApi
 import kotlin.js.JsExport
+import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
@@ -48,11 +49,22 @@ public class GetUploadImageParamsApi private constructor(
         private const val PATH = "/vila/api/bot/platform/getUploadImageParams"
         private val RESULT_SER = ApiResult.serializer(GetUploadImageParamsResult.serializer())
 
+        /** ext: `jpg` */
+        public const val EXT_JPG: String = "jpg"
+        /** ext: `jpeg` */
+        public const val EXT_JPEG: String = "jpeg"
+        /** ext: `png` */
+        public const val EXT_PNG: String = "png"
+        /** ext: `gif` */
+        public const val EXT_GIF: String = "gif"
+        /** ext: `bmp` */
+        public const val EXT_BMP: String = "bmp"
+
         /**
          * Create an instance of [GetUploadImageParamsApi]
          *
          * @param md5 图片的 md5，最后会被用于文件名
-         * @param ext 图片扩展名 (支持 jpg,jpeg,png,gif,bmp)
+         * @param ext 图片扩展名 (支持 jpg,jpeg,png,gif,bmp), 可参考 [GetUploadImageParamsApi] 中以 `EXT_` 为前缀的常量，例如 [EXT_JPG]。
          */
         @JvmStatic
         public fun create(md5: String, ext: String): GetUploadImageParamsApi = GetUploadImageParamsApi(md5, ext)
@@ -145,8 +157,36 @@ public data class OSSParams(
     public data class CallbackVar(@SerialName("x:extra") val xExtra: String)
 }
 
+/**
+ * OSS 相关操作可能产生的异常。
+ */
+public open class OSSException : RuntimeException {
+    @JsName("create_0")
+    public constructor() : super()
+    @JsName("create_1")
+    public constructor(message: String?) : super(message)
+    @JsName("create_2")
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    @JsName("create_3")
+    public constructor(cause: Throwable?) : super(cause)
+}
 
+/**
+ * OSS 上传操作可能产生的异常。
+ */
+@Suppress("MemberVisibilityCanBePrivate")
+public class OSSUploadException : OSSException {
 
+    @JsName("create_0")
+    public constructor() : super()
 
+    @JsName("create_1")
+    public constructor(message: String?) : super(message)
 
+    @JsName("create_2")
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+
+    @JsName("create_3")
+    public constructor(cause: Throwable?) : super(cause)
+}
 

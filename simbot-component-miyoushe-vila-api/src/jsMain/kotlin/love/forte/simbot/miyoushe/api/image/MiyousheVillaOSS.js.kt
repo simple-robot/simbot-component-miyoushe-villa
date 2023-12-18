@@ -31,8 +31,11 @@ import kotlin.js.Promise
 
 /**
  * 使用 [OSSParams] 上传文件到米游社的阿里云 OSS。
+ *
+ * 如果上传出现错误则会向 promise 中传播 [OSSUploadException] 异常。具体异常会被包装在 [OSSUploadException.cause] 中。
  */
-public fun OSSParams.uploadByInputProvider(
+@JsName("uploadByInputProvider")
+public fun OSSParams.upload(
     client: HttpClient,
     fileInputProvider: InputProvider,
     scope: CoroutineScope = client
@@ -42,6 +45,8 @@ public fun OSSParams.uploadByInputProvider(
 
 /**
  * 使用 [OSSParams] 上传文件到米游社的阿里云 OSS。
+ *
+ * 如果上传出现错误则会向 promise 中传播 [OSSUploadException] 异常。具体异常会被包装在 [OSSUploadException.cause] 中。
  */
 public fun OSSParams.upload(
     client: HttpClient,
@@ -53,8 +58,11 @@ public fun OSSParams.upload(
 
 /**
  * 使用 [OSSParams] 上传文件到米游社的阿里云 OSS。
+ *
+ * 如果上传出现错误则会向 promise 中传播 [OSSUploadException] 异常。具体异常会被包装在 [OSSUploadException.cause] 中。
  */
-public fun OSSParams.uploadByByteReadPacket(
+@JsName("uploadByByteReadPacket")
+public fun OSSParams.upload(
     client: HttpClient,
     fileData: ByteReadPacket,
     scope: CoroutineScope = client
@@ -64,8 +72,11 @@ public fun OSSParams.uploadByByteReadPacket(
 
 /**
  * 使用 [OSSParams] 上传文件到米游社的阿里云 OSS。
+ *
+ * 如果上传出现错误则会向 promise 中传播 [OSSUploadException] 异常。具体异常会被包装在 [OSSUploadException.cause] 中。
  */
-public fun OSSParams.uploadByChannelProvider(
+@JsName("uploadByChannelProvider")
+public fun OSSParams.upload(
     client: HttpClient,
     fileChannelProvider: ChannelProvider,
     scope: CoroutineScope = client
