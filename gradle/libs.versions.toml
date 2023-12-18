@@ -8,6 +8,7 @@ forte-annotationTool = "0.6.3"
 ktor = "2.3.7"
 log4j = "2.20.0"
 atomicfu = "0.20.1"
+okio = "3.7.0"
 
 [libraries]
 # jetbrains-annotation
@@ -103,3 +104,8 @@ log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.re
 log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
 log4j-slf4jImpl = { group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version.ref = "log4j" }
 log4j-slf4j2Impl = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j" }
+
+# okio
+okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+okio-nodefs = { group = "com.squareup.okio", name = "okio-nodefilesystem", version.ref = "okio" }
+okio-fakefs = { group = "com.squareup.okio", name = "okio-fakefilesystem", version.ref = "okio" }

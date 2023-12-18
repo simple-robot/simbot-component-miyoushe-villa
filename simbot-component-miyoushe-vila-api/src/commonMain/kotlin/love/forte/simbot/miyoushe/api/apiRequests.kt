@@ -15,15 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-@file:JvmName("MiyousheApis")
-
 package love.forte.simbot.miyoushe.api
 
 import io.ktor.client.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
 import love.forte.simbot.miyoushe.MiyousheVilla
-import kotlin.jvm.JvmName
 import kotlin.jvm.JvmSynthetic
 
 @JvmSynthetic

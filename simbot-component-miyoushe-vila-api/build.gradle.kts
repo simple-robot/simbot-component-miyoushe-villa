@@ -55,6 +55,8 @@ kotlin {
         compilations.all {
             // Enables ES6 classes generation
             kotlinOptions {
+                suppressWarnings
+                freeCompilerArgs = freeCompilerArgs + listOf("-Xsuppress:NON_EXPORTABLE_TYPE")
                 useEsClasses = true
             }
         }
@@ -95,7 +97,8 @@ kotlin {
         commonMain {
             dependencies {
                 compileOnly(simbotAnnotations)
-                api(simbotRequestorCore)
+//                api(simbotRequestorCore)
+                api(simbotUtilSuspendTransformer)
                 api(libs.kotlinx.coroutines.core)
                 api(libs.ktor.client.core)
                 api(libs.ktor.client.contentNegotiation)
@@ -103,6 +106,8 @@ kotlin {
                 api(libs.kotlinx.serialization.json)
                 api(libs.kotlinx.serialization.protobuf)
                 api(simbotLogger)
+                // for multiplatform md5
+                api(kotlincrypto.hash.md5)
             }
         }
 
@@ -111,6 +116,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.ktor.client.ws)
+                implementation(libs.okio)
             }
         }
 
@@ -140,6 +146,7 @@ kotlin {
         jsTest {
             dependencies {
                 api(libs.ktor.client.js)
+                api(libs.okio.nodefs)
             }
         }
 

@@ -15,7 +15,20 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:JsExport
+@file:Suppress("NON_EXPORTABLE_TYPE")
+
 package love.forte.simbot.miyoushe.api.image
+
+import io.ktor.http.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import love.forte.simbot.miyoushe.api.ApiResult
+import love.forte.simbot.miyoushe.api.MiyousheVillaGetApi
+import kotlin.js.JsExport
+import kotlin.jvm.JvmName
+import kotlin.jvm.JvmStatic
 
 
 /**
@@ -23,10 +36,117 @@ package love.forte.simbot.miyoushe.api.image
  *
  * 获取米游社阿里云 OSS 上传参数
  *
- * GET /vila/api/bot/platform/getUploadImageParams
+ * `GET /vila/api/bot/platform/getUploadImageParams`
  *
  * @author ForteScarlet
  */
-public class GetUploadImageParamsApi {
-    // TODO
+public class GetUploadImageParamsApi private constructor(
+    public val md5: String,
+    public val ext: String,
+) : MiyousheVillaGetApi<GetUploadImageParamsResult>() {
+    public companion object Factory {
+        private const val PATH = "/vila/api/bot/platform/getUploadImageParams"
+        private val RESULT_SER = ApiResult.serializer(GetUploadImageParamsResult.serializer())
+
+        /**
+         * Create an instance of [GetUploadImageParamsApi]
+         *
+         * @param md5 图片的 md5，最后会被用于文件名
+         * @param ext 图片扩展名 (支持 jpg,jpeg,png,gif,bmp)
+         */
+        @JvmStatic
+        public fun create(md5: String, ext: String): GetUploadImageParamsApi = GetUploadImageParamsApi(md5, ext)
+
+    }
+
+    override fun URLBuilder.prepareUrl(): URLBuilder = apply {
+        with(parameters) {
+            append("md5", md5)
+            append("ext", ext)
+        }
+    }
+
+    override val path: String
+        get() = PATH
+    override val resultSerializer: DeserializationStrategy<GetUploadImageParamsResult>
+        get() = GetUploadImageParamsResult.serializer()
+    override val apiResultSerializer: DeserializationStrategy<ApiResult<GetUploadImageParamsResult>>
+        get() = RESULT_SER
+
+    override fun toString(): String {
+        return "GetUploadImageParamsApi(md5='$md5', ext='$ext')"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is GetUploadImageParamsApi) return false
+
+        if (md5 != other.md5) return false
+        if (ext != other.ext) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = md5.hashCode()
+        result = 31 * result + ext.hashCode()
+        return result
+    }
 }
+
+/**
+ * Result of [GetUploadImageParamsApi]
+ *
+ * @property type 上传类型，oss
+ * @property fileName 上传后文件名
+ * @property maxFileSize 上传文件大小限制，单位 KB
+ * @property params 上传参数对象 oss 上传参数
+ */
+@Serializable
+public data class GetUploadImageParamsResult(
+    val type: String,
+    @SerialName("file_name")
+    val fileName: String,
+
+    @SerialName("max_file_size")
+    @get:JvmName("getMaxFileSize")
+    val maxFileSize: UInt,
+    val params: OSSParams,
+) {
+    public val maxFileSizeStrValue: String get() = maxFileSize.toString()
+}
+
+/**
+ * 阿里云 oss 上传参数
+ */
+@Serializable
+public data class OSSParams(
+    val accessid: String,
+    val callback: String,
+    @SerialName("callback_var")
+    val callbackVar: CallbackVar,
+    val dir: String,
+    val expire: String,
+    val host: String,
+    val name: String,
+    val policy: String,
+    val signature: String,
+    @SerialName("x_oss_content_type")
+    val xOssContentType: String,
+    @SerialName("object_acl")
+    val objectAcl: String,
+    @SerialName("content_disposition")
+    val contentDisposition: String,
+    val key: String,
+    @SerialName("success_action_status")
+    val successActionStatus: String,
+) {
+    @Serializable
+    public data class CallbackVar(@SerialName("x:extra") val xExtra: String)
+}
+
+
+
+
+
+

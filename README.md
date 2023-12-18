@@ -26,7 +26,7 @@ API 进度：
 - [x] 房间 API
 - [x] 身份组 API
 - [x] 表态表情 API
-- [ ] 审核 API
+- [x] 审核 API
 - [ ] 图片 API
 
 > [!warning]

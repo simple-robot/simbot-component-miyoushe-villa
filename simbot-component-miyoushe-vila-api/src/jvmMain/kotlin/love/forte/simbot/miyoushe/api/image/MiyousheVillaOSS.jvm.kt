@@ -15,37 +15,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:JvmName("MiyousheVillaOSS")
 
-package love.forte.simbot.miyoushe.api.emoticons
+package love.forte.simbot.miyoushe.api.image
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlin.js.JsExport
-import kotlin.jvm.JvmName
-
-/**
- * [表态表情 Emoticon](https://webstatic.mihoyo.com/vila/bot/doc/emoticon_api/)
- *
- */
-@Suppress("NON_EXPORTABLE_TYPE")
-@JsExport
-@Serializable
-public data class Emoticon(
-    /**
-     * 表情 id
-     */
-    @SerialName("emoticon_id")
-    @get:JvmName("getEmoticonId")
-    val emoticonId: ULong,
-    /**
-     * 描述文本
-     */
-    @SerialName("describe_text")
-    val describeText: String,
-    /**
-     * 表情图片链接
-     */
-    val icon: String,
-) {
-    val emoticonIdStrValue: String get() = emoticonId.toString()
-}
+// TODO JVM blocking and async API
