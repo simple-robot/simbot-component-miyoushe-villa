@@ -22,7 +22,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/buildSrc" />
-            <option value="$PROJECT_DIR$/simbot-component-miyoushe-vila-api" />
+            <option value="$PROJECT_DIR$/simbot-component-miyoushe-villa-api" />
+            <option value="$PROJECT_DIR$/simbot-component-miyoushe-villa-stdlib" />
           </set>
         </option>
       </GradleProjectSettings>

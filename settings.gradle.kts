@@ -12,6 +12,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "simbot-component-miyoushe-vila"
+rootProject.name = "simbot-component-miyoushe-villa"
 
-include("simbot-component-miyoushe-vila-api")
+include("simbot-component-miyoushe-villa-api")
+include("simbot-component-miyoushe-villa-stdlib")
