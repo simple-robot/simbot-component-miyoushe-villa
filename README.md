@@ -46,12 +46,12 @@ core（simbot组件）进度：
 
 ## 风格预览
 
-> [!info]
+> [!note]
 > 不论是 simbot API 本身还是其衍生项目（比如本项目）都会提供对 Java 的友好兼容。
 
 ### API
 
-> [!info]
+> [!note]
 > API 模块基于 KMP 支持多平台，包括 JVM、JS（nodeJS）和 native。
 
 [api模块](simbot-component-miyoushe-villa-api) 尽可能保证对API的定义与使用"原汁原味"，全面而不做过多封装，是一种 `low-level` 库。
@@ -74,7 +74,7 @@ println(data)
 
 ### stdlib
 
-> [!info]
+> [!note]
 > stdlib 模块基于 KMP 支持多平台，包括 JVM、JS（nodeJS）和 native。
 
 [标准库模块](simbot-component-miyoushe-villa-stdlib) 基于 [api模块](simbot-component-miyoushe-villa-api)，
