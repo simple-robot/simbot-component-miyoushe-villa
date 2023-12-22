@@ -245,6 +245,7 @@ public data class SendMessage(
      * 引用消息的内容
      */
     @ProtoNumber(10)
+    @SerialName("quote_msg")
     val quoteMsg: QuoteMessage? = null
 ) : EventExtendData() {
     public val fromUserIdStrValue: String get() = fromUserId.toString()

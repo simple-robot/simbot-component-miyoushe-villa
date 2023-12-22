@@ -395,6 +395,8 @@ public data class Robot(
  * @property fromUserId 发送者id
  * @property fromUserIdStr 发送者id（string）
  * @property fromUserNickname 发送者昵称
+ * @property images 消息中的图片url数组，支持图文消息、图片消息、自定义表情、avatar互动等消息类型
+ * （2023.12.20 更新）
  *
  */
 @OptIn(ExperimentalSerializationApi::class)
@@ -424,6 +426,8 @@ public data class QuoteMessage(
     @ProtoNumber(8)
     @SerialName("from_user_nickname")
     val fromUserNickname: String,
+    @ProtoNumber(9)
+    val images: List<String> = emptyList()
 ) {
     val fromUserIdStrValue: String get() = fromUserId.toString()
 }
