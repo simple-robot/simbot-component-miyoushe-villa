@@ -29,6 +29,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 
 /**
+ * [Bot] 的配置信息。
  *
  * @author ForteScarlet
  */
@@ -128,15 +129,6 @@ public class BotConfiguration {
      *
      */
     public var apiDecoder: Json = MiyousheVilla.DefaultJson
-
-    /**
-     * BOT内事件冲区的容量。
-     * 缓冲区中堆积的事件如果已满则后续推送的事件会挂起等待缓冲区内元素的消费。
-     * 默认为 [DEFAULT_EVENT_BUFFER_CAPACITY]
-     *
-     *
-     */
-    public var eventBufferCapacity: Int = DEFAULT_EVENT_BUFFER_CAPACITY
 
     public companion object {
         public const val DEFAULT_EVENT_BUFFER_CAPACITY: Int = 64

@@ -16,3 +16,4 @@ rootProject.name = "simbot-component-miyoushe-villa"
 
 include("simbot-component-miyoushe-villa-api")
 include("simbot-component-miyoushe-villa-stdlib")
+include("simbot-component-miyoushe-villa-core")
