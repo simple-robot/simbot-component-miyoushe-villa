@@ -205,6 +205,7 @@ public data class Event<out E : EventExtendData>(
      *
      * [Event.extendData] 与示例中的JSON结构有所不同：[extendData] 数据结构跳过了 `"EventData"` 和其中的子事件类型Key（比如说 `"SendMessage"`），
      * 取而代之的则是直接的事件体。
+     *
      */
     @SerialName("extend_data")
     val extendData: E,

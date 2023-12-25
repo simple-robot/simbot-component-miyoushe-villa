@@ -15,16 +15,27 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:JvmMultifileClass
+@file:JvmName("MsgContentInfos")
+
 package love.forte.simbot.miyoushe.api.msg
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.StringFormat
 import love.forte.simbot.ExperimentalSimbotApi
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
 
 /**
  * [消息 api](https://webstatic.mihoyo.com/vila/bot/doc/message_api/).
  * [MsgContentInfo] 是消息的最外层结构，发送消息时的 msg_content 参数就是将 MsgContentInfo 对象经 json 序列化后得到的字符串
+ *
+ * @property content 消息内容
+ * @property mentionedInfo 消息的提及信息
+ * @property quoteInfo 引用消息的信息
+ * @property panel 组件面板
  *
  */
 @Serializable
@@ -33,7 +44,14 @@ public data class MsgContentInfo<C : MsgContent>(
     val mentionedInfo: MentionedInfo? = null,
     val quoteInfo: QuoteInfo? = null,
     val panel: Panel? = null
-)
+) {
+    public companion object {
+        public val TextSerializer: KSerializer<MsgContentInfo<TextMsgContent>> = serializer(TextMsgContent.serializer())
+        public val PostSerializer: KSerializer<MsgContentInfo<PostMsgContent>> = serializer(PostMsgContent.serializer())
+        public val ImgSerializer: KSerializer<MsgContentInfo<ImgMsgContent>> = serializer(ImgMsgContent.serializer())
+
+    }
+}
 
 /**
  * [MsgContent](https://webstatic.mihoyo.com/vila/bot/doc/message_api/#msgcontent)
@@ -115,7 +133,7 @@ public data class QuoteInfo(
     @SerialName("quoted_message_send_time")
     val quotedMessageSendTime: Long,
     @SerialName("original_message_id")
-    val originalMessageId: String,
+    val originalMessageId: String = quotedMessageId,
     @SerialName("original_message_send_time")
-    val originalMessageSendTime: Long,
+    val originalMessageSendTime: Long = quotedMessageSendTime,
 )

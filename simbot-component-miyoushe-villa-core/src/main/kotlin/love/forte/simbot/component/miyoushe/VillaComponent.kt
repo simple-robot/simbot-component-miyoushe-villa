@@ -18,7 +18,12 @@
 package love.forte.simbot.component.miyoushe
 
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import love.forte.simbot.*
+import love.forte.simbot.component.miyoushe.message.*
+import love.forte.simbot.message.At
+import love.forte.simbot.message.Message
 
 
 /**
@@ -51,11 +56,23 @@ public class VillaComponent : Component {
         public val componentID: CharSequenceID = ID_VALUE.ID
 
         /**
+         * 当一个 at 的消息类型为提及 bot 时，使用在 [At.type] 中的类型
+         */
+        public const val MENTION_BOT_TYPE: String = "bot"
+
+        /**
          * 大别野组件的序列化模块信息。
          */
         @JvmStatic
         public val serializersModule: SerializersModule = SerializersModule {
-            // TODO
+            polymorphic(Message.Element::class) {
+                subclass(VillaLink.serializer())
+                subclass(VillaPanel.serializer())
+                subclass(VillaQuote.serializer())
+                subclass(VillaQuoteMessage.serializer())
+                subclass(VillaStyleText.serializer())
+                subclass(VillaVillaRoomLink.serializer())
+            }
         }
 
         override val key: Attribute<VillaComponent> = attribute(ID_VALUE)

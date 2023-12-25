@@ -59,8 +59,6 @@ kotlin {
         api(libs.ktor.serialization.kotlinx.json)
         api(libs.kotlinx.serialization.json)
         api(libs.kotlinx.serialization.protobuf)
-        // default client engine: CIO
-        api(libs.ktor.client.cio)
         // for multiplatform md5
 //        api(kotlincrypto.hash.md5)
 

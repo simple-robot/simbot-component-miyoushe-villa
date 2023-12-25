@@ -41,7 +41,7 @@ private fun ApiResult<*>.toReasonString() = "retcode: $retcode, message: $messag
  * @see ApiResult
  * @author forte
  */
-@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate")
 @JsExport
 public open class ApiResultNotSuccessException(
     public val apiResult: ApiResult<*>,

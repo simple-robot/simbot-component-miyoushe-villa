@@ -29,12 +29,22 @@ import love.forte.simbot.miyoushe.api.msg.MsgContentInfo
 import love.forte.simbot.miyoushe.api.msg.TextMsgContent
 import kotlin.js.JsExport
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmSynthetic
 
 /**
  * 事件结构体实现的统一父类。
- *
  */
 public sealed class EventExtendData
+
+/**
+ * [EventExtendData] 的特殊实现类型，
+ * 当解析 [SerializableRawEvent] 后没有任何目标中的结果时，
+ * 可以使用此类型。
+ *
+ * 可用于向前兼容尚未支持的事件类型用，配合 [EventSource] 可临时让用户自行解析事件结果。
+ */
+public data object UnknownEventExtendData : EventExtendData()
+
 
 /**
  * 由 [EventExtendData] 实现类的伴生对象实现，提供一些元数据信息。
@@ -92,14 +102,7 @@ public data class JoinVilla(
     @SerialName("join_user_nickname")
     @ProtoNumber(2)
     val joinUserNickname: String,
-    /**
-     * `int64`, 用户加入时间的时间戳
-     *
-     * @see Event.createdAt
-     */
-    @SerialName("join_at")
-    @ProtoNumber(3)
-    val joinAt: Long = 0L,
+
     /**
      * `uint64`, 大别野 id
      */
@@ -108,6 +111,15 @@ public data class JoinVilla(
     @ProtoNumber(4)
     val villaId: ULong,
 ) : EventExtendData() {
+    /**
+     * `int64`, 用户加入时间的时间戳（待废弃）
+     *
+     * @see Event.createdAt
+     */
+    @SerialName("join_at")
+    @ProtoNumber(3)
+    var joinAt: Long = 0L
+
     public val joinUidStrValue: String get() = joinUid.toString()
     public val villaIdStrValue: String get() = villaId.toString()
 
@@ -215,7 +227,7 @@ public data class SendMessage(
     @ProtoNumber(5)
     @SerialName("room_id")
     @get:JvmName("getRoomId")
-    val roomId: UInt,
+    val roomId: ULong,
     /**
      * 用户昵称
      */
@@ -256,6 +268,9 @@ public data class SendMessage(
     public companion object Meta : EventExtendDataMeta() {
         private const val TYPE: Int = 2
         internal const val NAME: String = "SendMessage"
+
+        public const val OBJECT_NAME_TEXT: Int = 1
+        public const val OBJECT_NAME_POST: Int = 2
 
         override val type: Int
             get() = TYPE
@@ -399,7 +414,7 @@ public data class AddQuickEmoticon(
     @ProtoNumber(2)
     @SerialName("room_id")
     @get:JvmName("getRoomId")
-    val roomId: UInt,
+    val roomId: ULong,
     /**
      * 发送表情的用户 id
      */
@@ -465,7 +480,7 @@ public data class AddQuickEmoticon(
 }
 
 /**
- * 大别野用户对机器人消息做出快捷表情表态
+ * 审核 API 结果回调
  *
  * json
  *
@@ -528,8 +543,9 @@ public data class AuditCallback(
      */
     @ProtoNumber(4)
     @SerialName("room_id")
+    @get:JvmSynthetic
     @get:JvmName("getRoomId")
-    val roomId: UInt,
+    val roomId: ULong? = null,
     /**
      * 用户 id（和审核接口调用方传入的值一致）
      */
@@ -542,7 +558,7 @@ public data class AuditCallback(
      */
     @ProtoNumber(6)
     @SerialName("pass_through")
-    val passThrough: String = "",
+    val passThrough: String? = null,
     /**
      * 审核结果，0作兼容，1审核通过，2审核驳回
      */
@@ -550,6 +566,9 @@ public data class AuditCallback(
     @SerialName("audit_result")
     val auditResult: Int = 0,
 ) : EventExtendData() {
+    @get:JvmName("getRoomId")
+    public val roomIdAsInt: Int? get() = roomId?.toInt()
+
     public val villaIdStrValue: String get() = villaId.toString()
     public val roomIdStrValue: String get() = roomId.toString()
     public val userIdStrValue: String get() = userId.toString()
@@ -616,7 +635,7 @@ public data class AuditCallback(
 @Serializable
 public data class ClickMsgComponent(
     @ProtoNumber(1) @SerialName("villa_id") @get:JvmName("getVillaId") val villaId: UInt,
-    @ProtoNumber(2) @SerialName("room_id") @get:JvmName("getRoomId") val roomId: UInt,
+    @ProtoNumber(2) @SerialName("room_id") @get:JvmName("getRoomId") val roomId: ULong,
     @ProtoNumber(3) @SerialName("component_id") val componentId: String,
     @ProtoNumber(4) @SerialName("msg_uid") val msgUid: String,
     @ProtoNumber(5) @get:JvmName("getUid") val uid: ULong,

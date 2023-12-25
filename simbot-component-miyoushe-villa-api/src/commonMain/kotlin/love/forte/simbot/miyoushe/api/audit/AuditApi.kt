@@ -124,7 +124,7 @@ public class AuditApi private constructor(override val body: Body) : MiyousheVil
         }
 
         /**
-         * @throws NumberFormatException 如果 [valueString] 无法转化为 [ULong]
+         * @throws NumberFormatException 如果 [valueString] 无法转化为 [UInt]
          */
         @JvmName("roomId")
         public fun roomId(valueString: String): Builder = apply {

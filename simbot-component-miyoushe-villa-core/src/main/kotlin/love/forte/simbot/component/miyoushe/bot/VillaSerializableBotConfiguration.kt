@@ -50,7 +50,9 @@ public data class VillaSerializableBotConfiguration(
      * @see Bot.Ticket
      */
     @Serializable
-    public data class Ticket(val botId: String, val botSecret: String)
+    public data class Ticket(val botId: String, val botSecret: String) {
+        public fun toTicket(): Bot.Ticket = Bot.Ticket(botId, botSecret)
+    }
 
 
     @Serializable
@@ -94,6 +96,26 @@ public data class VillaSerializableBotConfiguration(
         @SerialName("timeout")
         public val timeoutConfig: TimeoutConfig? = null,
     )
+
+    internal fun toConfiguration(): VillaBotConfiguration {
+        val configuration = VillaBotConfiguration().apply {
+            config?.also { config ->
+                botConfiguration = BotConfiguration().apply {
+                    config.loginVillaId?.also { loginVillaId = it }
+                    config.loginMeta?.also { loginMeta = it }
+                    config.loginRegion?.also { loginRegion = it }
+                    config.timeoutConfig?.also {
+                        apiHttpRequestTimeoutMillis = it.apiHttpRequestTimeoutMillis
+                        apiHttpConnectTimeoutMillis = it.apiHttpConnectTimeoutMillis
+                        apiHttpSocketTimeoutMillis = it.apiHttpSocketTimeoutMillis
+                    }
+                }
+            }
+        }
+
+        return configuration
+    }
+
 }
 
 /**

@@ -131,8 +131,8 @@ public data class PRawEvent(
  */
 public fun SerializableRawEvent<*>.toEvent(): Event<*> {
     return when (this) {
-        is RawEvent -> Event(robot, type, extendData.eventData.oneOfValue, createdAt, id, sendAt)
-        is PRawEvent -> Event(robot, type, extendData.oneOfValue, createdAt, id, sendAt)
+        is RawEvent -> Event(robot, type, extendData.eventData.oneOfValueOrUnknown, createdAt, id, sendAt)
+        is PRawEvent -> Event(robot, type, extendData.oneOfValueOrUnknown, createdAt, id, sendAt)
     }
 }
 
@@ -167,7 +167,11 @@ public data class ExtendDataContainer(
         @ProtoNumber(6) @SerialName(AuditCallback.NAME) val auditCallback: AuditCallback? = null,
         @ProtoNumber(7) @SerialName(ClickMsgComponent.NAME) val clickMsgComponent: ClickMsgComponent? = null,
     ) {
-        val oneOfValue: EventExtendData
+        /**
+         * 获取字段中第一个结果不为 `null` 的类型，或最终得到 `null`。
+         */
+        @Suppress("MemberVisibilityCanBePrivate")
+        val oneOfValueOrNull: EventExtendData?
             get() {
                 return joinVilla
                     ?: sendMessage
@@ -176,9 +180,19 @@ public data class ExtendDataContainer(
                     ?: addQuickEmoticon
                     ?: auditCallback
                     ?: clickMsgComponent
-                    ?: error("Non-null not found")
             }
 
+        /**
+         * 获取字段中第一个结果不为 `null` 的类型，或最终抛出 [IllegalStateException] 异常。
+         */
+        val oneOfValue: EventExtendData
+            get() = oneOfValueOrNull ?: error("Non-null not found")
+
+        /**
+         * 获取字段中第一个结果不为 `null` 的类型，或得到 [UnknownEventExtendData]。
+         */
+        val oneOfValueOrUnknown: EventExtendData
+            get() = oneOfValueOrNull ?: UnknownEventExtendData
     }
 }
 

@@ -64,6 +64,14 @@ public data class ApiResult<out D : Any>(
     public companion object {
         internal val EMPTY_SUCCESS_RESULT = ApiResult(data = Unit)
         public const val RETCODE_DEFAULT_SUCCESS: Int = 0
+        // 200 OK {"data":null,"message":"机器人没有数据访问权限，详见https://webstatic.mihoyo.com/vila/bot/doc/question_answer.html","retcode":10322003}
+        //  👆 也就是大别野ID错了
+
+        // 200 OK {"data":null,"message":"房间不存在","retcode":10315000}
+        // 200 OK {"data":null,"message":"用户不在大别野内","retcode":-1}
+
+        public const val RETCODE_MEMBER_NOT_IN_VILLA: Int = -1
+
 
         public fun emptySerializer(): KSerializer<ApiResult<Unit>> = EmptyApiResultSerializer
     }

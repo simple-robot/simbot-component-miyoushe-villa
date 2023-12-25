@@ -57,9 +57,9 @@ public data class TextMsgContent(
     @Serializable
     public data class Entity(
         @get:JvmName("getOffset")
-        val offset: ULong,
+        val offset: Int,
         @get:JvmName("getLength")
-        val length: ULong,
+        val length: Int,
         val entity: EntityContent
     )
 
@@ -111,7 +111,9 @@ public data class TextMsgContent(
          */
         @Serializable
         @SerialName(MentionedUser.TYPE)
-        public data class MentionedUser(@get:JvmName("getUserId") val userId: ULong) : EntityContent() {
+        public data class MentionedUser(
+            @SerialName("user_id") @get:JvmName("getUserId") val userId: ULong
+        ) : EntityContent() {
             val userIdStrValue: String get() = userId.toString()
 
             public companion object {
@@ -146,7 +148,7 @@ public data class TextMsgContent(
             val villaId: ULong,
             @SerialName("room_id")
             @get:JvmName("getRoomId")
-            val roomId: UInt,
+            val roomId: ULong,
         ) : EntityContent() {
             val villaIdStrValue: String get() = villaId.toString()
             val roomIdStrValue: String get() = roomId.toString()

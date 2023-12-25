@@ -27,7 +27,7 @@ import kotlin.jvm.JvmName
  *
  * @property basic 用户基本信息
  * @property roleIdList 用户加入的身份组 id 列表
- * @property joinedAt ISO8601 timestamp 用户加入时间 (实际上好像是10位时间戳字符串)
+ * @property joinedAt ISO8601 timestamp 用户加入时间 (实际上好像是时间戳字符串)
  * @property roleList 用户已加入的身份组列表
  *
  * @author ForteScarlet
