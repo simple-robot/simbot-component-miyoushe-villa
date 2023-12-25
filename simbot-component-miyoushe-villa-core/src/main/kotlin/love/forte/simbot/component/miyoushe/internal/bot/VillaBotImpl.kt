@@ -17,27 +17,36 @@
 
 package love.forte.simbot.component.miyoushe.internal.bot
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import love.forte.simbot.ID
 import love.forte.simbot.component.miyoushe.VillaComponent
 import love.forte.simbot.component.miyoushe.VillaMember
 import love.forte.simbot.component.miyoushe.bot.VillaBot
 import love.forte.simbot.component.miyoushe.bot.VillaBotManager
+import love.forte.simbot.component.miyoushe.event.VillaAuditCallbackEvent
+import love.forte.simbot.component.miyoushe.event.VillaCreateRobotEvent
+import love.forte.simbot.component.miyoushe.event.VillaDeleteRobotEvent
+import love.forte.simbot.component.miyoushe.event.VillaJoinVillaEvent
 import love.forte.simbot.component.miyoushe.internal.VillaGuild
 import love.forte.simbot.component.miyoushe.internal.VillaRoom
+import love.forte.simbot.component.miyoushe.internal.event.VillaAuditCallbackEventImpl
+import love.forte.simbot.component.miyoushe.internal.event.VillaCreateRobotEventImpl
+import love.forte.simbot.component.miyoushe.internal.event.VillaDeleteRobotEventImpl
+import love.forte.simbot.component.miyoushe.internal.event.VillaJoinVillaEventImpl
 import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.event.EventProcessor
+import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.miyoushe.api.member.GetMemberApi
 import love.forte.simbot.miyoushe.api.room.GetRoomApi
 import love.forte.simbot.miyoushe.api.villa.GetVillaApi
+import love.forte.simbot.miyoushe.event.*
+import love.forte.simbot.miyoushe.stdlib.DisposableHandle
 import love.forte.simbot.miyoushe.stdlib.bot.Bot
 import love.forte.simbot.utils.item.Items
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
 
@@ -58,23 +67,103 @@ internal class VillaBotImpl(
     override val logger = LoggerFactory.getLogger("love.forte.simbot.component.miyoushe.bot.${source.ticket.botId}")
 
     @Volatile
-    private var registeredHandlers = false
+    private var robotInfo: Robot? = null
+
+    override fun isMe(id: ID): Boolean {
+        if (this.id == id) {
+            return true
+        }
+
+        val rb = robotInfo ?: return true
+        return rb.template.id == id.literal
+    }
+
+    override val username: String
+        get() = robotInfo?.template?.name ?: source.ticket.botId
+
+    override val avatar: String
+        get() = robotInfo?.template?.icon ?: ""
+
+    @Volatile
+    private var handlerDisposable: DisposableHandle? = null
 
     override suspend fun start(): Boolean {
         if (!job.isActive) return false
 
         withJob(job) {
             startLock.withLock {
-                if (!registeredHandlers) {
-                    // TODO register handlers
-
-                    registeredHandlers = true
+                if (handlerDisposable == null) {
+                    handlerDisposable = registerHandler(source)
                 }
                 source.start()
             }
         }
 
         return true
+    }
+
+
+    @Suppress("UNCHECKED_CAST")
+    private fun registerHandler(bot: Bot): DisposableHandle {
+        return bot.registerPreProcessor { source ->
+            // try to set robot info if it's null, and ignore the result.
+            robotInfoUpdater.weakCompareAndSet(this@VillaBotImpl, null, robot)
+
+            when (extendData) {
+                is SendMessage -> {
+
+                }
+
+                is JoinVilla -> {
+                    pushIfProcessableInBotAsync(VillaJoinVillaEvent) {
+                        VillaJoinVillaEventImpl(this@VillaBotImpl, this as Event<JoinVilla>, source)
+                    }
+                }
+
+                is CreateRobot -> {
+                    pushIfProcessableInBotAsync(VillaCreateRobotEvent) {
+                        VillaCreateRobotEventImpl(this@VillaBotImpl, this as Event<CreateRobot>, source)
+                    }
+                }
+
+                is DeleteRobot -> {
+                    pushIfProcessableInBotAsync(VillaDeleteRobotEvent) {
+                        VillaDeleteRobotEventImpl(this@VillaBotImpl, this as Event<DeleteRobot>, source)
+                    }
+                }
+
+                is AuditCallback -> {
+                    pushIfProcessableInBotAsync(VillaAuditCallbackEvent) {
+                        VillaAuditCallbackEventImpl(this@VillaBotImpl, this as Event<AuditCallback>, source)
+                    }
+                }
+
+                is AddQuickEmoticon -> {
+                    // TODO
+                }
+
+                is ClickMsgComponent -> {
+                    // TODO
+                }
+
+                UnknownEventExtendData -> {
+                    // TODO
+                }
+
+                else -> {
+                    // TODO unknown
+                }
+            }
+        }
+    }
+
+    private suspend inline fun pushIfProcessableInBotAsync(
+        eventKey: love.forte.simbot.event.Event.Key<*>,
+        crossinline block: () -> love.forte.simbot.event.Event
+    ) {
+        if (eventProcessor.isProcessable(eventKey)) {
+            launch { eventProcessor.push(block()) }
+        }
     }
 
     override val guilds: Items<VillaGuild>
@@ -100,6 +189,12 @@ internal class VillaBotImpl(
         val result = GetMemberApi.create(id).requestDataBy(this, villaId)
 
         TODO("VillaMember")
+    }
+
+
+    companion object {
+        private val robotInfoUpdater =
+            AtomicReferenceFieldUpdater.newUpdater(VillaBotImpl::class.java, Robot::class.java, "robotInfo")
     }
 }
 

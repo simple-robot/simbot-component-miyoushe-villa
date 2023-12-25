@@ -25,15 +25,24 @@ import love.forte.simbot.literal
 import love.forte.simbot.miyoushe.event.CreateRobot
 import love.forte.simbot.miyoushe.event.DeleteRobot
 import love.forte.simbot.miyoushe.event.Event
+import love.forte.simbot.miyoushe.event.EventSource
 
 
-internal class VillaCreateRobotEventImpl(override val bot: VillaBotImpl, override val sourceEvent: Event<CreateRobot>) :
+internal class VillaCreateRobotEventImpl(
+    override val bot: VillaBotImpl,
+    override val sourceEvent: Event<CreateRobot>,
+    override val sourceEventSource: EventSource
+) :
     VillaCreateRobotEvent() {
     override suspend fun guild(): VillaGuild = bot.guildInternal(villaId.literal)
 }
 
 
-internal class VillaDeleteRobotEventImpl(override val bot: VillaBotImpl, override val sourceEvent: Event<DeleteRobot>) :
+internal class VillaDeleteRobotEventImpl(
+    override val bot: VillaBotImpl,
+    override val sourceEvent: Event<DeleteRobot>,
+    override val sourceEventSource: EventSource
+) :
     VillaDeleteRobotEvent() {
     override suspend fun guild(): VillaGuild = bot.guildInternal(villaId.literal)
 }

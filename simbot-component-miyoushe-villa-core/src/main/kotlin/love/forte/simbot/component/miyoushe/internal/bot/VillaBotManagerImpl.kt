@@ -94,7 +94,12 @@ internal class VillaBotManagerImpl(
         val botJob = SupervisorJob(sourceBotJob)
         val botContext = bot.coroutineContext.minusKey(Job) + botJob
 
-        return VillaBotImpl(bot, component, eventProcessor, this, botJob, botContext)
+        val botImpl = VillaBotImpl(bot, component, eventProcessor, this, botJob, botContext)
+
+        botJob.invokeOnCompletion { container.remove(botImpl) }
+        container.add(botImpl)
+
+        return botImpl
     }
 
     override fun get(id: ID): VillaBot? = container.get(id)

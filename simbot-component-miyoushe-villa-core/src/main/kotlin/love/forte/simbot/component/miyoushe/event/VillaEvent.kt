@@ -24,6 +24,7 @@ import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.Event
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.miyoushe.event.EventExtendData
+import love.forte.simbot.miyoushe.event.EventSource
 
 
 /**
@@ -35,6 +36,7 @@ import love.forte.simbot.miyoushe.event.EventExtendData
 public abstract class VillaEvent<E : EventExtendData> : Event {
     abstract override val bot: VillaBot
     public abstract val sourceEvent: love.forte.simbot.miyoushe.event.Event<E>
+    public abstract val sourceEventSource: EventSource
 
     public val sourceEventExtend: E
         get() = sourceEvent.extendData

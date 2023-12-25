@@ -32,6 +32,8 @@ import love.forte.simbot.definition.SocialRelationsContainer
 import love.forte.simbot.literal
 import love.forte.simbot.message.Image
 import love.forte.simbot.message.Image.Key.toImage
+import love.forte.simbot.miyoushe.event.Event
+import love.forte.simbot.miyoushe.event.Robot
 import love.forte.simbot.resources.Resource.Companion.toResource
 import love.forte.simbot.utils.item.Items
 import java.net.MalformedURLException
@@ -52,26 +54,25 @@ public abstract class VillaBot : Bot {
 
     /**
      * 大别野 bot 暂时没有获取 bot 自身信息的接口，
-     * [username] 将返回 [Ticket.botId][love.forte.simbot.miyoushe.stdlib.bot.Bot.Ticket.botId]
+     * [username] 在收到第一个事件中的 [Event.robot] 之前将返回 [Ticket.botId][love.forte.simbot.miyoushe.stdlib.bot.Bot.Ticket.botId]
      */
-    override val username: String
-        get() = source.ticket.botId
+    abstract override val username: String
 
     /**
      * 大别野 bot 暂时没有获取 bot 自身信息的接口，
-     * [avatar] 将返回空字符串 `""`
+     * [avatar] 在收到第一个事件中的 [Event.robot] 之前将返回空字符串 `""`
      */
-    override val avatar: String
-        get() = ""
+    abstract override val avatar: String
 
     abstract override val component: VillaComponent
 
     /**
      * 大别野 bot 暂时没有获取 bot 自身信息的接口，
-     * [isMe] 将仅与 [id] 做比较
+     * 在尚未启动的时候，[isMe] 只会使用 [id] 进行比较；
+     * 启动后，在收到第一个消息后会尝试将 [Event.robot] 信息缓存下来，
+     * 并在后续追加使用 [Robot.Template.id] 进行比较
      */
-    override fun isMe(id: ID): Boolean = this.id == id
-
+    abstract override fun isMe(id: ID): Boolean
 
     override val isActive: Boolean
         get() = job.isActive

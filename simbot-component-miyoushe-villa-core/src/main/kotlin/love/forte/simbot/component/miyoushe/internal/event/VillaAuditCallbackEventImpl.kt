@@ -22,6 +22,7 @@ import love.forte.simbot.component.miyoushe.internal.VillaGuild
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
 import love.forte.simbot.miyoushe.event.AuditCallback
 import love.forte.simbot.miyoushe.event.Event
+import love.forte.simbot.miyoushe.event.EventSource
 
 
 /**
@@ -30,7 +31,8 @@ import love.forte.simbot.miyoushe.event.Event
  */
 internal class VillaAuditCallbackEventImpl(
     override val bot: VillaBotImpl,
-    override val sourceEvent: Event<AuditCallback>
+    override val sourceEvent: Event<AuditCallback>,
+    override val sourceEventSource: EventSource
 ) : VillaAuditCallbackEvent() {
 
     override suspend fun guild(): VillaGuild {

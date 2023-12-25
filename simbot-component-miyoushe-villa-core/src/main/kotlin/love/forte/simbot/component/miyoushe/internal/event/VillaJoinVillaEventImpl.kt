@@ -22,6 +22,7 @@ import love.forte.simbot.component.miyoushe.event.VillaJoinVillaEvent
 import love.forte.simbot.component.miyoushe.internal.VillaGuild
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
 import love.forte.simbot.miyoushe.event.Event
+import love.forte.simbot.miyoushe.event.EventSource
 import love.forte.simbot.miyoushe.event.JoinVilla
 
 
@@ -31,7 +32,8 @@ import love.forte.simbot.miyoushe.event.JoinVilla
  */
 internal class VillaJoinVillaEventImpl(
     override val bot: VillaBotImpl,
-    override val sourceEvent: Event<JoinVilla>
+    override val sourceEvent: Event<JoinVilla>,
+    override val sourceEventSource: EventSource
 ) : VillaJoinVillaEvent() {
     override suspend fun member(): VillaMember = with(sourceEventExtend) {
         bot.memberInternal(joinUid, villaIdStrValue)
