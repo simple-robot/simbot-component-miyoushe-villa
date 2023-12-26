@@ -25,9 +25,11 @@ import love.forte.simbot.JST
 import love.forte.simbot.JSTP
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.component.miyoushe.VillaComponent
-import love.forte.simbot.component.miyoushe.internal.VillaGuild
+import love.forte.simbot.component.miyoushe.VillaGuild
+import love.forte.simbot.component.miyoushe.VillaMember
 import love.forte.simbot.definition.Contact
 import love.forte.simbot.definition.Group
+import love.forte.simbot.definition.GuildBot
 import love.forte.simbot.definition.SocialRelationsContainer
 import love.forte.simbot.literal
 import love.forte.simbot.message.Image
@@ -45,9 +47,12 @@ import java.net.URL
  *
  * @author ForteScarlet
  */
-public abstract class VillaBot : Bot {
+public abstract class VillaBot : Bot, GuildBot {
     protected abstract val job: Job
     public abstract val source: love.forte.simbot.miyoushe.stdlib.bot.Bot
+
+    override val bot: VillaBot
+        get() = this
 
     override val id: ID
         get() = source.ticket.botId.ID
@@ -119,10 +124,18 @@ public abstract class VillaBot : Bot {
         return url.toResource().toImage()
     }
 
-    abstract override val guilds: Items<VillaGuild>
+    /**
+     * 大别野机器人无法获取所有的别野列表，始终得到 [Items.emptyItems]
+     */
+    override val guilds: Items<VillaGuild>
+        get() = Items.emptyItems()
 
     @JST
     abstract override suspend fun guild(id: ID): VillaGuild?
+
+    override fun toString(): String {
+        return "VillaBot(botId=${source.ticket.botId})"
+    }
 
     // unsupported
 
@@ -159,8 +172,20 @@ public abstract class VillaBot : Bot {
     @Deprecated(CONTACT_UNSUPPORTED_MESSAGE, ReplaceWith("null"))
     @JST
     override suspend fun contact(id: ID): Contact? = null
+
+
+    /**
+     * 大别野中 bot 无法作为成员存在。
+     * @throws UnsupportedOperationException 不支持
+     */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("'asMember' is not supported in villa: bot can't be a member")
+    @JST(blockingBaseName = "toMember", blockingSuffix = "", asyncBaseName = "toMember")
+    override suspend fun asMember(): VillaMember = throw UnsupportedOperationException("Villa bot can't be a member")
 }
 
 
 internal const val GROUP_UNSUPPORTED_MESSAGE = "'Group' is unsupported in miyoushe villa"
 internal const val CONTACT_UNSUPPORTED_MESSAGE = "'Contact' is unsupported in miyoushe villa"
+
+

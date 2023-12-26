@@ -17,18 +17,19 @@
 
 package love.forte.simbot.component.miyoushe
 
+import love.forte.simbot.ID
 import love.forte.simbot.JST
 import love.forte.simbot.JSTP
-import love.forte.simbot.ULongID
+import love.forte.simbot.Timestamp
+import love.forte.simbot.action.DeleteSupport
 import love.forte.simbot.action.UnsupportedActionException
 import love.forte.simbot.component.miyoushe.bot.VillaBot
-import love.forte.simbot.component.miyoushe.internal.VillaGuild
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.Role
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.MessageReceipt
-import love.forte.simbot.miyoushe.api.member.MemberBasic
+import love.forte.simbot.miyoushe.api.member.Member
 import love.forte.simbot.utils.item.Items
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
@@ -39,22 +40,32 @@ import kotlin.time.Duration
  *
  * @author ForteScarlet
  */
-public interface VillaMember : GuildMember {
+public interface VillaMember : GuildMember, DeleteSupport {
     override val bot: VillaBot
 
-    /*
-     * id 和 用户名是总是存在的。
+    /**
+     * 用户基础信息
      */
-    public val source: MemberBasic
+    public val source: Member
 
-    override val id: ULongID
+    override val id: ID
+        get() = source.basic.uid.ID
+
     override val username: String
+        get() = source.basic.nickname
 
     /**
+     * 始终为 `""`
      * @see username
      */
     override val nickname: String
         get() = ""
+
+    override val avatar: String
+        get() = source.basic.avatarUrl
+
+    override val joinTime: Timestamp
+        get() = Timestamp.byMillisecond(source.joinedAt)
 
     @JSTP
     override suspend fun guild(): VillaGuild
@@ -66,6 +77,11 @@ public interface VillaMember : GuildMember {
     override val roles: Items<Role>
         get() = Items.emptyItems()
 
+    /**
+     * 踢出成员
+     */
+    @JvmSynthetic
+    override suspend fun delete(): Boolean
 
     // unsupported
 

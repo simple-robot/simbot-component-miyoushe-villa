@@ -15,23 +15,17 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.miyoushe.bot
+package love.forte.simbot.component.miyoushe.internal
 
-import love.forte.simbot.miyoushe.stdlib.bot.BotConfiguration
+import love.forte.simbot.ID
+import love.forte.simbot.component.miyoushe.VillaRoomGroup
 
 
 /**
  *
  * @author ForteScarlet
  */
-public class VillaBotConfiguration {
-    /**
-     * 直接提供给 [标准库 Bot][love.forte.simbot.miyoushe.stdlib.bot.Bot] 的源配置类。
-     */
-    public var botConfiguration: BotConfiguration = BotConfiguration()
-
-}
-
-public inline fun VillaBotConfiguration.botConfiguration(block: BotConfiguration.() -> Unit) {
-    botConfiguration.apply(block)
+internal class VillaRoomGroupImpl(private val groupId: ULong, override val name: String = "") : VillaRoomGroup {
+    override val id: ID
+        get() = groupId.ID
 }

@@ -33,11 +33,11 @@ import love.forte.simbot.miyoushe.api.msg.TextMsgContent
  */
 @Serializable
 @SerialName("villa.villa_room_link")
-public data class VillaVillaRoomLink(val source: TextMsgContent.EntityContent.VillaRoomLink) :
+public data class VillaVillaRoomLink(val name: String, val link: TextMsgContent.EntityContent.VillaRoomLink) :
     VillaMessageElement<VillaVillaRoomLink>() {
 
-    val villaId: ID get() = source.villaId.ID
-    val roomId: ID get() = source.roomId.ID
+    val villaId: ID get() = link.villaId.ID
+    val roomId: ID get() = link.roomId.ID
 
     override val key: Message.Key<VillaVillaRoomLink>
         get() = Key

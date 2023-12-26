@@ -20,9 +20,9 @@ package love.forte.simbot.component.miyoushe.event
 import love.forte.simbot.JSTP
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.ActionType
+import love.forte.simbot.component.miyoushe.VillaGuild
 import love.forte.simbot.component.miyoushe.VillaMember
 import love.forte.simbot.component.miyoushe.bot.VillaBot
-import love.forte.simbot.component.miyoushe.internal.VillaGuild
 import love.forte.simbot.definition.MemberInfo
 import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.Event

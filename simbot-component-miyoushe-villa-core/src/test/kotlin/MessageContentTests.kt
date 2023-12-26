@@ -1,4 +1,4 @@
-import love.forte.simbot.component.miyoushe.toMessages
+import love.forte.simbot.component.miyoushe.internal.message.toMessages
 import love.forte.simbot.miyoushe.MiyousheVilla
 import love.forte.simbot.miyoushe.event.SendMessage
 import kotlin.test.Test

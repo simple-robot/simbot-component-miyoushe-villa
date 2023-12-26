@@ -15,23 +15,33 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.miyoushe.bot
+package love.forte.simbot.component.miyoushe.internal
 
-import love.forte.simbot.miyoushe.stdlib.bot.BotConfiguration
+import love.forte.simbot.component.miyoushe.VillaGuild
+import love.forte.simbot.component.miyoushe.VillaMember
+import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
+import love.forte.simbot.miyoushe.api.member.Member
 
 
 /**
  *
  * @author ForteScarlet
  */
-public class VillaBotConfiguration {
-    /**
-     * 直接提供给 [标准库 Bot][love.forte.simbot.miyoushe.stdlib.bot.Bot] 的源配置类。
-     */
-    public var botConfiguration: BotConfiguration = BotConfiguration()
+internal class VillaMemberImpl(
+    override val bot: VillaBotImpl,
+    override val source: Member,
+    private val villaId: String,
+    private val villa: VillaGuild? = null
+) : VillaMember {
 
-}
+    override suspend fun guild(): VillaGuild {
+        if (villa != null) return villa
 
-public inline fun VillaBotConfiguration.botConfiguration(block: BotConfiguration.() -> Unit) {
-    botConfiguration.apply(block)
+        return bot.guildInternal(villaId)
+    }
+
+    override suspend fun delete(): Boolean {
+        // TODO("Not yet implemented")
+        return false
+    }
 }

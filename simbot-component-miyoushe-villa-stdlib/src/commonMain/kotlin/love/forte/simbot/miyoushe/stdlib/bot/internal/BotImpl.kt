@@ -519,7 +519,7 @@ internal class BotImpl(
         }
 
 
-        // TODO process event.
+        // process event.
         private suspend fun processEvent(packet: ProtoPacket, event: PRawEvent) {
             val realEvent = event.toEvent()
             val source = ProtoPacketEventSource(packet)

@@ -17,36 +17,38 @@
 
 package love.forte.simbot.component.miyoushe.message
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import love.forte.simbot.message.Message
-import love.forte.simbot.message.doSafeCast
-import love.forte.simbot.miyoushe.api.msg.TextMsgContent
+import love.forte.simbot.ID
+import love.forte.simbot.message.AggregatedMessageReceipt
+import love.forte.simbot.message.MessageReceipt
+import love.forte.simbot.message.SingleMessageReceipt
+import love.forte.simbot.miyoushe.api.msg.SendMessageResult
 
 
 /**
- * 接收到的消息中的 [TextMsgContent.EntityContent.Link]
  *
  * @author ForteScarlet
  */
-@Serializable
-@SerialName("villa.link")
-public data class VillaLink(val text: String, val link: TextMsgContent.EntityContent.Link) : VillaMessageElement<VillaLink>() {
-
+public interface VillaSendMessageReceipt : MessageReceipt {
     /**
-     * @see TextMsgContent.EntityContent.Link.url
+     * 是否发送成功。
+     * 能得到此类型即说明消息已发送成功，始终为 `true`。
      */
-    val url: String get() = link.url
-
-    /**
-     * @see TextMsgContent.EntityContent.Link.requiresBotAccessToken
-     */
-    val requiresBotAccessToken: Boolean get() = link.requiresBotAccessToken
-
-    override val key: Message.Key<VillaLink>
-        get() = Key
-
-    public companion object Key : Message.Key<VillaLink> {
-        override fun safeCast(value: Any): VillaLink? = doSafeCast(value)
-    }
+    override val isSuccess: Boolean
+        get() = true
 }
+
+/**
+ *
+ * @author ForteScarlet
+ */
+public abstract class VillaSendSingleMessageReceipt : VillaSendMessageReceipt, SingleMessageReceipt() {
+    public abstract val result: SendMessageResult
+    override val id: ID
+        get() = result.botMsgId.ID
+}
+
+/**
+ *
+ * @author ForteScarlet
+ */
+public abstract class VillaSendAggregatedMessageReceipt : VillaSendMessageReceipt, AggregatedMessageReceipt()

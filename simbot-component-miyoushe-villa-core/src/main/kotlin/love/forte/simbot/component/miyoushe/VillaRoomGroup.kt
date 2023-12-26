@@ -15,28 +15,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.miyoushe.internal
+package love.forte.simbot.component.miyoushe
 
-import love.forte.simbot.JSTP
-import love.forte.simbot.definition.Channel
-import love.forte.simbot.miyoushe.api.room.Room
+import love.forte.simbot.ID
+import love.forte.simbot.definition.Category
 
 
 /**
- * 米游社大别野中的子频道。
- * 也就是 `房间 (Room)`。
+ * 大别野房间的分组。
  *
  * @author ForteScarlet
  */
-public interface VillaRoom : Channel {
+public interface VillaRoomGroup : Category {
+    override val id: ID
+
     /**
-     * 原始的房间信息。
+     * 在非列表获取的时候可能为空字符串
      */
-    public val room: Room
-
-    @JSTP
-    override suspend fun guild(): VillaGuild
-
-
-
+    override val name: String
 }

@@ -18,16 +18,28 @@
 package love.forte.simbot.component.miyoushe
 
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.util.cio.*
+import io.ktor.utils.io.*
+import kotlinx.serialization.json.Json
 import love.forte.simbot.component.miyoushe.bot.VillaBot
+import love.forte.simbot.miyoushe.MiyousheVilla
 import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.ApiResultNotSuccessException
 import love.forte.simbot.miyoushe.api.HttpStatusException
 import love.forte.simbot.miyoushe.api.MiyousheVillaApi
+import love.forte.simbot.miyoushe.api.image.GetUploadImageParamsApi
+import love.forte.simbot.miyoushe.api.image.OSSResponse
+import love.forte.simbot.miyoushe.api.image.upload
 import love.forte.simbot.miyoushe.stdlib.bot.requestBy
 import love.forte.simbot.miyoushe.stdlib.bot.requestDataBy
 import love.forte.simbot.miyoushe.stdlib.bot.requestResultBy
+import love.forte.simbot.miyoushe.utils.toHex
+import org.kotlincrypto.hash.md.MD5
+import java.io.File
+import java.nio.file.Path
 
 
 /**
@@ -70,3 +82,112 @@ public suspend inline fun <R : Any> MiyousheVillaApi<R>.requestDataBy(
     villaId: String?,
     postRequestBuilder: HttpRequestBuilder.() -> Unit = {}
 ): R = requestDataBy(bot.source, villaId, postRequestBuilder)
+
+
+// OSS
+
+public suspend fun uploadToOss(
+    bot: VillaBot,
+    villaId: String?,
+    data: ByteArray,
+    ext: String
+): HttpResponse {
+    val md5 = MD5().digest(data).toHex()
+    val result = GetUploadImageParamsApi.create(md5, ext).requestDataBy(bot, villaId)
+    return result.params.upload(bot.source.apiClient, data)
+}
+
+public suspend fun uploadToOssResult(
+    bot: VillaBot,
+    villaId: String?,
+    data: ByteArray,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): ApiResult<OSSResponse> {
+    val resp = uploadToOss(bot, villaId, data, ext)
+    val text = resp.bodyAsText()
+    return decoder.decodeFromString(OSSResponse.apiResultDeserializationStrategy, text)
+}
+
+public suspend fun uploadToOssData(
+    bot: VillaBot,
+    villaId: String?,
+    data: ByteArray,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): OSSResponse {
+    val result = uploadToOssResult(bot, villaId, data, ext, decoder)
+    return result.dataIfSuccess
+}
+
+public suspend fun uploadToOss(
+    bot: VillaBot,
+    villaId: String?,
+    data: File,
+    ext: String
+): HttpResponse {
+    val md5 = with(MD5()) {
+        data.readChannel().consumeEachBufferRange { buffer, _ ->
+            update(buffer)
+            true
+        }
+
+        digest().toHex()
+    }
+
+    val result = GetUploadImageParamsApi.create(md5, ext).requestDataBy(bot, villaId)
+    return result.params.upload(bot.source.apiClient, ChannelProvider(data.length()) { data.readChannel() })
+}
+
+public suspend fun uploadToOssResult(
+    bot: VillaBot,
+    villaId: String?,
+    data: File,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): ApiResult<OSSResponse> {
+    val resp = uploadToOss(bot, villaId, data, ext)
+    val text = resp.bodyAsText()
+    return decoder.decodeFromString(OSSResponse.apiResultDeserializationStrategy, text)
+}
+
+public suspend fun uploadToOssData(
+    bot: VillaBot,
+    villaId: String?,
+    data: File,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): OSSResponse {
+    val result = uploadToOssResult(bot, villaId, data, ext, decoder)
+    return result.dataIfSuccess
+}
+
+public suspend fun uploadToOss(
+    bot: VillaBot,
+    villaId: String?,
+    data: Path,
+    ext: String
+): HttpResponse = uploadToOss(bot, villaId, data.toFile(), ext)
+
+public suspend fun uploadToOssResult(
+    bot: VillaBot,
+    villaId: String?,
+    data: Path,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): ApiResult<OSSResponse> {
+    val resp = uploadToOss(bot, villaId, data, ext)
+    val text = resp.bodyAsText()
+    return decoder.decodeFromString(OSSResponse.apiResultDeserializationStrategy, text)
+}
+
+public suspend fun uploadToOssData(
+    bot: VillaBot,
+    villaId: String?,
+    data: Path,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): OSSResponse {
+    val result = uploadToOssResult(bot, villaId, data, ext, decoder)
+    return result.dataIfSuccess
+}

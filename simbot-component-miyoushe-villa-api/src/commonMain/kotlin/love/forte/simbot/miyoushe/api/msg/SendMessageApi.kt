@@ -37,6 +37,7 @@ import kotlin.jvm.JvmStatic
  *
  * @author ForteScarlet
  */
+@Serializable
 public class SendMessageApi private constructor(override val body: Body) : MiyousheVillaPostApi<SendMessageResult>() {
     public companion object Factory {
         private const val PATH = "/vila/api/bot/platform/sendMessage"
@@ -82,10 +83,10 @@ public class SendMessageApi private constructor(override val body: Body) : Miyou
         @JvmStatic
         public fun create(
             roomId: ULong,
-            msgContent: MsgContent,
+            msgContent: MsgContentInfo<*>,
             decoder: Json
         ): SendMessageApi =
-            create(roomId, msgContent.objectName, msgContent.serialize(decoder))
+            create(roomId, msgContent.content.objectName, msgContent.serialize(decoder))
 
         /**
          * Create an instance of [SendMessageApi].
@@ -97,7 +98,7 @@ public class SendMessageApi private constructor(override val body: Body) : Miyou
         @JvmStatic
         public fun create(
             roomId: ULong,
-            msgContent: MsgContent,
+            msgContent: MsgContentInfo<*>,
         ): SendMessageApi =
             create(roomId, msgContent, MiyousheVilla.DefaultJson)
 
@@ -114,7 +115,7 @@ public class SendMessageApi private constructor(override val body: Body) : Miyou
         @JvmOverloads
         public fun create(
             roomIdString: String,
-            msgContent: MsgContent,
+            msgContent: MsgContentInfo<*>,
             decoder: Json = MiyousheVilla.DefaultJson
         ): SendMessageApi =
             create(roomIdString.toULong(), msgContent, decoder)

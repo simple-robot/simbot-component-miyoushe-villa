@@ -21,6 +21,7 @@
 package love.forte.simbot.miyoushe.api.image
 
 import io.ktor.http.*
+import io.ktor.utils.io.core.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -64,6 +65,46 @@ public class GetUploadImageParamsApi private constructor(
 
         /** ext: `bmp` */
         public const val EXT_BMP: String = "bmp"
+
+        private const val EXT_JPG_B: UInt = 0xFFD8FFu
+        //private const val EXT_JPEG_B: UInt = EXT_JPG_B
+        private const val EXT_PNG_B: UInt = 0x89504E47u
+        private const val EXT_GIF_B: UInt = 0x47494638u
+        private const val EXT_BMP_B: UInt = 0x424Du
+
+        public fun ext(filename: String): String? {
+            val fileExt = filename.substringAfterLast('.', "").takeIf { it.isNotEmpty() } ?: return null
+
+            return when (fileExt.lowercase()) {
+                EXT_JPG -> EXT_JPG
+                EXT_JPEG -> EXT_JPEG
+                EXT_PNG -> EXT_PNG
+                EXT_GIF -> EXT_GIF
+                EXT_BMP -> EXT_BMP
+                else -> null
+            }
+        }
+
+        @JsName("extFromBytes")
+        public fun ext(bytes: ByteArray): String? {
+            require(bytes.size >= 4) { "bytes.length must >= 4 (for read int)" }
+            val head = ByteReadPacket(bytes).readInt().toUInt()
+
+            return ext(head)
+        }
+
+        @JsName("extFromHead")
+        @JvmName("ext")
+        public fun ext(head: UInt): String? {
+            return when  {
+                (head and 0xffffff00u) shr 8 == EXT_JPG_B -> EXT_JPG
+//                EXT_JPEG_B -> EXT_JPEG
+                head == EXT_PNG_B -> EXT_PNG
+                head == EXT_GIF_B -> EXT_GIF
+                (head and 0xffff0000u) shr 16 == EXT_BMP_B -> EXT_BMP
+                else -> null
+            }
+        }
 
         /**
          * Create an instance of [GetUploadImageParamsApi]

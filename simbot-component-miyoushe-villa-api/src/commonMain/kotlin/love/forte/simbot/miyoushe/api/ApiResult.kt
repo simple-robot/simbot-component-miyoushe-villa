@@ -70,6 +70,8 @@ public data class ApiResult<out D : Any>(
         // 200 OK {"data":null,"message":"房间不存在","retcode":10315000}
         // 200 OK {"data":null,"message":"用户不在大别野内","retcode":-1}
 
+        public const val RETCODE_BOT_ACCESS_DEFIED: Int = 10322003
+        public const val RETCODE_ROOM_NOT_EXISTS: Int = 10315000
         public const val RETCODE_MEMBER_NOT_IN_VILLA: Int = -1
 
 

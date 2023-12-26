@@ -67,7 +67,9 @@ kotlin {
         testImplementation(libs.ktor.client.logging)
         testImplementation(libs.okio)
 
-        testImplementation(simbotApi) // use @Api4J annotation
+        testImplementation(simbotApi)
+        testImplementation(simbotCore)
+        testImplementation(libs.ktor.client.cio)
         testImplementation(simbotLoggerSlf4j)
     }
 

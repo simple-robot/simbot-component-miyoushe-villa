@@ -30,6 +30,12 @@ import love.forte.simbot.miyoushe.api.msg.TextMsgContent
  * 更多文本样式消息。
  * 文本样式不会作为 [PlainText] 使用（因为其对应的 [text] 已经直接作为 [Text] 被追加了）
  *
+ * [VillaStyleText] 仅在接收消息时、作为单独的消息元素（而不是在消息链中）或使用 [VillaReceivedMessageContent] 原样发送时有效。
+ * 如果使用自定义的拼接消息链则 [VillaStyleText] 会被忽略。
+ * 因为目前仅凭单纯的消息链暂时无法解决多个 style 附加的问题。
+ *
+ * 如果希望发送复杂的消息结构体，参考使用 [VillaSendMessage]。
+ *
  * @author ForteScarlet
  */
 @Serializable

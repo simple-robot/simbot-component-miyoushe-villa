@@ -52,6 +52,10 @@ public suspend inline fun MiyousheVillaApi<*>.request(
 
             is OutgoingContent -> setBody(body)
             else -> {
+                if (contentType() == null) {
+                    contentType(ContentType.Application.Json)
+                }
+
                 if (client.pluginOrNull(ContentNegotiation) != null) {
                     setBody(body)
                 } else {
@@ -128,3 +132,4 @@ public suspend inline fun <R : Any> MiyousheVillaApi<R>.requestData(
     // check if success and return
     return apiResult.dataIfSuccess
 }
+

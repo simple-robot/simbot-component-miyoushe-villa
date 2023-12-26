@@ -23,6 +23,10 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
+import kotlinx.serialization.json.Json
+import love.forte.simbot.miyoushe.MiyousheVilla
+import love.forte.simbot.miyoushe.api.ApiResult
+import love.forte.simbot.miyoushe.api.ApiResultNotSuccessException
 import love.forte.simbot.miyoushe.api.MiyousheVillaApiToken
 import love.forte.simbot.miyoushe.api.requestData
 import love.forte.simbot.miyoushe.utils.toHex
@@ -134,4 +138,31 @@ public suspend fun uploadToOss(
     val md5 = MD5().digest(data).toHex()
     val result = GetUploadImageParamsApi.create(md5, ext).requestData(client, token)
     return result.params.upload(client, data)
+}
+
+public suspend fun uploadToOssResult(
+    client: HttpClient,
+    token: MiyousheVillaApiToken,
+    data: ByteArray,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): ApiResult<OSSResponse> {
+    val resp = uploadToOss(client, token, data, ext)
+
+    val body = resp.bodyAsText()
+
+    return decoder.decodeFromString(OSSResponse.apiResultDeserializationStrategy, body)
+}
+
+/**
+ * @throws ApiResultNotSuccessException
+ */
+public suspend fun uploadToOssData(
+    client: HttpClient,
+    token: MiyousheVillaApiToken,
+    data: ByteArray,
+    ext: String,
+    decoder: Json = MiyousheVilla.DefaultJson
+): OSSResponse {
+    return uploadToOssResult(client, token, data, ext).dataIfSuccess
 }

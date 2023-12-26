@@ -15,38 +15,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.miyoushe.internal
+package love.forte.simbot.component.miyoushe.utils
 
 import love.forte.simbot.ID
-import love.forte.simbot.JST
-import love.forte.simbot.definition.Guild
-import love.forte.simbot.miyoushe.api.villa.Villa
-import love.forte.simbot.utils.item.Items
+import love.forte.simbot.IDException
+import love.forte.simbot.ULongID
+import love.forte.simbot.literal
 
 
-/**
- * 米游社大别野中的频道服务器。
- * 也就是 `大别野 (Villa)`。
- *
- * @author ForteScarlet
- */
-public interface VillaGuild : Guild {
-    /**
-     * 原始的大别野对象。
-     */
-    public val source: Villa
-
-    override val channels: Items<VillaRoom>
-        get() = TODO("Not yet implemented")
-
-    @JST
-    override suspend fun channel(id: ID): VillaRoom? {
-        TODO("Not yet implemented")
+public fun ID.toULong(): ULong = when (this) {
+    is ULongID -> this.number
+    else -> try {
+        literal.toULong()
+    } catch (nfe: NumberFormatException) {
+        throw IDException("Unable to convert id [$this] to ULong", nfe)
     }
-
-    override val currentChannel: Int
-        get() = TODO("Not yet implemented")
-
-    override val maximumChannel: Int
-        get() = TODO("Not yet implemented")
 }

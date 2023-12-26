@@ -217,10 +217,21 @@ public data class TextMsgContent(
                 public const val STYLE_UNDERLINE: String = "underline"
             }
         }
-
     }
+}
+
+public fun TextMsgContent.Entity.substring(text: String): String = text.substring(offset, offset + length)
 
 
+/**
+ * Builder for [TextMsgContent]
+ */
+public class TextMsgContentBuilder : MsgContent.Builder<TextMsgContent> {
+
+
+    override fun build(): TextMsgContent {
+        TODO("Not yet implemented")
+    }
 }
 
 
@@ -262,8 +273,29 @@ public data class ImgMsgContent(
      */
     @Serializable
     public data class Size(val width: Int, val height: Int)
-
 }
+
+/**
+ * Builder for [ImgMsgContent]
+ */
+@Suppress("MemberVisibilityCanBePrivate")
+public class ImgMsgContentBuilder : MsgContent.Builder<ImgMsgContent> {
+    public var url: String? = null
+    public var size: ImgMsgContent.Size? = null
+    public var fileSize: Int? = null
+
+    public fun size(width: Int, height: Int): ImgMsgContentBuilder = apply {
+        size = ImgMsgContent.Size(width, height)
+    }
+
+    override fun build(): ImgMsgContent =
+        ImgMsgContent(
+            url = url ?: error("Required 'url' is null"),
+            size,
+            fileSize
+        )
+}
+
 
 /**
  * [米游社主站帖子](https://webstatic.mihoyo.com/vila/bot/doc/message_api/msg_define/post_msg_content.html)
@@ -274,4 +306,17 @@ public data class PostMsgContent(@SerialName("post_id") val postId: String) : Ms
     public companion object {
         public const val OBJECT_NAME: String = "MHY:Post"
     }
+}
+
+/**
+ * Builder for [PostMsgContent]
+ */
+@Suppress("MemberVisibilityCanBePrivate")
+public class PostMsgContentBuilder : MsgContent.Builder<PostMsgContent> {
+    public var postId: String? = null
+
+    override fun build(): PostMsgContent =
+        PostMsgContent(
+            postId = postId ?: error("Required 'postId' is null")
+        )
 }

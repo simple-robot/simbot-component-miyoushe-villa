@@ -27,6 +27,7 @@ import kotlinx.serialization.StringFormat
 import love.forte.simbot.ExperimentalSimbotApi
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmStatic
 
 /**
  * [消息 api](https://webstatic.mihoyo.com/vila/bot/doc/message_api/).
@@ -50,6 +51,63 @@ public data class MsgContentInfo<C : MsgContent>(
         public val PostSerializer: KSerializer<MsgContentInfo<PostMsgContent>> = serializer(PostMsgContent.serializer())
         public val ImgSerializer: KSerializer<MsgContentInfo<ImgMsgContent>> = serializer(ImgMsgContent.serializer())
 
+        @JvmStatic
+        public fun textBuilder(): MsgContentInfoBuilder<TextMsgContentBuilder, TextMsgContent> =
+            MsgContentInfoBuilder(MsgContent.textBuilder())
+
+        @JvmStatic
+        public fun imgBuilder(): MsgContentInfoBuilder<ImgMsgContentBuilder, ImgMsgContent> =
+            MsgContentInfoBuilder(MsgContent.imgBuilder())
+
+        @JvmStatic
+        public fun postBuilder(): MsgContentInfoBuilder<PostMsgContentBuilder, PostMsgContent> =
+            MsgContentInfoBuilder(MsgContent.postBuilder())
+    }
+}
+
+public inline fun buildTextMsgContentInfo(block: MsgContentInfoBuilder<TextMsgContentBuilder, TextMsgContent>.() -> Unit): MsgContentInfo<TextMsgContent> =
+    MsgContentInfo.textBuilder().also(block).build()
+
+public inline fun buildImgMsgContentInfo(block: MsgContentInfoBuilder<ImgMsgContentBuilder, ImgMsgContent>.() -> Unit): MsgContentInfo<ImgMsgContent> =
+    MsgContentInfo.imgBuilder().also(block).build()
+
+public inline fun buildPostMsgContentInfo(block: MsgContentInfoBuilder<PostMsgContentBuilder, PostMsgContent>.() -> Unit): MsgContentInfo<PostMsgContent> =
+    MsgContentInfo.postBuilder().also(block).build()
+
+/**
+ * Builder for [MsgContentInfo].
+ */
+public class MsgContentInfoBuilder<B : MsgContent.Builder<C>, C : MsgContent>(public val builder: B) {
+    public var mentionedInfo: MentionedInfo? = null //  = MentionedInfo.builder()
+    public var quoteInfo: QuoteInfo? = null //  = QuoteInfo.builder()
+    public var panel: Panel? = null //  = Panel.Builder()
+
+    /**
+     * in [builder].
+     */
+    public inline fun content(block: B.() -> Unit) {
+        builder.also(block)
+    }
+
+    public inline fun mentionedInfo(block: MentionedInfo.Builder.() -> Unit) {
+        mentionedInfo = MentionedInfo.builder().also(block).build()
+    }
+
+    public inline fun quoteInfo(block: QuoteInfo.Builder.() -> Unit) {
+        quoteInfo = QuoteInfo.builder().also(block).build()
+    }
+
+    public inline fun panel(block: Panel.Builder.() -> Unit) {
+        panel = Panel.Builder().also(block).build()
+    }
+
+    public fun build(): MsgContentInfo<C> {
+        return MsgContentInfo(
+            content = builder.build(),
+            mentionedInfo = mentionedInfo,
+            quoteInfo = quoteInfo,
+            panel = panel,
+        )
     }
 }
 
@@ -62,7 +120,26 @@ public data class MsgContentInfo<C : MsgContent>(
  * @see MsgContent.serialize
  *
  */
-public sealed class MsgContent
+public sealed class MsgContent {
+
+    /**
+     * Builder interface for [MsgContent]
+     */
+    public interface Builder<T : MsgContent> {
+        public fun build(): T
+    }
+
+    public companion object {
+        @JvmStatic
+        public fun textBuilder(): TextMsgContentBuilder = TextMsgContentBuilder()
+
+        @JvmStatic
+        public fun imgBuilder(): ImgMsgContentBuilder = ImgMsgContentBuilder()
+
+        @JvmStatic
+        public fun postBuilder(): PostMsgContentBuilder = PostMsgContentBuilder()
+    }
+}
 
 /**
  * 根据 [MsgContent] 的具体类型获取对应的 `object_name` 值。
@@ -84,6 +161,18 @@ public fun MsgContent.serialize(format: StringFormat): String = when (this) {
     is ImgMsgContent -> format.encodeToString(ImgMsgContent.serializer(), this)
     is PostMsgContent -> format.encodeToString(PostMsgContent.serializer(), this)
     is TextMsgContent -> format.encodeToString(TextMsgContent.serializer(), this)
+}
+
+/**
+ * 根据 [MsgContent] 的具体类型进行序列化
+ *
+ */
+@Suppress("UNCHECKED_CAST")
+@ExperimentalSimbotApi
+public fun MsgContentInfo<*>.serialize(format: StringFormat): String = when (content) {
+    is ImgMsgContent -> format.encodeToString(MsgContentInfo.ImgSerializer, this as MsgContentInfo<ImgMsgContent>)
+    is PostMsgContent -> format.encodeToString(MsgContentInfo.PostSerializer, this as MsgContentInfo<PostMsgContent>)
+    is TextMsgContent -> format.encodeToString(MsgContentInfo.TextSerializer, this as MsgContentInfo<TextMsgContent>)
 }
 
 /**
@@ -114,6 +203,40 @@ public data class MentionedInfo(
          * 提及类型: @部分成员
          */
         public const val TYPE_MENTION_MEMBER: Int = 2
+
+        private val MENTION_ALL = MentionedInfo(TYPE_MENTION_ALL, null)
+
+        /**
+         * 以 [TYPE_MENTION_ALL] 为 type 构建 [MentionedInfo]
+         */
+        @JvmStatic
+        public fun mentionAll(): MentionedInfo = MENTION_ALL
+
+        /**
+         * 以 [TYPE_MENTION_MEMBER] 为 type 构建 [MentionedInfo]
+         */
+        @JvmStatic
+        public fun mentionMembers(idList: List<String>): MentionedInfo = MentionedInfo(TYPE_MENTION_MEMBER, idList)
+
+        @JvmStatic
+        public fun builder(): Builder = Builder()
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    public class Builder {
+        public var type: Int? = null
+        public var userIdList: MutableList<String> = mutableListOf()
+
+        public fun build(): MentionedInfo {
+            if (type == TYPE_MENTION_ALL && userIdList.isEmpty()) {
+                return MENTION_ALL
+            }
+
+            return MentionedInfo(
+                type = type ?: error("Required 'type' is null"),
+                userIdList = userIdList.toList()
+            )
+        }
     }
 }
 
@@ -136,4 +259,34 @@ public data class QuoteInfo(
     val originalMessageId: String = quotedMessageId,
     @SerialName("original_message_send_time")
     val originalMessageSendTime: Long = quotedMessageSendTime,
-)
+) {
+    public companion object {
+        @JvmStatic
+        public fun builder(): Builder = Builder()
+    }
+
+    /**
+     * Builder for [QuoteInfo].
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    public class Builder {
+        public var quotedMessageId: String? = null
+        public var quotedMessageSendTime: Long? = null
+        public var originalMessageId: String? = null
+        public var originalMessageSendTime: Long? = null
+
+        public fun build(): QuoteInfo {
+            val quotedMessageId = quotedMessageId ?: error("Required 'quotedMessageId' is null")
+            val quotedMessageSendTime = quotedMessageSendTime ?: error("Required 'quotedMessageSendTime' is null")
+
+            return QuoteInfo(
+                quotedMessageId = quotedMessageId,
+                quotedMessageSendTime = quotedMessageSendTime,
+                originalMessageId = originalMessageId ?: quotedMessageId,
+                originalMessageSendTime = originalMessageSendTime ?: quotedMessageSendTime,
+            )
+        }
+    }
+
+
+}

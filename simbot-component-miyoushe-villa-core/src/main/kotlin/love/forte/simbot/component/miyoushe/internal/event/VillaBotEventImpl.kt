@@ -17,9 +17,9 @@
 
 package love.forte.simbot.component.miyoushe.internal.event
 
+import love.forte.simbot.component.miyoushe.VillaGuild
 import love.forte.simbot.component.miyoushe.event.VillaCreateRobotEvent
 import love.forte.simbot.component.miyoushe.event.VillaDeleteRobotEvent
-import love.forte.simbot.component.miyoushe.internal.VillaGuild
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
 import love.forte.simbot.literal
 import love.forte.simbot.miyoushe.event.CreateRobot

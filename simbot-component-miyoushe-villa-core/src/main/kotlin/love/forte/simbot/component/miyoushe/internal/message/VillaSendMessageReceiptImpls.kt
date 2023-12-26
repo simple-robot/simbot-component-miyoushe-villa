@@ -15,31 +15,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package love.forte.simbot.component.miyoushe.internal.event
+package love.forte.simbot.component.miyoushe.internal.message
 
-import love.forte.simbot.component.miyoushe.VillaGuild
-import love.forte.simbot.component.miyoushe.VillaMember
-import love.forte.simbot.component.miyoushe.event.VillaJoinVillaEvent
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
-import love.forte.simbot.miyoushe.event.Event
-import love.forte.simbot.miyoushe.event.EventSource
-import love.forte.simbot.miyoushe.event.JoinVilla
+import love.forte.simbot.component.miyoushe.message.VillaSendSingleMessageReceipt
+import love.forte.simbot.component.miyoushe.requestResultBy
+import love.forte.simbot.miyoushe.api.msg.RecallMessageApi
+import love.forte.simbot.miyoushe.api.msg.SendMessageResult
 
 
-/**
- *
- * @author ForteScarlet
- */
-internal class VillaJoinVillaEventImpl(
-    override val bot: VillaBotImpl,
-    override val sourceEvent: Event<JoinVilla>,
-    override val sourceEventSource: EventSource
-) : VillaJoinVillaEvent() {
-    override suspend fun member(): VillaMember = with(sourceEventExtend) {
-        bot.memberInternal(joinUid, villaIdStrValue)
-    }
-
-    override suspend fun source(): VillaGuild = with(sourceEventExtend) {
-        bot.guildInternal(villaIdStrValue)
+internal class VillaSendSingleMessageReceiptImpl(
+    private val bot: VillaBotImpl,
+    private val villaId: String,
+    private val roomId: ULong,
+    private val msgTime: Long?,
+    override val result: SendMessageResult
+) : VillaSendSingleMessageReceipt() {
+    override suspend fun delete(): Boolean {
+        val result = RecallMessageApi.create(result.botMsgId, roomId, msgTime).requestResultBy(bot, villaId)
+        return result.isSuccess
     }
 }

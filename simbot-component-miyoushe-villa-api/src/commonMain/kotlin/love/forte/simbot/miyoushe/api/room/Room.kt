@@ -20,7 +20,54 @@ package love.forte.simbot.miyoushe.api.room
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmSynthetic
 
+/**
+ * 与房间相关的基础信息。
+ *
+ * @see Room
+ * @see ListRoom
+ */
+public interface RoomBasic {
+    /**
+     * 房间 id
+     */
+    @get:JvmSynthetic
+    public val roomId: ULong
+
+    /**
+     * See [RoomType]: [房间名称](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#%E6%88%BF%E9%97%B4%E7%B1%BB%E5%9E%8B).
+     */
+    public val roomName: String
+
+    /**
+     * 房间类型
+     */
+    public val roomTypeValue: String
+
+    /**
+     * 分组 id
+     */
+    @get:JvmSynthetic
+    public val groupId: ULong
+
+    /**
+     * String value of [roomId]
+     */
+    public val roomIdStrValue: String get() = roomId.toString()
+
+    /**
+     * String value of [groupIdStrValue]
+     */
+    public val groupIdStrValue: String get() = groupId.toString()
+
+    /**
+     * 通过 [roomTypeValue] 转化为 [RoomType]。
+     * @throws NoSuchElementException 如果没有匹配结果
+     */
+    public val roomType: RoomType
+        get() = RoomType.valueOf(roomTypeValue)
+}
 
 /**
  * [房间 api](https://webstatic.mihoyo.com/vila/bot/doc/room_api/)
@@ -40,28 +87,19 @@ import kotlin.jvm.JvmName
 public data class Room(
     @SerialName("room_id")
     @get:JvmName("getRoomId")
-    val roomId: ULong,
+    override val roomId: ULong,
     @SerialName("room_name")
-    val roomName: String,
+    override val roomName: String,
     @SerialName("room_type")
-    val roomTypeValue: String,
+    override val roomTypeValue: String,
     @SerialName("group_id")
     @get:JvmName("getGroupId")
-    val groupId: ULong,
+    override val groupId: ULong,
     @SerialName("room_default_notify_type")
     val roomDefaultNotifyTypeValue: String,
     @SerialName("send_msg_auth_range")
     val sendMsgAuthRange: SendMsgAuthRange,
-) {
-    val roomIdStrValue: String get() = roomId.toString()
-    val groupIdStrValue: String get() = groupId.toString()
-
-    /**
-     * 通过 [roomTypeValue] 转化为 [RoomType]。
-     * @throws NoSuchElementException 如果没有匹配结果
-     */
-    val roomType: RoomType
-        get() = RoomType.valueOf(roomTypeValue)
+) : RoomBasic {
 
     /**
      * 通过 [roomDefaultNotifyTypeValue] 转化为 [RoomDefaultNotifyType]。
@@ -164,18 +202,15 @@ public data class GroupRoom(
 public data class ListRoom(
     @SerialName("room_id")
     @get:JvmName("getRoomId")
-    val roomId: ULong,
+    override val roomId: ULong,
     @SerialName("room_name")
-    val roomName: String,
+    override val roomName: String,
     @SerialName("room_type")
-    val roomTypeValue: String,
+    override val roomTypeValue: String,
     @SerialName("group_id")
     @get:JvmName("getGroupId")
-    val groupId: ULong,
-) {
-    val roomIdStrValue: String get() = roomId.toString()
-    val groupIdStrValue: String get() = groupId.toString()
-}
+    override val groupId: ULong,
+) : RoomBasic
 
 /**
  * [分组信息](https://webstatic.mihoyo.com/vila/bot/doc/room_api/#sendmsgauthrange#group)

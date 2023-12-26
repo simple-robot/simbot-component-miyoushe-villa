@@ -66,6 +66,8 @@ public class VillaComponent : Component {
         @JvmStatic
         public val serializersModule: SerializersModule = SerializersModule {
             polymorphic(Message.Element::class) {
+                subclass(VillaImgMsgContent.serializer())
+                subclass(VillaSendMessage.serializer())
                 subclass(VillaLink.serializer())
                 subclass(VillaPanel.serializer())
                 subclass(VillaQuote.serializer())

@@ -18,34 +18,34 @@
 package love.forte.simbot.component.miyoushe.internal.bot
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import love.forte.simbot.ID
 import love.forte.simbot.component.miyoushe.VillaComponent
-import love.forte.simbot.component.miyoushe.VillaMember
+import love.forte.simbot.component.miyoushe.VillaGuild
 import love.forte.simbot.component.miyoushe.bot.VillaBot
 import love.forte.simbot.component.miyoushe.bot.VillaBotManager
-import love.forte.simbot.component.miyoushe.event.VillaAuditCallbackEvent
-import love.forte.simbot.component.miyoushe.event.VillaCreateRobotEvent
-import love.forte.simbot.component.miyoushe.event.VillaDeleteRobotEvent
-import love.forte.simbot.component.miyoushe.event.VillaJoinVillaEvent
-import love.forte.simbot.component.miyoushe.internal.VillaGuild
-import love.forte.simbot.component.miyoushe.internal.VillaRoom
-import love.forte.simbot.component.miyoushe.internal.event.VillaAuditCallbackEventImpl
-import love.forte.simbot.component.miyoushe.internal.event.VillaCreateRobotEventImpl
-import love.forte.simbot.component.miyoushe.internal.event.VillaDeleteRobotEventImpl
-import love.forte.simbot.component.miyoushe.internal.event.VillaJoinVillaEventImpl
+import love.forte.simbot.component.miyoushe.event.*
+import love.forte.simbot.component.miyoushe.internal.VillaGuildImpl
+import love.forte.simbot.component.miyoushe.internal.VillaMemberImpl
+import love.forte.simbot.component.miyoushe.internal.VillaRoomGroupImpl
+import love.forte.simbot.component.miyoushe.internal.VillaRoomImpl
+import love.forte.simbot.component.miyoushe.internal.event.*
 import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.miyoushe.api.member.GetMemberApi
+import love.forte.simbot.miyoushe.api.member.GetVillaMembersApi
 import love.forte.simbot.miyoushe.api.room.GetRoomApi
+import love.forte.simbot.miyoushe.api.room.GetVillaGroupRoomListApi
 import love.forte.simbot.miyoushe.api.villa.GetVillaApi
 import love.forte.simbot.miyoushe.event.*
 import love.forte.simbot.miyoushe.stdlib.DisposableHandle
 import love.forte.simbot.miyoushe.stdlib.bot.Bot
-import love.forte.simbot.utils.item.Items
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import kotlin.concurrent.Volatile
 import kotlin.coroutines.CoroutineContext
@@ -63,6 +63,8 @@ internal class VillaBotImpl(
     override val job: Job,
     override val coroutineContext: CoroutineContext,
 ) : VillaBot() {
+
+
     private val startLock = Mutex()
     override val logger = LoggerFactory.getLogger("love.forte.simbot.component.miyoushe.bot.${source.ticket.botId}")
 
@@ -111,7 +113,9 @@ internal class VillaBotImpl(
 
             when (extendData) {
                 is SendMessage -> {
-
+                    pushIfProcessableInBotAsync(VillaSendMessageEvent) {
+                        VillaSendMessageEventImpl(this@VillaBotImpl, this as Event<SendMessage>, source)
+                    }
                 }
 
                 is JoinVilla -> {
@@ -166,29 +170,61 @@ internal class VillaBotImpl(
         }
     }
 
-    override val guilds: Items<VillaGuild>
-        get() = TODO("Not yet implemented")
-
     override suspend fun guild(id: ID): VillaGuild? {
-        TODO("Not yet implemented")
+        return guildInternal(id.literal)
+//        try {
+//            return guildInternal(id.literal)
+//        } catch (ae: ApiResultNotSuccessException) {
+//            // TODO
+//            if (ae.apiResult.retcode == ApiResult.RETCODE_BOT_ACCESS_DEFIED) {
+//
+//            }
+//            throw ae
+//        }
     }
 
-    internal suspend fun guildInternal(id: String): VillaGuild { // TODO nullable?
+    internal suspend fun guildInternal(id: String): VillaGuildImpl {
         val villa = GetVillaApi.create().requestDataBy(this, id)
-
-        TODO("VillaGuild")
+        return VillaGuildImpl(this, villa.villa)
     }
 
-    internal suspend fun roomInternal(id: ULong, villaId: String, villa: VillaGuild? = null): VillaRoom {
+    internal suspend fun roomInternal(id: ULong, villaId: String, villa: VillaGuild? = null): VillaRoomImpl {
         val result = GetRoomApi.create(id).requestDataBy(this, villaId)
 
-        TODO("VillaRoom")
+        return VillaRoomImpl(this, result.room, villaId, villa = villa)
     }
 
-    internal suspend fun memberInternal(id: ULong, villaId: String, villa: VillaGuild? = null): VillaMember {
+    internal fun roomFlowInternal(
+        villaId: String,
+        villa: VillaGuild? = null
+    ): Flow<VillaRoomImpl> {
+        return flow {
+            val listResult = GetVillaGroupRoomListApi.create().requestDataBy(bot, villaId)
+            for (groupRoom in listResult.list) {
+                val group = VillaRoomGroupImpl(groupRoom.groupId, groupRoom.groupName)
+                for (room in groupRoom.roomList) {
+                    val roomImpl = VillaRoomImpl(this@VillaBotImpl, room, villaId, villa = villa)
+                    emit(roomImpl)
+                }
+            }
+        }
+    }
+
+    internal suspend fun memberInternal(id: ULong, villaId: String, villa: VillaGuild? = null): VillaMemberImpl {
         val result = GetMemberApi.create(id).requestDataBy(this, villaId)
 
-        TODO("VillaMember")
+        return VillaMemberImpl(this, result.member, villaId, villa)
+    }
+
+    internal fun memberFlowInternal(
+        villaId: String,
+        fixSize: ULong = 100u,
+        villa: VillaGuild? = null
+    ): Flow<VillaMemberImpl> {
+        return GetVillaMembersApi.getVillaMembersApiFlow(fixSize) { requestDataBy(this@VillaBotImpl, villaId) }
+            .map { member ->
+                VillaMemberImpl(this, member, villaId, villa)
+            }
     }
 
 
@@ -209,3 +245,4 @@ private suspend inline fun withJob(parent: Job?, crossinline block: suspend Coro
         job.complete()
     }
 }
+

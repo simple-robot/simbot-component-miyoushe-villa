@@ -24,6 +24,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import love.forte.simbot.miyoushe.api.msg.ButtonComponent.Companion.C_TYPE_CALLBACK
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmStatic
 
 /**
  * [消息组件](https://webstatic.mihoyo.com/vila/bot/doc/message_api/component.html)
@@ -58,7 +59,6 @@ public data class Panel(
     @SerialName("big_component_group_list")
     val bigComponentGroupList: List<Component>? = null,
 ) {
-
     /**
      * Friendly property for Java.
      */
@@ -66,6 +66,66 @@ public data class Panel(
         @JvmName("templateId")
         get() = templateId?.toLong()
 
+    public companion object {
+        @JvmStatic
+        public fun builder(): Builder = Builder()
+    }
+
+    /**
+     * Builder for [Panel].
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    public class Builder {
+        public var templateId: ULong? = null
+        public var smallComponentGroupList: MutableList<Component>? = null
+        public var midComponentGroupList: MutableList<Component>? = null
+        public var bigComponentGroupList: MutableList<Component>? = null
+
+        @PublishedApi
+        internal val smallComponentGroupListNonnull: MutableList<Component>
+            get() = smallComponentGroupList ?: mutableListOf<Component>().also { smallComponentGroupList = it }
+
+        @PublishedApi
+        internal val midComponentGroupListNonnull: MutableList<Component>
+            get() = midComponentGroupList ?: mutableListOf<Component>().also { midComponentGroupList = it }
+
+        @PublishedApi
+        internal val bigComponentGroupListNonnull: MutableList<Component>
+            get() = bigComponentGroupList ?: mutableListOf<Component>().also { bigComponentGroupList = it }
+
+        public inline fun addSmallButtonComponent(block: ButtonComponent.Builder.() -> Unit): Builder = apply {
+            smallComponentGroupListNonnull.add(Component.buttonBuilder().also(block).build())
+        }
+
+        public inline fun addMidButtonComponent(block: ButtonComponent.Builder.() -> Unit): Builder = apply {
+            midComponentGroupListNonnull.add(Component.buttonBuilder().also(block).build())
+        }
+
+        public inline fun addBigButtonComponent(block: ButtonComponent.Builder.() -> Unit): Builder = apply {
+            bigComponentGroupListNonnull.add(Component.buttonBuilder().also(block).build())
+        }
+
+        public inline fun addSmallSimpleComponent(block: SimpleComponent.Builder.() -> Unit): Builder = apply {
+            smallComponentGroupListNonnull.add(Component.simpleBuilder().also(block).build())
+        }
+
+        public inline fun addMidSimpleComponent(block: SimpleComponent.Builder.() -> Unit): Builder = apply {
+            midComponentGroupListNonnull.add(Component.simpleBuilder().also(block).build())
+        }
+
+        public inline fun addBigSimpleComponent(block: SimpleComponent.Builder.() -> Unit): Builder = apply {
+            bigComponentGroupListNonnull.add(Component.simpleBuilder().also(block).build())
+        }
+
+        public fun build(): Panel {
+            return Panel(
+                templateId = templateId,
+                smallComponentGroupList = smallComponentGroupList?.toList(),
+                midComponentGroupList = midComponentGroupList?.toList(),
+                bigComponentGroupList = bigComponentGroupList?.toList(),
+            )
+        }
+    }
 }
 
 /**
@@ -107,6 +167,38 @@ public sealed class Component {
      * 组件回调透传信息，由机器人自定义
      */
     public abstract val extra: String?
+
+    public companion object {
+        @JvmStatic
+        public fun buttonBuilder(): ButtonComponent.Builder = ButtonComponent.builder()
+
+        @JvmStatic
+        public fun simpleBuilder(): SimpleComponent.Builder = SimpleComponent.builder()
+    }
+
+    public interface Builder<C : Component> {
+        /**
+         * 组件id，由机器人自定义，不能为空字符串。面板内的id需要唯一
+         */
+        public var id: String?
+
+        /**
+         * 组件展示文本, 不能为空
+         */
+        public var text: String?
+
+        /**
+         * 是否订阅该组件的回调事件
+         */
+        public var needCallback: Boolean?
+
+        /**
+         * 组件回调透传信息，由机器人自定义
+         */
+        public var extra: String?
+
+        public fun build(): C
+    }
 }
 
 
@@ -150,7 +242,31 @@ public data class SimpleComponent(
     @SerialName("need_callback")
     override val needCallback: Boolean = false,
     override val extra: String? = null,
-) : Component()
+) : Component() {
+    public companion object {
+        @JvmStatic
+        public fun builder(): Builder = Builder()
+    }
+
+    /**
+     * Builder for [SimpleComponent].
+     */
+    public class Builder : Component.Builder<SimpleComponent> {
+        override var id: String? = null
+        override var text: String? = null
+        public var type: Int? = null
+        override var needCallback: Boolean? = null
+        override var extra: String? = null
+
+        override fun build(): SimpleComponent = SimpleComponent(
+            id = id ?: error("Required 'id' is null"),
+            text = text ?: error("Required 'text' is null"),
+            type = type ?: error("Required 'type' is null"),
+            needCallback = needCallback ?: false,
+            extra = extra,
+        )
+    }
+}
 
 /**
  * 按钮组件
@@ -203,6 +319,49 @@ public data class ButtonComponent(
          * 如果 need_callback = true，机器人还会收到点击后的回调事件
          */
         public const val C_TYPE_LINK: Int = 3
+
+        @JvmStatic
+        public fun builder(): Builder = Builder()
+    }
+
+    /**
+     * Builder for [ButtonComponent]
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    public class Builder : Component.Builder<ButtonComponent> {
+        override var id: String? = null
+        override var text: String? = null
+        override var needCallback: Boolean? = null
+        override var extra: String? = null
+        public var cType: Int? = null
+        public var input: String? = null
+        public var link: String? = null
+        public var needToken: Boolean = false
+
+        public fun cTypeCallback(): Builder = apply {
+            cType = C_TYPE_CALLBACK
+        }
+
+        public fun cTypeInput(): Builder = apply {
+            cType = C_TYPE_INPUT
+        }
+
+        public fun cTypeLink(): Builder = apply {
+            cType = C_TYPE_LINK
+        }
+
+        override fun build(): ButtonComponent {
+            return ButtonComponent(
+                id = id ?: error("Required 'id' is null"),
+                text = text ?: error("Required 'text' is null"),
+                needCallback = needCallback ?: false,
+                extra = extra,
+                cType = cType ?: error("Required 'cType' is null"),
+                input = input,
+                link = link,
+                needToken = needToken,
+            )
+        }
     }
 }
 

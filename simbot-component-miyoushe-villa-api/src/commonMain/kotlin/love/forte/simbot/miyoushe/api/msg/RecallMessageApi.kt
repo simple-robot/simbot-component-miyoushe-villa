@@ -36,7 +36,7 @@ import kotlin.jvm.JvmStatic
 public class RecallMessageApi private constructor(
     private val msgUid: String,
     private val roomId: ULong,
-    private val msgTime: Long
+    private val msgTime: Long?
 ) : MiyousheVillaGetApi<Unit>() {
     public companion object Factory {
         private const val PATH = "/vila/api/bot/platform/recallMessage"
@@ -51,7 +51,7 @@ public class RecallMessageApi private constructor(
          */
         @JvmName("create")
         @JvmStatic
-        public fun create(msgUid: String, roomId: ULong, msgTime: Long): RecallMessageApi =
+        public fun create(msgUid: String, roomId: ULong, msgTime: Long?): RecallMessageApi =
             RecallMessageApi(msgUid, roomId, msgTime)
     }
 
@@ -59,7 +59,7 @@ public class RecallMessageApi private constructor(
         with(parameters) {
             append("msg_uid", msgUid)
             append("room_id", roomId.toString())
-            append("msg_time", msgTime.toString())
+            msgTime?.also { append("msg_time", it.toString()) }
         }
     }
 
