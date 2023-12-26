@@ -9,8 +9,8 @@ repositories {
 
 val kotlinVersion = "1.9.21"
 val dokkaVersion = "1.9.10"
-val suspendTransformVersion = "0.5.1"
-val gradleCommon = "0.1.1"
+val suspendTransformVersion = "0.6.0-beta3"
+val gradleCommon = "0.2.0"
 
 dependencies {
     // kotlin("jvm") apply false

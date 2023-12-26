@@ -1,4 +1,7 @@
 import love.forte.gradle.common.core.project.setup
+import love.forte.gradle.common.kotlin.multiplatform.applyTier1
+import love.forte.gradle.common.kotlin.multiplatform.applyTier2
+import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 
 plugins {
     kotlin("multiplatform")
@@ -62,36 +65,10 @@ kotlin {
         }
     }
 
-
-//    val mainPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
-//    val testPresets = mutableSetOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
-
     // see https://kotlinlang.org/docs/native-target-support.html
-    // Tier 1
-    macosX64()
-    macosArm64()
-    iosSimulatorArm64()
-    iosX64()
-
-    // Tier 2
-    linuxX64()
-    linuxArm64()
-    watchosSimulatorArm64()
-    watchosX64()
-    watchosArm32()
-    watchosArm64()
-    tvosSimulatorArm64()
-    tvosX64()
-    tvosArm64()
-    iosArm64()
-
-    // Tier 3
-//    androidNativeArm32()
-//    androidNativeArm64()
-//    androidNativeX86()
-//    androidNativeX64()
-    mingwX64()
-//    watchosDeviceArm64()
+    applyTier1(supportKtorClient = true, supportKtorServer = true)
+    applyTier2(supportKtorClient = true, supportKtorServer = true, linuxArm64 = true)
+    applyTier3(supportKtorClient = true, supportKtorServer = true)
 
     sourceSets {
         commonMain {
