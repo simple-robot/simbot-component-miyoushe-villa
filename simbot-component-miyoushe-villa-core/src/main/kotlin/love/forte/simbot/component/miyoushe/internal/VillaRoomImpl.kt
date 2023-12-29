@@ -52,7 +52,7 @@ internal class VillaRoomImpl(
     override val guildId: ID
         get() = villaId.ID
 
-    @OptIn(Api4J::class) // TODO ?
+    @OptIn(Api4J::class)
     override val ownerId: ID
         get() = villa?.ownerId ?: guild.ownerId
 

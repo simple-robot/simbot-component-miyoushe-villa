@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import love.forte.simbot.DiscreetSimbotApi
 import love.forte.simbot.ID
 import love.forte.simbot.component.miyoushe.VillaComponent
 import love.forte.simbot.component.miyoushe.VillaGuild
@@ -38,6 +39,8 @@ import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.event.EventProcessor
 import love.forte.simbot.literal
 import love.forte.simbot.logger.LoggerFactory
+import love.forte.simbot.miyoushe.api.ApiResult
+import love.forte.simbot.miyoushe.api.ApiResultNotSuccessException
 import love.forte.simbot.miyoushe.api.member.GetMemberApi
 import love.forte.simbot.miyoushe.api.member.GetVillaMembersApi
 import love.forte.simbot.miyoushe.api.room.GetRoomApi
@@ -92,24 +95,31 @@ internal class VillaBotImpl(
     override suspend fun start(): Boolean {
         if (!job.isActive) return false
 
-        withJob(job) {
-            startLock.withLock {
-                if (handlerDisposable == null) {
-                    handlerDisposable = registerHandler(source)
+        startLock.withLock {
+            robotInfoUpdateInvoker = {
+                if (robotInfoUpdater.weakCompareAndSet(this@VillaBotImpl, null, it)) {
+                    robotInfoUpdateInvoker = {
+                        // do nothing.
+                    }
                 }
-                source.start()
             }
+            if (handlerDisposable == null) {
+                handlerDisposable = registerHandler(source)
+            }
+            source.start()
         }
 
         return true
     }
 
+    @Volatile
+    private var robotInfoUpdateInvoker: (Robot) -> Unit = {}
 
     @Suppress("UNCHECKED_CAST")
+    @OptIn(DiscreetSimbotApi::class)
     private fun registerHandler(bot: Bot): DisposableHandle {
         return bot.registerPreProcessor { source ->
-            // try to set robot info if it's null, and ignore the result.
-            robotInfoUpdater.weakCompareAndSet(this@VillaBotImpl, null, robot)
+            robotInfoUpdateInvoker(robot)
 
             when (extendData) {
                 is SendMessage -> {
@@ -143,19 +153,35 @@ internal class VillaBotImpl(
                 }
 
                 is AddQuickEmoticon -> {
-                    // TODO
+                    pushIfProcessableInBotAsync(VillaAddQuickEmoticonEvent) {
+                        VillaAddQuickEmoticonEventImpl(this@VillaBotImpl, this as Event<AddQuickEmoticon>, source)
+                    }
                 }
 
                 is ClickMsgComponent -> {
-                    // TODO
+                    pushIfProcessableInBotAsync(VillaClickMsgComponentEvent) {
+                        VillaClickMsgComponentEventImpl(this@VillaBotImpl, this as Event<ClickMsgComponent>, source)
+                    }
                 }
 
                 UnknownEventExtendData -> {
-                    // TODO
+                    pushIfProcessableInBotAsync(VillaUnknownEventExtendDataEvent) {
+                        VillaUnknownEventExtendDataEventImpl(
+                            this@VillaBotImpl,
+                            this as Event<UnknownEventExtendData>,
+                            source
+                        )
+                    }
                 }
 
                 else -> {
-                    // TODO unknown
+                    pushIfProcessableInBotAsync(VillaUnsupportedYetEvent) {
+                        VillaUnsupportedYetEventImpl(
+                            this@VillaBotImpl,
+                            this,
+                            source
+                        )
+                    }
                 }
             }
         }
@@ -171,16 +197,17 @@ internal class VillaBotImpl(
     }
 
     override suspend fun guild(id: ID): VillaGuild? {
-        return guildInternal(id.literal)
-//        try {
-//            return guildInternal(id.literal)
-//        } catch (ae: ApiResultNotSuccessException) {
-//            // TODO
-//            if (ae.apiResult.retcode == ApiResult.RETCODE_BOT_ACCESS_DEFIED) {
-//
-//            }
-//            throw ae
-//        }
+//        return guildInternal(id.literal)
+        try {
+            return guildInternal(id.literal)
+        } catch (ae: ApiResultNotSuccessException) {
+            if (ae.apiResult.retcode == ApiResult.RETCODE_BOT_ACCESS_DEFIED) {
+                logger.debug("Bot(id={}).guild({}) result not success: {}, maybe not found, return null", this.id, id, ae.apiResult)
+                logger.trace("Bot(id={}).guild({}) result not success: {}, maybe not found, return null", this.id, id, ae.apiResult, ae)
+                return null
+            }
+            throw ae
+        }
     }
 
     internal suspend fun guildInternal(id: String): VillaGuildImpl {

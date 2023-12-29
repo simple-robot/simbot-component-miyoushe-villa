@@ -25,7 +25,7 @@ import love.forte.simbot.miyoushe.api.MiyousheVillaGetApi
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
-
+// TODO 似乎说这应该是 POST
 /**
  * [撤回消息](https://webstatic.mihoyo.com/vila/bot/doc/message_api/recall_message.html)
  *

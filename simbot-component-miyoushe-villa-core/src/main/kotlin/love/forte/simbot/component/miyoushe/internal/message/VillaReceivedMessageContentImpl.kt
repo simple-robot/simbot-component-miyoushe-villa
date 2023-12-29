@@ -49,7 +49,7 @@ internal class VillaReceivedMessageContentImpl(private val bot: VillaBot, overri
             RecallMessageApi.create(source.extendData.msgUid, source.extendData.roomId, source.extendData.sendAt)
                 .requestResultBy(bot, source.extendData.villaIdStrValue)
 
-        // TODO 只有重复删除时才返回false
+        // TODO 只有重复删除时才返回false?
 
         return result.isSuccess
     }

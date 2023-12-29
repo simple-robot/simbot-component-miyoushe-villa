@@ -45,7 +45,7 @@ import love.forte.simbot.miyoushe.api.WebsocketInfo
 import love.forte.simbot.miyoushe.event.*
 import love.forte.simbot.miyoushe.stdlib.DisposableHandle
 import love.forte.simbot.miyoushe.stdlib.bot.*
-import love.forte.simbot.miyoushe.utils.atomic.AtomicLong
+import love.forte.simbot.miyoushe.utils.atomic.AtomicBoolean
 import love.forte.simbot.miyoushe.utils.atomic.AtomicULong
 import love.forte.simbot.miyoushe.utils.atomic.atomic
 import love.forte.simbot.miyoushe.utils.atomic.atomicULong
@@ -72,7 +72,7 @@ internal class BotImpl(
 ) : Bot {
     private val job: Job
     override val coroutineContext: CoroutineContext
-    private val started: AtomicLong = atomic(0L) // TODO to AtomicBool?
+    private val started: AtomicBoolean = atomic(false)
     private val protoBuf: ProtoBuf = ProtoBuf.Default
     private val startingLock = Mutex()
     override val apiDecoder: Json = configuration.apiDecoder
@@ -208,11 +208,11 @@ internal class BotImpl(
     }
 
     private fun started() {
-        started.value = 1L
+        started.value = true
     }
 
     override val isStarted: Boolean
-        get() = started.value == 1L
+        get() = started.value
 
     override val isActive: Boolean get() = job.isActive
     override val isCancelled: Boolean get() = job.isCancelled
@@ -391,7 +391,7 @@ internal class BotImpl(
         override suspend fun invoke(): BotLinkState? {
 
             if (!session.isActive) {
-                // TODO Not Active!
+                // TODO Not Active? try reconnect?
                 logger.error("Bot session is not active. Cancel the bot {}", bot)
                 val reason = session.closeReason.await()
                 bot.cancel(CancellationException("reason: $reason", null))
@@ -403,24 +403,33 @@ internal class BotImpl(
             val frameCatching = session.incoming.receiveCatching()
             frameCatching.onClosed { e ->
                 logger.error(
-                    "Bot session receive failed: session closed and reason: {}. Cancel the bot {}",
-                    e?.message,
+                    "Bot({}) session receive failed: session closed and reason: {}.",
                     bot,
+                    e?.message,
                     e
                 )
-                bot.cancel(CancellationException(e?.message?.let { "Session closed: $it" } ?: "Session closed", e))
+                if (bot.isActive) {
+                    logger.debug("Bot is active now, try to reconnect.")
+                    return GetWebsocketInfo(bot)
+                } else {
+                    logger.debug("Bot is not active now, just cancel the session and bot.")
+                }
+//                bot.cancel(CancellationException(e?.message?.let { "Session closed: $it" } ?: "Session closed", e))
                 return null
             }
 
             frameCatching.onFailure { e ->
                 logger.error(
-                    "Bot session receive failed: {}. Cancel the bot {}",
-                    e?.message,
-                    bot,
-                    e
+                    "Bot({}) session receive failed: {}.", bot, e?.message, e
                 )
-                bot.cancel(CancellationException(e?.message?.let { "Session receive onFailure: $it" }
-                    ?: "Session receive onFailure", e))
+                if (bot.isActive) {
+                    logger.debug("Bot is active now, try to reconnect.")
+                    return GetWebsocketInfo(bot)
+                } else {
+                    logger.debug("Bot is not active now, just cancel the session and bot.")
+                }
+//                bot.cancel(CancellationException(e?.message?.let { "Session receive onFailure: $it" }
+//                    ?: "Session receive onFailure", e))
                 return null
             }
 
