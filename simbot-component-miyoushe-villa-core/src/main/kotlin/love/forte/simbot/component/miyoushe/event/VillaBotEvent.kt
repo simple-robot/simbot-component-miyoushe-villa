@@ -19,7 +19,6 @@ package love.forte.simbot.component.miyoushe.event
 
 import love.forte.simbot.ID
 import love.forte.simbot.JSTP
-import love.forte.simbot.ULongID
 import love.forte.simbot.component.miyoushe.VillaGuild
 import love.forte.simbot.component.miyoushe.bot.VillaBot
 import love.forte.simbot.event.BaseEventKey
@@ -46,7 +45,7 @@ public abstract class VillaBotEvent<E : EventExtendData> : VillaEvent<E>(), Guil
     /**
      * 大别野ID
      */
-    public abstract val villaId: ULongID
+    public abstract val villaId: ID
 
     /**
      * 发生事件的大别野
@@ -76,7 +75,7 @@ public abstract class VillaBotEvent<E : EventExtendData> : VillaEvent<E>(), Guil
  * @see VillaBotEvent
  */
 public abstract class VillaCreateRobotEvent : VillaBotEvent<CreateRobot>() {
-    override val villaId: ULongID
+    override val villaId: ID
         get() = sourceEventExtend.villaId.ID
 
     override val key: Event.Key<out VillaCreateRobotEvent>
@@ -96,7 +95,7 @@ public abstract class VillaCreateRobotEvent : VillaBotEvent<CreateRobot>() {
  * @see VillaBotEvent
  */
 public abstract class VillaDeleteRobotEvent : VillaBotEvent<DeleteRobot>() {
-    override val villaId: ULongID
+    override val villaId: ID
         get() = sourceEventExtend.villaId.ID
 
     override val key: Event.Key<out VillaDeleteRobotEvent>

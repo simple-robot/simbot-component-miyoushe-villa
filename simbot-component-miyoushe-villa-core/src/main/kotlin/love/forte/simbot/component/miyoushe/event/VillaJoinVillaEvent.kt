@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.miyoushe.event
 
+import love.forte.simbot.ID
 import love.forte.simbot.JSTP
 import love.forte.simbot.Timestamp
 import love.forte.simbot.action.ActionType
@@ -40,6 +41,30 @@ import love.forte.simbot.miyoushe.event.JoinVilla
  */
 public abstract class VillaJoinVillaEvent : VillaEvent<JoinVilla>(), GuildMemberIncreaseEvent {
     abstract override val bot: VillaBot
+
+    //region delegates
+    /**
+     * `uint64`, 用户 id
+     *
+     * @see JoinVilla.joinUid
+     */
+    public val joinUid: ID get() = sourceEventExtend.joinUid.ID
+
+    /**
+     * `string`, 用户昵称
+     *
+     * @see JoinVilla.joinUserNickname
+     */
+    public val joinUserNickname: String get() = sourceEventExtend.joinUserNickname
+
+    /**
+     * `uint64`, 大别野 id
+     *
+     * @see JoinVilla.villaId
+     */
+    public val villaId: ID get() = sourceEventExtend.villaId.ID
+    //endregion
+
     override val timestamp: Timestamp
         get() = super<VillaEvent>.timestamp
 

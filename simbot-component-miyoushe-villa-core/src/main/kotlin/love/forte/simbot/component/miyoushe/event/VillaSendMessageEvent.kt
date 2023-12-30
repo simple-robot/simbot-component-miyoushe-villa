@@ -17,6 +17,7 @@
 
 package love.forte.simbot.component.miyoushe.event
 
+import love.forte.simbot.ID
 import love.forte.simbot.JST
 import love.forte.simbot.component.miyoushe.VillaMember
 import love.forte.simbot.component.miyoushe.VillaRoom
@@ -40,6 +41,51 @@ import love.forte.simbot.miyoushe.event.SendMessage
  * @author ForteScarlet
  */
 public abstract class VillaSendMessageEvent : VillaEvent<SendMessage>(), ChannelMessageEvent {
+
+    //region delegates
+    /**
+     * 发送者 id
+     *
+     * @see SendMessage.fromUserId
+     */
+    public val fromUserId: ID get() = sourceEventExtend.fromUserId.ID
+
+    /**
+     * 房间 id
+     *
+     * @see SendMessage.roomId
+     */
+    public val roomId: ID get() = sourceEventExtend.roomId.ID
+
+    /**
+     * 用户昵称
+     *
+     * @see SendMessage.nickname
+     */
+    public val nickname: String get() = sourceEventExtend.nickname
+
+    /**
+     * 消息 id
+     *
+     * @see SendMessage.msgUid
+     */
+    public val msgUid: ID get() = sourceEventExtend.msgUid.ID
+
+    /**
+     * 如果被回复的消息从属于机器人，则该字段不为 `null`。
+     *
+     * @see SendMessage.botMsgId
+     */
+    public val botMsgId: ID? get() = sourceEventExtend.botMsgId.takeIf { it.isNotEmpty() }?.ID
+
+    /**
+     * 大别野 id
+     *
+     * @see SendMessage.villaId
+     */
+    public val villaId: ID get() = sourceEventExtend.villaId.ID
+
+    //endregion
 
     /**
      * 消息内容本体
