@@ -26,7 +26,7 @@ import love.forte.simbot.component.miyoushe.VillaRoomGroup
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
 import love.forte.simbot.component.miyoushe.internal.message.toReceipt
 import love.forte.simbot.component.miyoushe.message.VillaSendMessageReceipt
-import love.forte.simbot.component.miyoushe.message.sendTo
+import love.forte.simbot.component.miyoushe.message.sendToReceipt
 import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.Role
@@ -78,16 +78,14 @@ internal class VillaRoomImpl(
     override suspend fun send(message: Message): VillaSendMessageReceipt {
         val roomId = room.roomId
 
-        return message.sendTo(bot, villaId, roomId, null)
-            .toReceipt(bot, villaId, roomId, null)
+        return message.sendToReceipt(bot, villaId, roomId, null)
     }
 
     @OptIn(InternalSimbotApi::class)
     override suspend fun send(message: MessageContent): VillaSendMessageReceipt {
         val roomId = room.roomId
 
-        return message.sendTo(bot, villaId, roomId, null)
-            .toReceipt(bot, villaId, roomId, null)
+        return message.sendToReceipt(bot, villaId, roomId, null)
     }
 
     override suspend fun send(text: String): VillaSendMessageReceipt {
@@ -96,6 +94,6 @@ internal class VillaRoomImpl(
         val result =
             SendMessageApi.create(roomId, MsgContentInfo(TextMsgContent(text = text))).requestDataBy(bot, villaId)
 
-        return result.toReceipt(bot, villaId, roomId, null)
+        return result.toReceipt(bot, villaId, roomId, System.currentTimeMillis())
     }
 }

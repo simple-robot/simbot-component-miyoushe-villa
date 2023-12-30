@@ -17,11 +17,13 @@
 
 package love.forte.simbot.miyoushe.api.msg
 
-import io.ktor.http.*
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import love.forte.simbot.miyoushe.api.ApiResult
-import love.forte.simbot.miyoushe.api.MiyousheVillaGetApi
+import love.forte.simbot.miyoushe.api.MiyousheVillaPostApi
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
@@ -33,11 +35,7 @@ import kotlin.jvm.JvmStatic
  *
  * @author ForteScarlet
  */
-public class RecallMessageApi private constructor(
-    private val msgUid: String,
-    private val roomId: ULong,
-    private val msgTime: Long?
-) : MiyousheVillaGetApi<Unit>() {
+public class RecallMessageApi private constructor(override val body: Body) : MiyousheVillaPostApi<Unit>() {
     public companion object Factory {
         private const val PATH = "/vila/api/bot/platform/recallMessage"
 
@@ -52,16 +50,19 @@ public class RecallMessageApi private constructor(
         @JvmName("create")
         @JvmStatic
         public fun create(msgUid: String, roomId: ULong, msgTime: Long?): RecallMessageApi =
-            RecallMessageApi(msgUid, roomId, msgTime)
+            RecallMessageApi(Body(msgUid, roomId, msgTime))
     }
 
-    override fun URLBuilder.prepareUrl(): URLBuilder = apply {
-        with(parameters) {
-            append("msg_uid", msgUid)
-            append("room_id", roomId.toString())
-            msgTime?.also { append("msg_time", it.toString()) }
-        }
-    }
+    @Serializable
+    public data class Body(
+        @SerialName("msg_uid")
+        val msgUid: String,
+        @SerialName("room_id")
+        @Serializable(ULongWriteStringSerializer::class)
+        val roomId: ULong,
+        @SerialName("msg_time")
+        val msgTime: Long?
+    )
 
     override val path: String
         get() = PATH
@@ -71,25 +72,20 @@ public class RecallMessageApi private constructor(
         get() = ApiResult.emptySerializer()
 
     override fun toString(): String {
-        return "RecallMessageApi(msgUid='$msgUid', roomId=$roomId, msgTime=$msgTime)"
+        return "RecallMessageApi(body=$body)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is RecallMessageApi) return false
 
-        if (msgUid != other.msgUid) return false
-        if (roomId != other.roomId) return false
-        if (msgTime != other.msgTime) return false
+        if (body != other.body) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = msgUid.hashCode()
-        result = 31 * result + roomId.hashCode()
-        result = 31 * result + msgTime.hashCode()
-        return result
+        return body.hashCode()
     }
 
 

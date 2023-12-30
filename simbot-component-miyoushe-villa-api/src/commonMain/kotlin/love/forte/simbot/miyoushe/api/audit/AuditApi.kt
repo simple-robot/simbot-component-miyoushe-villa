@@ -22,6 +22,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.MiyousheVillaPostApi
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
@@ -70,7 +71,10 @@ public class AuditApi private constructor(override val body: Body) : MiyousheVil
     public data class Body(
         @SerialName("audit_content") val auditContent: String,
         @SerialName("pass_through") val passThrough: String?,
-        @SerialName("room_id") val roomId: ULong?,
+        @SerialName("room_id")
+        @Serializable(ULongWriteStringSerializer::class)
+        val roomId: ULong?,
+        @Serializable(ULongWriteStringSerializer::class)
         val uid: ULong,
 
         /**

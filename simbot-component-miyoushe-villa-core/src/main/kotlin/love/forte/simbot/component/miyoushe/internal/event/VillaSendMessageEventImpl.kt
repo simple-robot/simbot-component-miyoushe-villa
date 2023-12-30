@@ -26,7 +26,7 @@ import love.forte.simbot.component.miyoushe.internal.message.VillaReceivedMessag
 import love.forte.simbot.component.miyoushe.internal.message.toReceipt
 import love.forte.simbot.component.miyoushe.message.VillaReceivedMessageContent
 import love.forte.simbot.component.miyoushe.message.VillaSendMessageReceipt
-import love.forte.simbot.component.miyoushe.message.sendTo
+import love.forte.simbot.component.miyoushe.message.sendToReceipt
 import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
@@ -63,8 +63,7 @@ internal class VillaSendMessageEventImpl(
         val villaIdStr = sourceEventExtend.villaIdStrValue
         val roomId = sourceEventExtend.roomId
 
-        return message.sendTo(bot, villaIdStr, roomId, autoQuote)
-            .toReceipt(bot, villaIdStr, roomId, null)
+        return message.sendToReceipt(bot, villaIdStr, roomId, autoQuote)
     }
 
     @OptIn(InternalSimbotApi::class)
@@ -73,8 +72,7 @@ internal class VillaSendMessageEventImpl(
         val villaIdStr = sourceEventExtend.villaIdStrValue
         val roomId = sourceEventExtend.roomId
 
-        return message.sendTo(bot, villaIdStr, roomId, autoQuote)
-            .toReceipt(bot, villaIdStr, roomId, null)
+        return message.sendToReceipt(bot, villaIdStr, roomId, autoQuote)
     }
 
     override suspend fun reply(text: String): VillaSendMessageReceipt {
@@ -91,6 +89,6 @@ internal class VillaSendMessageEventImpl(
             decoder = bot.source.apiDecoder
         ).requestDataBy(bot, villaIdStr)
 
-        return result.toReceipt(bot, villaIdStr, roomId, null)
+        return result.toReceipt(bot, villaIdStr, roomId, System.currentTimeMillis())
     }
 }

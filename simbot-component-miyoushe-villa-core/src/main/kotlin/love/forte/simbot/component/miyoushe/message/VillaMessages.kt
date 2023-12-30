@@ -21,13 +21,17 @@ package love.forte.simbot.component.miyoushe.message
 
 import love.forte.simbot.InternalSimbotApi
 import love.forte.simbot.component.miyoushe.bot.VillaBot
+import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
+import love.forte.simbot.component.miyoushe.internal.message.toReceipt
 import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.component.miyoushe.uploadToOssData
+import love.forte.simbot.component.miyoushe.utils.toULong
 import love.forte.simbot.literal
 import love.forte.simbot.message.*
 import love.forte.simbot.miyoushe.api.image.GetUploadImageParamsApi
 import love.forte.simbot.miyoushe.api.msg.*
 import love.forte.simbot.miyoushe.api.msg.QuoteInfo.Companion.toQuoteInfo
+import love.forte.simbot.miyoushe.api.msg.TextMsgContent.EntityContent
 import love.forte.simbot.miyoushe.event.SendMessage
 import love.forte.simbot.resources.ByteArrayResource
 import love.forte.simbot.resources.FileResource
@@ -53,7 +57,6 @@ public suspend fun Message.sendTo(
     check(apiList.isNotEmpty()) { "Nothing to reply: the list of APIs ready to be used for sending is empty" }
 
     return apiList.map {
-        println("api: $it")
         it.requestDataBy(bot, villaId)
     }
 }
@@ -70,9 +73,48 @@ public suspend fun MessageContent.sendTo(
     check(apiList.isNotEmpty()) { "Nothing to reply: the list of APIs ready to be used for sending is empty" }
 
     return apiList.map {
-        println("api: $it")
         it.requestDataBy(bot, villaId)
     }
+}
+
+@InternalSimbotApi
+internal suspend fun Message.sendToReceipt(
+    bot: VillaBotImpl,
+    villaId: String,
+    roomId: ULong,
+    autoQuote: QuoteInfo? = null
+): VillaSendMessageReceipt {
+    val apiList = toSendApi(bot, villaId, roomId, autoQuote)
+    // 没有可回复的内容：准备用于发送的API列表为空
+    check(apiList.isNotEmpty()) { "Nothing to reply: the list of APIs ready to be used for sending is empty" }
+
+    val result = apiList.map {
+        it.requestDataBy(bot, villaId).toReceipt(bot, villaId, roomId, System.currentTimeMillis())
+    }
+
+    if (result.size == 1) return result.first()
+
+    return result.toReceipt()
+}
+
+@InternalSimbotApi
+internal suspend fun MessageContent.sendToReceipt(
+    bot: VillaBotImpl,
+    villaId: String,
+    roomId: ULong,
+    autoQuote: QuoteInfo? = null
+): VillaSendMessageReceipt {
+    val apiList = toSendApi(bot, villaId, roomId, autoQuote)
+    // 没有可回复的内容：准备用于发送的API列表为空
+    check(apiList.isNotEmpty()) { "Nothing to reply: the list of APIs ready to be used for sending is empty" }
+
+    val result = apiList.map {
+        it.requestDataBy(bot, villaId).toReceipt(bot, villaId, roomId, System.currentTimeMillis())
+    }
+
+    if (result.size == 1) return result.first()
+
+    return result.toReceipt()
 }
 
 
@@ -241,7 +283,16 @@ private suspend fun Message.Element<*>.toMsgContents0(
             is At ->
                 return returnListOf(
                     MsgContentInfo(
-                        content = TextMsgContent.EMPTY,
+                        content = TextMsgContent(
+                            text = originContent,
+                            entities = listOf(
+                                TextMsgContent.Entity(
+                                    offset = 0,
+                                    length = originContent.length,
+                                    EntityContent.MentionedUser(target.toULong())
+                                )
+                            )
+                        ),
                         mentionedInfo = MentionedInfo.mentionMembers(listOf(target.literal)),
                         quoteInfo = autoQuote
                     )
@@ -249,7 +300,16 @@ private suspend fun Message.Element<*>.toMsgContents0(
 
             AtAll -> return returnListOf(
                 MsgContentInfo(
-                    content = TextMsgContent.EMPTY,
+                    content = TextMsgContent(
+                        text = EntityContent.MentionAll.CONTENT,
+                        entities = listOf(
+                            TextMsgContent.Entity(
+                                offset = 0,
+                                length = EntityContent.MentionAll.CONTENT.length,
+                                EntityContent.MentionAll
+                            )
+                        )
+                    ),
                     mentionedInfo = MentionedInfo.mentionAll(),
                     quoteInfo = autoQuote
                 )
@@ -289,6 +349,15 @@ private suspend fun Message.Element<*>.toMsgContents0(
         }
 
         is VillaStyleText -> {
+            // `VillaStyleText` 不能单独发送，你需要配合 `PlainText` (例如 `text.toText()`) 使用。
+            // 在发送时，`VillaStyleText.text` 是无效的。
+            // 未来可能会真的让它无效，所以请及时改正。
+            bot.logger.warn(
+                "`VillaStyleText` ({}) cannot be sent alone, you need to use it with `PlainText` (e.g. `text.toText()`). When sent, `VillaStyleText.text` is not valid." +
+                        "In the future, separately sent `VillaStyleText` will be ignored, so please check and correct it in time.",
+                this
+            )
+
             return returnListOf(
                 MsgContentInfo(
                     content = TextMsgContent(
@@ -462,7 +531,21 @@ private suspend fun toMsgContents0(
                     }
 
                     text.mentionedInfo {
+                        type = MentionedInfo.TYPE_MENTION_MEMBER
                         userIdList.add(message.target.literal)
+                    }
+
+                    text.content {
+                        entity {
+                            val currentLen = textBuilder.length
+                            val atContent = message.originContent
+                            appendText(atContent)
+                            content(EntityContent.MentionedUser) {
+                                userId = message.target.toULong()
+                            }
+                            offset = currentLen
+                            length = atContent.length
+                        }
                     }
                 }
 
@@ -474,6 +557,17 @@ private suspend fun toMsgContents0(
 
                     text.mentionedInfo {
                         type = MentionedInfo.TYPE_MENTION_ALL
+                    }
+
+                    text.content {
+                        entity {
+                            val currentLen = textBuilder.length
+                            val atContent = EntityContent.MentionAll.CONTENT
+                            appendText(atContent)
+                            content = EntityContent.MentionAll
+                            offset = currentLen
+                            length = EntityContent.MentionAll.CONTENT.length
+                        }
                     }
                 }
 

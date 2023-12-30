@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE terms SYSTEM "https://resources.jetbrains.com/writerside/1.0/glossary.dtd">
+<terms>
+    <term name="Simple Robot">高性能全异步的bot风格事件调度框架</term>
+    <term name="simbot">高性能全异步的bot风格事件调度框架，是Simple Robot的简称</term>
+    <term name="大别野组件">基于simbot核心库对米游社大别野机器人的组件实现，也包括对API和事件订阅能力的底层库实现模块</term>
+</terms>

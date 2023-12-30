@@ -52,6 +52,7 @@ public fun <R : Any> MiyousheVillaApi<R>.requestBlocking(
  * @throws HttpStatusException 如果 http 结果不是成功 ([HttpStatusCode.isSuccess] == false)
  */
 @Api4J
+@JvmOverloads
 public fun <R : Any> MiyousheVillaApi<R>.requestResultBlocking(
     client: HttpClient,
     token: MiyousheVillaApiToken,
@@ -66,6 +67,7 @@ public fun <R : Any> MiyousheVillaApi<R>.requestResultBlocking(
  * @throws ApiResultNotSuccessException 如果结果不是成功 (see [ApiResult.dataIfSuccess])
  */
 @Api4J
+@JvmOverloads
 public fun <R : Any> MiyousheVillaApi<R>.requestDataBlocking(
     client: HttpClient,
     token: MiyousheVillaApiToken,

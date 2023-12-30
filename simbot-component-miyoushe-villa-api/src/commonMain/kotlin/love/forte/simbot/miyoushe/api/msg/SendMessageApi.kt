@@ -25,6 +25,7 @@ import love.forte.simbot.ExperimentalSimbotApi
 import love.forte.simbot.miyoushe.MiyousheVilla
 import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.MiyousheVillaPostApi
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -138,7 +139,9 @@ public class SendMessageApi private constructor(override val body: Body) : Miyou
      */
     @Serializable
     public data class Body(
-        @SerialName("room_id") val roomId: ULong,
+        @SerialName("room_id")
+        @Serializable(ULongWriteStringSerializer::class)
+        val roomId: ULong,
         @SerialName("object_name") val objectName: String,
         @SerialName("msg_content") val msgContent: String,
     )

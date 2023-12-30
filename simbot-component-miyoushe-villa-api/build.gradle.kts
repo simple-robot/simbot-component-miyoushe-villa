@@ -7,7 +7,7 @@ plugins {
     kotlin("multiplatform")
 //    `miyoushe-multiplatform-maven-publish`
     kotlin("plugin.serialization")
-//    `miyoushe-dokka-partial-configure`
+    `miyoushe-dokka-partial-configure`
 }
 
 setup(P)

@@ -4,7 +4,8 @@ plugins {
     kotlin("jvm")
 //    `miyoushe-multiplatform-maven-publish`
     kotlin("plugin.serialization")
-//    `miyoushe-dokka-partial-configure`
+    `miyoushe-dokka-partial-configure`
+    `simbot-miyoushe-suspend-transform`
 }
 
 setup(P)

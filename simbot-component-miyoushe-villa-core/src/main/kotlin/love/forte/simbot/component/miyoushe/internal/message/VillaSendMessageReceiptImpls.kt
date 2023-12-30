@@ -34,17 +34,16 @@ internal class VillaSendSingleMessageReceiptImpl(
     override val result: SendMessageResult
 ) : VillaSendSingleMessageReceipt() {
     override suspend fun delete(): Boolean {
-        val result = RecallMessageApi.create(result.botMsgId, roomId, msgTime).requestResultBy(bot, villaId)
+        val api = RecallMessageApi.create(result.botMsgId, roomId, msgTime)
+        bot.logger.trace("Delete api: {}", api)
+        val result = api.requestResultBy(bot, villaId)
+        bot.logger.trace("Delete result: {}", result)
         return result.isSuccess
     }
 }
 
 
 internal class VillaSendAggregatedMessageReceiptImpl(
-    private val bot: VillaBotImpl,
-    private val villaId: String,
-    private val roomId: ULong,
-    private val msgTime: Long?,
     private val receipts: List<VillaSendSingleMessageReceiptImpl>
 ) : VillaSendAggregatedMessageReceipt() {
     override val size: Int get() = receipts.size
@@ -59,5 +58,12 @@ internal fun List<SendMessageResult>.toReceipt(bot: VillaBotImpl, villaId: Strin
     check(isNotEmpty()) { "List of `SendMessageResult` is empty" }
     if (size == 1) return first().toReceipt(bot, villaId, roomId, msgTime)
 
-    return VillaSendAggregatedMessageReceiptImpl(bot, villaId, roomId, msgTime, map { it.toReceipt(bot, villaId, roomId, msgTime) })
+    return VillaSendAggregatedMessageReceiptImpl(map { it.toReceipt(bot, villaId, roomId, msgTime) })
+}
+
+internal fun List<VillaSendSingleMessageReceiptImpl>.toReceipt(): VillaSendMessageReceipt {
+    check(isNotEmpty()) { "List of `VillaSendSingleMessageReceipt` is empty" }
+    if (size == 1) return first()
+
+    return VillaSendAggregatedMessageReceiptImpl(toList())
 }

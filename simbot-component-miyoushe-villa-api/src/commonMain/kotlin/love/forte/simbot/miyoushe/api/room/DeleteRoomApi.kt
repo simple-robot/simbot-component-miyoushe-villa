@@ -20,6 +20,7 @@ package love.forte.simbot.miyoushe.api.room
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.MiyousheVillaPostEmptyResultApi
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
@@ -66,7 +67,7 @@ public class DeleteRoomApi private constructor(override val body: Body) : Miyous
      * @property roomId 房间 id
      */
     @Serializable
-    public data class Body(@SerialName("room_id") val roomId: ULong)
+    public data class Body(@SerialName("room_id") @Serializable(ULongWriteStringSerializer::class) val roomId: ULong)
 
     override fun toString(): String {
         return "DeleteRoomApi(body=$body)"

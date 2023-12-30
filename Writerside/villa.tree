@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="villa"
+                 name="米游社大别野组件"
+                  start-page="Home.md">
+
+    <toc-element topic="Home.md"/>
+    <toc-element topic="快速开始.md">
+        <toc-element topic="使用API.md"/>
+        <toc-element topic="使用标准库.md"/>
+        <toc-element topic="使用核心库.md"/>
+        <toc-element topic="使用-Spring-Boot.md"/>
+    </toc-element>
+</instance-profile>

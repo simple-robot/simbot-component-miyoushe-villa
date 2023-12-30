@@ -20,6 +20,7 @@ package love.forte.simbot.miyoushe.stdlib.bot
 import io.ktor.client.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
+import love.forte.simbot.JST
 import love.forte.simbot.miyoushe.event.Event
 import love.forte.simbot.miyoushe.event.EventExtendData
 import love.forte.simbot.miyoushe.event.EventSource
@@ -124,7 +125,7 @@ public interface Bot : CoroutineScope {
      * @throws IllegalArgumentException 如果 bot 已经被关闭或已经结束
      * @throws PLoginFailedException 如果登录时失败
      */
-    @JvmSynthetic // TODO JST?
+    @JST
     public suspend fun start()
 
     /**
@@ -138,7 +139,7 @@ public interface Bot : CoroutineScope {
      * 挂起直到此 bot 的协程被终止。
      * 可能会通过 [logout]、[cancel] 主动终止，或收到了 [PKickOff] 数据包而被动终止。
      */
-    @JvmSynthetic // TODO JST?
+    @JST(asyncBaseName = "asFuture", asyncSuffix = "")
     public suspend fun join()
 
     /**

@@ -19,6 +19,7 @@ package love.forte.simbot.miyoushe.api.member
 
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.MiyousheVillaPostEmptyResultApi
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.jvm.JvmStatic
 
 
@@ -64,7 +65,7 @@ public class DeleteVillaMemberApi private constructor(override val body: Body) :
      *
      */
     @Serializable
-    public data class Body(val uid: ULong)
+    public data class Body(@Serializable(ULongWriteStringSerializer::class) val uid: ULong)
 
     override fun toString(): String {
         return "DeleteVillaMemberApi(body=$body)"

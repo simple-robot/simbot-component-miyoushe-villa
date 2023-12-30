@@ -23,6 +23,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import love.forte.simbot.miyoushe.api.msg.ButtonComponent.Companion.C_TYPE_CALLBACK
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
@@ -39,6 +40,7 @@ public data class Panel(
      */
     @SerialName("template_id")
     @get:JvmName("getTemplateIdUnsignedSource")
+    @Serializable(ULongWriteStringSerializer::class)
     val templateId: ULong? = null,
 
     /**

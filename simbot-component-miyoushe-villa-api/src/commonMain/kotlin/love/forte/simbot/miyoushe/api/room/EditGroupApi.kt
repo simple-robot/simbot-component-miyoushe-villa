@@ -20,6 +20,7 @@ package love.forte.simbot.miyoushe.api.room
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.MiyousheVillaPostEmptyResultApi
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
 
@@ -69,7 +70,12 @@ public class EditGroupApi private constructor(override val body: Body) : Miyoush
      * @property groupName 大别野 名称
      */
     @Serializable
-    public data class Body(@SerialName("group_id") val groupId: ULong, @SerialName("group_name") val groupName: String)
+    public data class Body(
+        @SerialName("group_id")
+        @Serializable(ULongWriteStringSerializer::class)
+        val groupId: ULong,
+        @SerialName("group_name") val groupName: String
+    )
 
     override fun toString(): String {
         return "EditGroupApi(body=$body)"

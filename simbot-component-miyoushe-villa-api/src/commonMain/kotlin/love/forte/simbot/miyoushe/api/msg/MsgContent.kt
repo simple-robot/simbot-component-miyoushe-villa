@@ -20,6 +20,7 @@ package love.forte.simbot.miyoushe.api.msg
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.miyoushe.api.msg.TextMsgContent.EntityContent.Style.Factory.STYLE_BOLD
+import love.forte.simbot.miyoushe.utils.serialization.ULongWriteStringSerializer
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
@@ -128,7 +129,10 @@ public data class TextMsgContent(
         @Serializable
         @SerialName(MentionedUser.TYPE)
         public data class MentionedUser(
-            @SerialName("user_id") @get:JvmName("getUserId") val userId: ULong
+            @SerialName("user_id")
+            @get:JvmName("getUserId")
+            @Serializable(ULongWriteStringSerializer::class)
+            val userId: ULong
         ) : EntityContent() {
             val userIdStrValue: String get() = userId.toString()
 
@@ -192,9 +196,11 @@ public data class TextMsgContent(
         public data class VillaRoomLink(
             @SerialName("villa_id")
             @get:JvmName("getVillaId")
+            @Serializable(ULongWriteStringSerializer::class)
             val villaId: ULong,
             @SerialName("room_id")
             @get:JvmName("getRoomId")
+            @Serializable(ULongWriteStringSerializer::class)
             val roomId: ULong,
         ) : EntityContent() {
             val villaIdStrValue: String get() = villaId.toString()
@@ -260,6 +266,7 @@ public data class TextMsgContent(
         @SerialName(MentionAll.TYPE)
         public data object MentionAll : EntityContent() {
             public const val TYPE: String = "mention_all"
+            public const val CONTENT: String = "@全体成员"
 
             /**
              * Factory for [Builder].

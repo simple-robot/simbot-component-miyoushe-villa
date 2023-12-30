@@ -30,8 +30,12 @@ import love.forte.simbot.miyoushe.api.msg.TextMsgContent
  * 更多文本样式消息。
  * 文本样式不会作为 [PlainText] 使用（因为其对应的 [text] 已经直接作为 [Text] 被追加了）
  *
+ * ### 发送
+ *
  * [VillaStyleText] 在作为用于发送的消息时，[text] **无效**，
  * 且 [offset] 与 [length] 会直接相对于当前解析过程中的正文信息。
+ * 因此，如果一定要使用 [VillaStyleText] 发送具有样式的文本，那么一定是要配合 [PlainText] 进行的。
+ *
  * 而当前解析过程中的文本信息除了 [PlainText] 以外，还可能由其他消息类型进行填充（例如 [VillaVillaRoomLink] 会填充房间名称信息），
  * 因此 [VillaStyleText] 作为发送用的消息（且不是直接使用 [VillaReceivedMessageContent] 原样发送时）需要仔细确认其参数是否正确。
  *
@@ -60,12 +64,14 @@ public data class VillaStyleText(
 
         /**
          * 构建一个**用于发送**的 [VillaStyleText]。
-         * 发送时 [text] 无效因此无需填写，默认为空字符串。
+         * 在作为多个消息元素的消息链发送时 [text] 无效，可选择默认为空字符串。
+         *
          *
          * @param fontStyle 参考 [TextMsgContent.EntityContent.Style.fontStyle]
          */
         @JvmStatic
-        public fun create(offset: Int, length: Int, fontStyle: String): VillaStyleText =
+        @JvmOverloads
+        public fun create(text: String = "", offset: Int, length: Int, fontStyle: String): VillaStyleText =
             VillaStyleText("", offset, length, TextMsgContent.EntityContent.Style(fontStyle))
     }
 }
