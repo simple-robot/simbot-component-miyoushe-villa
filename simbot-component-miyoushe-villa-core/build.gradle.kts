@@ -2,7 +2,7 @@ import love.forte.gradle.common.core.project.setup
 
 plugins {
     kotlin("jvm")
-//    `miyoushe-multiplatform-maven-publish`
+    `simbot-miyoushe-maven-publish`
     kotlin("plugin.serialization")
     `miyoushe-dokka-partial-configure`
     `simbot-miyoushe-suspend-transform`

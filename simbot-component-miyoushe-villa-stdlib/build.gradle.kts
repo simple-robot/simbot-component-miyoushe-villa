@@ -5,7 +5,7 @@ import love.forte.gradle.common.kotlin.multiplatform.applyTier3
 
 plugins {
     kotlin("multiplatform")
-//    `miyoushe-multiplatform-maven-publish`
+    `miyoushe-multiplatform-maven-publish`
     kotlin("plugin.serialization")
     `miyoushe-dokka-partial-configure`
     `simbot-miyoushe-suspend-transform`

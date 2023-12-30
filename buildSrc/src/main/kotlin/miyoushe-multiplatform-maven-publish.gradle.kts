@@ -57,15 +57,16 @@ multiplatformConfigPublishing {
     if (systemProp("SIMBOT_LOCAL").toBoolean()) {
         mainHost = null
     }
-//    else {
-//
-//        mainHostSupportedTargets = mainHost?.supports(hostManager) ?: emptySet()
-//    }
-
 }
 
 fun KonanTarget.supports(hostManager: HostManager): Set<String> {
     return hostManager.enabledByHost[this]?.mapTo(mutableSetOf()) { target -> target.name } ?: emptySet()
+}
+
+// TODO see https://github.com/gradle-nexus/publish-plugin/issues/208#issuecomment-1465029831
+val signingTasks: TaskCollection<Sign> = tasks.withType<Sign>()
+tasks.withType<PublishToMavenRepository>().configureEach {
+    mustRunAfter(signingTasks)
 }
 
 show()
