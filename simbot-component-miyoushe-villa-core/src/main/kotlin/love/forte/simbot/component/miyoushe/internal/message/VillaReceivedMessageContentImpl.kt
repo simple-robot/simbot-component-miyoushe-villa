@@ -129,7 +129,14 @@ private fun TextMsgContent.appendTo(builder: MessagesBuilder) {
         val entity0 = entity.entity
         if (entity0 is TextMsgContent.EntityContent.Style) {
             // 保留 lastIndex, 添加 style buf 然后跳过
-            styleElements.add(VillaStyleText(text.substring(entity.offset, entity.offset + entity.length), entity0))
+            styleElements.add(
+                VillaStyleText(
+                    text.substring(entity.offset, entity.offset + entity.length),
+                    entity.offset,
+                    entity.length,
+                    entity0
+                )
+            )
             continue
         }
 

@@ -345,6 +345,7 @@ private suspend fun Message.Element<*>.toMsgContents0(
     return emptyList()
 }
 
+@Suppress("unused")
 private class MultiMessagesBuilder(private val autoQuote: QuoteInfo?) {
     private val result = mutableListOf<Any>()
     var currentBuilder: MsgContentInfoBuilder<*, *>? = null
@@ -514,12 +515,15 @@ private suspend fun toMsgContents0(
             }
 
             is VillaStyleText -> {
-                // A 不支持在多个消息元素中使用。
-                bot.logger.warn(
-                    "`VillaStyleText` ({}) is not supported in multiple message elements. " +
-                            "If you wish to send complex message elements, consider using `love.forte.simbot.component.miyoushe.message.VillaSendMessage`",
-                    message
-                )
+                with(builder.textOrNew()) {
+                    content {
+                        entity {
+                            offset = message.offset
+                            length = message.length
+                            content = message.style
+                        }
+                    }
+                }
             }
 
             is VillaVillaRoomLink -> {
