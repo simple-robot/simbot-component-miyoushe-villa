@@ -41,9 +41,7 @@ tasks.create("updateWebsiteVersionJson") {
 
         websiteVersionJsonFile.writeText(
             """
-            {
-              "version": "$version"
-            }
+            {"version": "$version"}
         """.trimIndent()
         )
     }
