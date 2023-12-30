@@ -28,7 +28,7 @@ import love.forte.simbot.miyoushe.event.SendMessage
 
 
 /**
- * [SendMessage] 中的引用消息内容 [SendMessage.quoteMsg]
+ * [SendMessage] 事件中接收到的引用消息内容 [SendMessage.quoteMsg].
  *
  * @see QuoteMessage
  *

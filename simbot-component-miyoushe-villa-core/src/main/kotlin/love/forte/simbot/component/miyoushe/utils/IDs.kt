@@ -17,14 +17,12 @@
 
 package love.forte.simbot.component.miyoushe.utils
 
-import love.forte.simbot.ID
-import love.forte.simbot.IDException
-import love.forte.simbot.ULongID
-import love.forte.simbot.literal
+import love.forte.simbot.*
 
 
 public fun ID.toULong(): ULong = when (this) {
-    is ULongID -> this.number
+    is ULongID -> number
+    is UIntID -> number.toULong()
     else -> try {
         literal.toULong()
     } catch (nfe: NumberFormatException) {

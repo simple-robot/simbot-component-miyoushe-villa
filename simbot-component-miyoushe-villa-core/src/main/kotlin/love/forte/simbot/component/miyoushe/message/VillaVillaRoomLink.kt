@@ -20,6 +20,7 @@ package love.forte.simbot.component.miyoushe.message
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import love.forte.simbot.ID
+import love.forte.simbot.component.miyoushe.utils.toULong
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.doSafeCast
 import love.forte.simbot.miyoushe.api.msg.TextMsgContent
@@ -44,5 +45,9 @@ public data class VillaVillaRoomLink(val name: String, val link: TextMsgContent.
 
     public companion object Key : Message.Key<VillaVillaRoomLink> {
         override fun safeCast(value: Any): VillaVillaRoomLink? = doSafeCast(value)
+
+        @JvmStatic
+        public fun create(name: String, villaId: ID, roomId: ID): VillaVillaRoomLink =
+            VillaVillaRoomLink(name, TextMsgContent.EntityContent.VillaRoomLink(villaId.toULong(), roomId.toULong()))
     }
 }

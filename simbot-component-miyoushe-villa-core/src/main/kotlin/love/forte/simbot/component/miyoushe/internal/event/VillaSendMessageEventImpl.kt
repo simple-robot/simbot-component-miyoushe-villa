@@ -17,19 +17,21 @@
 
 package love.forte.simbot.component.miyoushe.internal.event
 
+import love.forte.simbot.InternalSimbotApi
 import love.forte.simbot.component.miyoushe.VillaMember
 import love.forte.simbot.component.miyoushe.VillaRoom
 import love.forte.simbot.component.miyoushe.event.VillaSendMessageEvent
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
 import love.forte.simbot.component.miyoushe.internal.message.VillaReceivedMessageContentImpl
-import love.forte.simbot.component.miyoushe.internal.message.VillaSendSingleMessageReceiptImpl
+import love.forte.simbot.component.miyoushe.internal.message.toReceipt
 import love.forte.simbot.component.miyoushe.message.VillaReceivedMessageContent
 import love.forte.simbot.component.miyoushe.message.VillaSendMessageReceipt
+import love.forte.simbot.component.miyoushe.message.sendTo
 import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.miyoushe.api.msg.MsgContentInfo
-import love.forte.simbot.miyoushe.api.msg.QuoteInfo
+import love.forte.simbot.miyoushe.api.msg.QuoteInfo.Companion.toQuoteInfo
 import love.forte.simbot.miyoushe.api.msg.SendMessageApi
 import love.forte.simbot.miyoushe.api.msg.TextMsgContent
 import love.forte.simbot.miyoushe.event.Event
@@ -55,27 +57,40 @@ internal class VillaSendMessageEventImpl(
         bot.roomInternal(roomId, villaIdStrValue)
     }
 
+    @OptIn(InternalSimbotApi::class)
     override suspend fun reply(message: Message): VillaSendMessageReceipt {
-        TODO("Not yet implemented")
+        val autoQuote = sourceEvent.toQuoteInfo()
+        val villaIdStr = sourceEventExtend.villaIdStrValue
+        val roomId = sourceEventExtend.roomId
+
+        return message.sendTo(bot, villaIdStr, roomId, autoQuote)
+            .toReceipt(bot, villaIdStr, roomId, null)
     }
 
+    @OptIn(InternalSimbotApi::class)
     override suspend fun reply(message: MessageContent): VillaSendMessageReceipt {
-        TODO("Not yet implemented")
+        val autoQuote = sourceEvent.toQuoteInfo()
+        val villaIdStr = sourceEventExtend.villaIdStrValue
+        val roomId = sourceEventExtend.roomId
+
+        return message.sendTo(bot, villaIdStr, roomId, autoQuote)
+            .toReceipt(bot, villaIdStr, roomId, null)
     }
 
     override suspend fun reply(text: String): VillaSendMessageReceipt {
+        val autoQuote = sourceEvent.toQuoteInfo()
+        val villaIdStr = sourceEventExtend.villaIdStrValue
+
         val roomId = sourceEventExtend.roomId
         val result = SendMessageApi.create(
             roomId = roomId,
             msgContent = MsgContentInfo(
-                TextMsgContent(text = text), quoteInfo = QuoteInfo(
-                    quotedMessageId = sourceEventExtend.msgUid,
-                    quotedMessageSendTime = sourceEventExtend.sendAt
-                )
+                content = TextMsgContent(text = text),
+                quoteInfo = autoQuote
             ),
             decoder = bot.source.apiDecoder
-        ).requestDataBy(bot, sourceEventExtend.villaIdStrValue)
+        ).requestDataBy(bot, villaIdStr)
 
-        return VillaSendSingleMessageReceiptImpl(bot, sourceEventExtend.villaIdStrValue, roomId, null, result)
+        return result.toReceipt(bot, villaIdStr, roomId, null)
     }
 }

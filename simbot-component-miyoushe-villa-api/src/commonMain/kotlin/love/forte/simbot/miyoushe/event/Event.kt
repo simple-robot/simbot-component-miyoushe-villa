@@ -366,10 +366,6 @@ public data class Robot(
 }
 
 
-/*
-
- */
-
 /**
  * 引用消息内容
  *

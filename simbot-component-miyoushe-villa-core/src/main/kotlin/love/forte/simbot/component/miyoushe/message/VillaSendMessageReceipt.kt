@@ -51,4 +51,9 @@ public abstract class VillaSendSingleMessageReceipt : VillaSendMessageReceipt, S
  *
  * @author ForteScarlet
  */
-public abstract class VillaSendAggregatedMessageReceipt : VillaSendMessageReceipt, AggregatedMessageReceipt()
+public abstract class VillaSendAggregatedMessageReceipt : VillaSendMessageReceipt, AggregatedMessageReceipt() {
+    abstract override fun get(index: Int): VillaSendSingleMessageReceipt
+    abstract override fun iterator(): Iterator<VillaSendSingleMessageReceipt>
+    override val isSuccess: Boolean
+        get() = super.isSuccess
+}

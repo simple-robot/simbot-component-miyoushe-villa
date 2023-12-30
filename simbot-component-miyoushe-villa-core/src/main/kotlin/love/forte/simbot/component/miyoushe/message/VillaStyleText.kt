@@ -32,7 +32,7 @@ import love.forte.simbot.miyoushe.api.msg.TextMsgContent
  *
  * [VillaStyleText] 仅在接收消息时、作为单独的消息元素（而不是在消息链中）或使用 [VillaReceivedMessageContent] 原样发送时有效。
  * 如果使用自定义的拼接消息链则 [VillaStyleText] 会被忽略。
- * 因为目前仅凭单纯的消息链暂时无法解决多个 style 附加的问题。
+ * 因为目前仅凭一个单独的 [VillaStyleText] 消息无法解决多个 style 对重叠文本的附加问题。
  *
  * 如果希望发送复杂的消息结构体，参考使用 [VillaSendMessage]。
  *

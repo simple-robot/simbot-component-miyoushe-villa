@@ -18,6 +18,8 @@
 package love.forte.simbot.component.miyoushe.internal.message
 
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
+import love.forte.simbot.component.miyoushe.message.VillaSendAggregatedMessageReceipt
+import love.forte.simbot.component.miyoushe.message.VillaSendMessageReceipt
 import love.forte.simbot.component.miyoushe.message.VillaSendSingleMessageReceipt
 import love.forte.simbot.component.miyoushe.requestResultBy
 import love.forte.simbot.miyoushe.api.msg.RecallMessageApi
@@ -35,4 +37,27 @@ internal class VillaSendSingleMessageReceiptImpl(
         val result = RecallMessageApi.create(result.botMsgId, roomId, msgTime).requestResultBy(bot, villaId)
         return result.isSuccess
     }
+}
+
+
+internal class VillaSendAggregatedMessageReceiptImpl(
+    private val bot: VillaBotImpl,
+    private val villaId: String,
+    private val roomId: ULong,
+    private val msgTime: Long?,
+    private val receipts: List<VillaSendSingleMessageReceiptImpl>
+) : VillaSendAggregatedMessageReceipt() {
+    override val size: Int get() = receipts.size
+    override fun get(index: Int): VillaSendSingleMessageReceipt = receipts[index]
+    override fun iterator(): Iterator<VillaSendSingleMessageReceipt> = receipts.iterator()
+}
+
+internal fun SendMessageResult.toReceipt(bot: VillaBotImpl, villaId: String, roomId: ULong, msgTime: Long?): VillaSendSingleMessageReceiptImpl =
+    VillaSendSingleMessageReceiptImpl(bot, villaId, roomId, msgTime, this)
+
+internal fun List<SendMessageResult>.toReceipt(bot: VillaBotImpl, villaId: String, roomId: ULong, msgTime: Long?): VillaSendMessageReceipt {
+    check(isNotEmpty()) { "List of `SendMessageResult` is empty" }
+    if (size == 1) return first().toReceipt(bot, villaId, roomId, msgTime)
+
+    return VillaSendAggregatedMessageReceiptImpl(bot, villaId, roomId, msgTime, map { it.toReceipt(bot, villaId, roomId, msgTime) })
 }

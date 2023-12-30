@@ -19,8 +19,11 @@ package love.forte.simbot.miyoushe.api.msg
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import love.forte.simbot.miyoushe.api.msg.TextMsgContent.EntityContent.Style.Companion.STYLE_BOLD
+import love.forte.simbot.miyoushe.api.msg.TextMsgContent.EntityContent.Style.Factory.STYLE_BOLD
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
 
 /**
@@ -32,6 +35,8 @@ public data class TextMsgContent(
     val entities: List<Entity> = emptyList()
 ) : MsgContent() {
     public companion object {
+        @JvmField
+        public val EMPTY: TextMsgContent = TextMsgContent(text = "", entities = emptyList())
         public const val OBJECT_NAME: String = "MHY:Text"
     }
 
@@ -56,9 +61,7 @@ public data class TextMsgContent(
      */
     @Serializable
     public data class Entity(
-        @get:JvmName("getOffset")
         val offset: Int,
-        @get:JvmName("getLength")
         val length: Int,
         val entity: EntityContent
     )
@@ -88,8 +91,21 @@ public data class TextMsgContent(
         @Serializable
         @SerialName(MentionedRobot.TYPE)
         public data class MentionedRobot(@SerialName("bot_id") val botId: String) : EntityContent() {
-            public companion object {
+            public companion object Factory : EntityContentBuilderFactory<Builder> {
                 public const val TYPE: String = "mentioned_robot"
+
+                @JvmStatic
+                override fun builder(): Builder = Builder()
+            }
+
+            /**
+             * Builder for [MentionedRobot].
+             */
+            public class Builder : EntityContentBuilder {
+                public var botId: String? = null
+
+                override fun build(): MentionedRobot =
+                    MentionedRobot(botId = requireNotNull(botId) { "Required 'botId' was null" })
             }
         }
 
@@ -116,8 +132,39 @@ public data class TextMsgContent(
         ) : EntityContent() {
             val userIdStrValue: String get() = userId.toString()
 
-            public companion object {
+            public companion object Factory : EntityContentBuilderFactory<Builder> {
                 public const val TYPE: String = "mentioned_user"
+
+                @JvmStatic
+                override fun builder(): Builder = Builder()
+            }
+
+            /**
+             * Builder for [MentionedUser].
+             */
+            public class Builder : EntityContentBuilder {
+                @JvmSynthetic
+                public var userId: ULong? = null
+
+                /**
+                 * @throws NumberFormatException
+                 */
+                public var userIdStrValue: String?
+                    get() = userId?.toString()
+                    set(value) {
+                        userId = value?.toULong()
+                    }
+
+                @JvmName("setUserId")
+                public fun setUserId(userId: ULong) {
+                    this.userId = userId
+                }
+
+                @get:JvmName("getUserId")
+                public val userIdAsLong: Long? get() = userId?.toLong()
+
+                override fun build(): MentionedUser =
+                    MentionedUser(requireNotNull(userId) { "Required 'userId' was null" })
             }
         }
 
@@ -153,8 +200,56 @@ public data class TextMsgContent(
             val villaIdStrValue: String get() = villaId.toString()
             val roomIdStrValue: String get() = roomId.toString()
 
-            public companion object {
+            public companion object Factory : EntityContentBuilderFactory<Builder> {
                 public const val TYPE: String = "villa_room_link"
+
+                @JvmStatic
+                override fun builder(): Builder = Builder()
+            }
+
+            /**
+             * Builder for [VillaRoomLink].
+             */
+            public class Builder : EntityContentBuilder {
+                @JvmSynthetic
+                public var villaId: ULong? = null
+
+                @JvmSynthetic
+                public var roomId: ULong? = null
+
+                public var villaIdStrValue: String?
+                    get() = villaId?.toString()
+                    set(value) {
+                        villaId = value?.toULong()
+                    }
+
+                public var roomIdStrValue: String?
+                    get() = roomId?.toString()
+                    set(value) {
+                        roomId = value?.toULong()
+                    }
+
+                @JvmName("setVillaId")
+                public fun setVillaId(villaId: ULong) {
+                    this.villaId = villaId
+                }
+
+                @JvmName("setRoomId")
+                public fun setRoomId(roomId: ULong) {
+                    this.roomId = roomId
+                }
+
+                @get:JvmName("getVillaId")
+                public val villaIdAsLong: Long? get() = villaId?.toLong()
+
+                @get:JvmName("getRoomId")
+                public val roomIdAsLong: Long? get() = roomId?.toLong()
+
+                override fun build(): VillaRoomLink =
+                    VillaRoomLink(
+                        villaId = requireNotNull(villaId) { "Required 'villaId' was null" },
+                        roomId = requireNotNull(roomId) { "Required 'roomId' was null" },
+                    )
             }
         }
 
@@ -165,6 +260,24 @@ public data class TextMsgContent(
         @SerialName(MentionAll.TYPE)
         public data object MentionAll : EntityContent() {
             public const val TYPE: String = "mention_all"
+
+            /**
+             * Factory for [Builder].
+             */
+            @JvmField
+            public val Factory: EntityContentBuilderFactory<Builder> = object : EntityContentBuilderFactory<Builder> {
+                override fun builder(): Builder = Builder
+            }
+
+            @JvmStatic
+            public fun builder(): Builder = Factory.builder()
+
+            /**
+             * Builder for [MentionAll]
+             */
+            public object Builder : EntityContentBuilder {
+                override fun build(): MentionAll = MentionAll
+            }
         }
 
         /**
@@ -181,8 +294,24 @@ public data class TextMsgContent(
             @SerialName("requires_bot_access_token")
             val requiresBotAccessToken: Boolean = false
         ) : EntityContent() {
-            public companion object {
+            public companion object Factory : EntityContentBuilderFactory<Builder> {
                 public const val TYPE: String = "link"
+
+                @JvmStatic
+                override fun builder(): Builder = Builder()
+            }
+
+            /**
+             * Builder for [Link].
+             */
+            public class Builder : EntityContentBuilder {
+                public var url: String? = null
+                public var requiresBotAccessToken: Boolean = false
+
+                override fun build(): Link = Link(
+                    url = requireNotNull(url) { "Required 'url' was null" },
+                    requiresBotAccessToken = requiresBotAccessToken
+                )
             }
         }
 
@@ -201,7 +330,7 @@ public data class TextMsgContent(
         @Serializable
         @SerialName(Style.TYPE)
         public data class Style(@SerialName("font_style") val fontStyle: String) : EntityContent() {
-            public companion object {
+            public companion object Factory : EntityContentBuilderFactory<Builder> {
                 public const val TYPE: String = "style"
 
                 /** 加粗 */
@@ -215,6 +344,35 @@ public data class TextMsgContent(
 
                 /** 分割线 */
                 public const val STYLE_UNDERLINE: String = "underline"
+
+                @JvmStatic
+                override fun builder(): Builder = Builder()
+            }
+
+            /**
+             * Builder for [Style]
+             */
+            public class Builder : EntityContentBuilder {
+                public var fontStyle: String? = null
+
+                public fun bold() {
+                    fontStyle = STYLE_BOLD
+                }
+
+                public fun italic() {
+                    fontStyle = STYLE_ITALIC
+                }
+
+                public fun strikethrough() {
+                    fontStyle = STYLE_STRIKETHROUGH
+                }
+
+                public fun underline() {
+                    fontStyle = STYLE_UNDERLINE
+                }
+
+                override fun build(): Style =
+                    Style(requireNotNull(fontStyle) { "Required 'fontStyle' was null" })
             }
         }
     }
@@ -227,13 +385,123 @@ public fun TextMsgContent.Entity.substring(text: String): String = text.substrin
  * Builder for [TextMsgContent]
  */
 public class TextMsgContentBuilder : MsgContent.Builder<TextMsgContent> {
+    public var textBuilder: StringBuilder = StringBuilder()
 
+    private var _lastText: String? = null
+    private val lastText: String
+        get() = _lastText ?: textBuilder.toString().also { _lastText = it }
+
+    /**
+     * 设置属性 `text`。实际上是对 [textBuilder] 的操作。
+     * @see TextMsgContent.text
+     */
+    public var text: String
+        get() = lastText
+        set(value) {
+            textBuilder = StringBuilder(value)
+            _lastText = value
+        }
+
+    public fun appendText(value: String?) {
+        textBuilder.append(value)
+        _lastText = null
+    }
+
+    /**
+     * @see TextMsgContent.entities
+     */
+    public var entities: MutableList<TextMsgContent.Entity> = mutableListOf()
+
+    /**
+     * 添加一个 [entity] 到 [entities] 中。
+     */
+    public fun entity(entity: TextMsgContent.Entity) {
+        entities.add(entity)
+    }
 
     override fun build(): TextMsgContent {
-        TODO("Not yet implemented")
+        return TextMsgContent(textBuilder.toString(), entities.toList())
     }
 }
 
+public inline fun buildTextMsgContent(block: TextMsgContentBuilder.() -> Unit): TextMsgContent =
+    TextMsgContentBuilder().also(block).build()
+
+
+public inline fun TextMsgContentBuilder.entity(block: EntityBuilder.() -> Unit) {
+    entity(EntityBuilder().also(block).build())
+}
+
+/**
+ * Builder for [TextMsgContent.Entity]
+ */
+public class EntityBuilder {
+    public var offset: Int? = null
+    public var length: Int? = null
+    public var content: TextMsgContent.EntityContent? = null
+
+    public fun build(): TextMsgContent.Entity {
+        return TextMsgContent.Entity(
+            offset = requireNotNull(offset) { "Required 'offset' was null" },
+            length = requireNotNull(length) { "Required 'length' was null" },
+            entity = requireNotNull(content) { "Required 'content' was null" }
+        )
+    }
+}
+
+/**
+ *
+ * e.g.
+ * ```kotlin
+ * buildTextMsgContent {
+ *     text = ""
+ *     entity {
+ *         offset = 2
+ *         length = 1
+ *         content(TextMsgContent.EntityContent.Link) {
+ *             url = "x"
+ *         }
+ *     }
+ *
+ *     entity {
+ *         offset = 3
+ *         length = 2
+ *         content(TextMsgContent.EntityContent.MentionAll.Factory) {
+ *             // nothing.
+ *         }
+ *     }
+ *
+ *     entity {
+ *         offset = 5
+ *         length = 10
+ *         content(TextMsgContent.EntityContent.Style) {
+ *             bold()
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ */
+public inline fun <B : EntityContentBuilder> EntityBuilder.content(
+    factory: EntityContentBuilderFactory<B>,
+    block: B.() -> Unit
+) {
+    content = factory.builder().also(block).build()
+}
+
+/**
+ * Builder for [TextMsgContent.EntityContent]
+ */
+public interface EntityContentBuilder {
+    public fun build(): TextMsgContent.EntityContent
+}
+
+/**
+ * Factory for [EntityContentBuilder]
+ */
+public interface EntityContentBuilderFactory<B : EntityContentBuilder> {
+    public fun builder(): B
+}
 
 /**
  * 图片消息
@@ -290,11 +558,14 @@ public class ImgMsgContentBuilder : MsgContent.Builder<ImgMsgContent> {
 
     override fun build(): ImgMsgContent =
         ImgMsgContent(
-            url = url ?: error("Required 'url' is null"),
+            url = requireNotNull(url) { "Required 'url' was null" },
             size,
             fileSize
         )
 }
+
+public inline fun buildImgMsgContent(block: ImgMsgContentBuilder.() -> Unit): ImgMsgContent =
+    ImgMsgContentBuilder().also(block).build()
 
 
 /**
@@ -317,6 +588,9 @@ public class PostMsgContentBuilder : MsgContent.Builder<PostMsgContent> {
 
     override fun build(): PostMsgContent =
         PostMsgContent(
-            postId = postId ?: error("Required 'postId' is null")
+            postId = requireNotNull(postId) { "Required 'postId' was null" }
         )
 }
+
+public inline fun buildPostMsgContent(block: PostMsgContentBuilder.() -> Unit): PostMsgContent =
+    PostMsgContentBuilder().also(block).build()

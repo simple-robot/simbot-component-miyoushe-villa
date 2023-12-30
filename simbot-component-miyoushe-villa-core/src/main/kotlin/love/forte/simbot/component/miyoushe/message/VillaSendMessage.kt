@@ -32,11 +32,15 @@ import love.forte.simbot.miyoushe.api.msg.serialize
 
 /**
  * 一个仅用于发送的、直接提供一个 [SendMessageApi] 的消息元素。
+ * [VillaSendMessage] 适合用于希望发送复杂的大别野消息时使用，
+ * 例如希望使用叠加的 Style 消息。
+ *
+ * [VillaSendMessage] 目前无法支持在使用 `reply` 时自动附加消息引用效果。
  *
  * @author ForteScarlet
  */
 @Serializable
-@SerialName("villa.msg_content_info")
+@SerialName("villa.send_message")
 public data class VillaSendMessage(val objectName: String, val msgContent: String) :
     VillaMessageElement<VillaSendMessage>() {
 

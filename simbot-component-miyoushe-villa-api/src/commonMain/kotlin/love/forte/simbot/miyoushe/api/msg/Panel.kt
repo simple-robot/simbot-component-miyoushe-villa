@@ -259,9 +259,9 @@ public data class SimpleComponent(
         override var extra: String? = null
 
         override fun build(): SimpleComponent = SimpleComponent(
-            id = id ?: error("Required 'id' is null"),
-            text = text ?: error("Required 'text' is null"),
-            type = type ?: error("Required 'type' is null"),
+            id = id ?: error("Required 'id' was null"),
+            text = text ?: error("Required 'text' was null"),
+            type = type ?: error("Required 'type' was null"),
             needCallback = needCallback ?: false,
             extra = extra,
         )
@@ -352,11 +352,11 @@ public data class ButtonComponent(
 
         override fun build(): ButtonComponent {
             return ButtonComponent(
-                id = id ?: error("Required 'id' is null"),
-                text = text ?: error("Required 'text' is null"),
+                id = id ?: error("Required 'id' was null"),
+                text = text ?: error("Required 'text' was null"),
                 needCallback = needCallback ?: false,
                 extra = extra,
-                cType = cType ?: error("Required 'cType' is null"),
+                cType = cType ?: error("Required 'cType' was null"),
                 input = input,
                 link = link,
                 needToken = needToken,

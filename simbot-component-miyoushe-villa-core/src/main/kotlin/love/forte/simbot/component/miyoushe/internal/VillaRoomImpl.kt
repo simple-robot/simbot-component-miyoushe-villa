@@ -19,12 +19,14 @@ package love.forte.simbot.component.miyoushe.internal
 
 import love.forte.simbot.Api4J
 import love.forte.simbot.ID
+import love.forte.simbot.InternalSimbotApi
 import love.forte.simbot.component.miyoushe.VillaGuild
 import love.forte.simbot.component.miyoushe.VillaRoom
 import love.forte.simbot.component.miyoushe.VillaRoomGroup
 import love.forte.simbot.component.miyoushe.internal.bot.VillaBotImpl
-import love.forte.simbot.component.miyoushe.internal.message.VillaSendSingleMessageReceiptImpl
+import love.forte.simbot.component.miyoushe.internal.message.toReceipt
 import love.forte.simbot.component.miyoushe.message.VillaSendMessageReceipt
+import love.forte.simbot.component.miyoushe.message.sendTo
 import love.forte.simbot.component.miyoushe.requestDataBy
 import love.forte.simbot.definition.GuildMember
 import love.forte.simbot.definition.Role
@@ -72,17 +74,28 @@ internal class VillaRoomImpl(
             guild().members.collect { emit(it) }
         }
 
+    @OptIn(InternalSimbotApi::class)
     override suspend fun send(message: Message): VillaSendMessageReceipt {
-        TODO("Not yet implemented")
+        val roomId = room.roomId
+
+        return message.sendTo(bot, villaId, roomId, null)
+            .toReceipt(bot, villaId, roomId, null)
     }
 
+    @OptIn(InternalSimbotApi::class)
     override suspend fun send(message: MessageContent): VillaSendMessageReceipt {
-        TODO("Not yet implemented")
+        val roomId = room.roomId
+
+        return message.sendTo(bot, villaId, roomId, null)
+            .toReceipt(bot, villaId, roomId, null)
     }
 
     override suspend fun send(text: String): VillaSendMessageReceipt {
+        val roomId = room.roomId
+
         val result =
-            SendMessageApi.create(room.roomId, MsgContentInfo(TextMsgContent(text = text))).requestDataBy(bot, villaId)
-        return VillaSendSingleMessageReceiptImpl(bot, villaId, room.roomId, null, result)
+            SendMessageApi.create(roomId, MsgContentInfo(TextMsgContent(text = text))).requestDataBy(bot, villaId)
+
+        return result.toReceipt(bot, villaId, roomId, null)
     }
 }

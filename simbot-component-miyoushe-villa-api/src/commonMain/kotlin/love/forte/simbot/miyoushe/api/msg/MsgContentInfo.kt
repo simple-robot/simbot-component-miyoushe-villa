@@ -25,6 +25,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.StringFormat
 import love.forte.simbot.ExperimentalSimbotApi
+import love.forte.simbot.miyoushe.event.Event
+import love.forte.simbot.miyoushe.event.QuoteMessage
+import love.forte.simbot.miyoushe.event.SendMessage
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
@@ -77,16 +80,28 @@ public inline fun buildPostMsgContentInfo(block: MsgContentInfoBuilder<PostMsgCo
 /**
  * Builder for [MsgContentInfo].
  */
-public class MsgContentInfoBuilder<B : MsgContent.Builder<C>, C : MsgContent>(public val builder: B) {
+public class MsgContentInfoBuilder<B : MsgContent.Builder<C>, C : MsgContent>(
+    public val builder: B,
+    builderUsed: Boolean = false
+) {
     public var mentionedInfo: MentionedInfo? = null //  = MentionedInfo.builder()
     public var quoteInfo: QuoteInfo? = null //  = QuoteInfo.builder()
     public var panel: Panel? = null //  = Panel.Builder()
+
+    public var isBuilderUsed: Boolean = builderUsed
+        private set
+
+    @PublishedApi
+    internal fun builderUsed() {
+        isBuilderUsed = true
+    }
 
     /**
      * in [builder].
      */
     public inline fun content(block: B.() -> Unit) {
         builder.also(block)
+        builderUsed()
     }
 
     public inline fun mentionedInfo(block: MentionedInfo.Builder.() -> Unit) {
@@ -233,7 +248,7 @@ public data class MentionedInfo(
             }
 
             return MentionedInfo(
-                type = type ?: error("Required 'type' is null"),
+                type = type ?: error("Required 'type' was null"),
                 userIdList = userIdList.toList()
             )
         }
@@ -263,6 +278,35 @@ public data class QuoteInfo(
     public companion object {
         @JvmStatic
         public fun builder(): Builder = Builder()
+
+        /**
+         * 将 [QuoteMessage] 转化为 [QuoteInfo].
+         */
+        @JvmName("of")
+        @JvmStatic
+        public fun QuoteMessage.toQuoteInfo(): QuoteInfo =
+            QuoteInfo(
+                quotedMessageId = msgUid,
+                quotedMessageSendTime = sendAt,
+            )
+
+        /**
+         * 将 [SendMessage] 转化为 [QuoteInfo].
+         */
+        @JvmName("of")
+        @JvmStatic
+        public fun SendMessage.toQuoteInfo(eventCreatedAt: Long): QuoteInfo =
+            QuoteInfo(
+                quotedMessageId = msgUid,
+                quotedMessageSendTime = eventCreatedAt,
+            )
+
+        /**
+         * 将被 [Event] 包裹 [SendMessage] 转化为 [QuoteInfo].
+         */
+        @JvmName("of")
+        @JvmStatic
+        public fun Event<SendMessage>.toQuoteInfo(): QuoteInfo = extendData.toQuoteInfo(createdAt)
     }
 
     /**
@@ -276,8 +320,8 @@ public data class QuoteInfo(
         public var originalMessageSendTime: Long? = null
 
         public fun build(): QuoteInfo {
-            val quotedMessageId = quotedMessageId ?: error("Required 'quotedMessageId' is null")
-            val quotedMessageSendTime = quotedMessageSendTime ?: error("Required 'quotedMessageSendTime' is null")
+            val quotedMessageId = quotedMessageId ?: error("Required 'quotedMessageId' was null")
+            val quotedMessageSendTime = quotedMessageSendTime ?: error("Required 'quotedMessageSendTime' was null")
 
             return QuoteInfo(
                 quotedMessageId = quotedMessageId,

@@ -220,7 +220,7 @@ public data class SendMessage(
      */
     @ProtoNumber(4)
     @SerialName("object_name")
-    val objectName: Int = 0, // TODO enum?
+    val objectName: Int = OBJECT_NAME_UNKNOWN,
     /**
      * 房间 id
      */
@@ -269,6 +269,7 @@ public data class SendMessage(
         private const val TYPE: Int = 2
         internal const val NAME: String = "SendMessage"
 
+        public const val OBJECT_NAME_UNKNOWN: Int = 0
         public const val OBJECT_NAME_TEXT: Int = 1
         public const val OBJECT_NAME_POST: Int = 2
 

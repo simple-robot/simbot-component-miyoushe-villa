@@ -155,11 +155,11 @@ public class AuditApi private constructor(override val body: Body) : MiyousheVil
          */
         public fun build(): AuditApi = AuditApi(
             Body(
-                auditContent = auditContent ?: throw IllegalArgumentException("required 'auditContent' is null"),
+                auditContent = auditContent ?: throw IllegalArgumentException("required 'auditContent' was null"),
                 passThrough = passThrough,
                 roomId = roomId,
-                uid = uid ?: throw IllegalArgumentException("required 'uid' is null"),
-                contentType = contentType ?: throw IllegalArgumentException("required 'uid' is null"),
+                uid = uid ?: throw IllegalArgumentException("required 'uid' was null"),
+                contentType = contentType ?: throw IllegalArgumentException("required 'uid' was null"),
             )
         )
     }
