@@ -45,8 +45,8 @@ fun Project.generateChangelog(tag: String) {
         file.writeText("""
             > 对应核心版本: [**v$coreVersion**](https://github.com/simple-robot/simpler-robot/releases/tag/v$coreVersion)
                 
-            > **Warning**
-            > 目前版本尚处于 **`ALPHA`** 阶段，代表仍然可能存在大量[已知问题](https://github.com/simple-robot/simbot-component-miyoushe/issues)或未知问题，
+            > [!warning]
+            > 目前版本尚处于 **早期** 阶段，代表仍然可能存在大量[已知问题](https://github.com/simple-robot/simbot-component-miyoushe/issues)或未知问题，
             以及未完善的内容和落后于官方更新的内容。**
             
             我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-miyoushe/issues)或[协助](https://github.com/simple-robot/simbot-component-miyoushe/pulls)，
