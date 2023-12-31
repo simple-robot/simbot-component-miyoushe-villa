@@ -19,6 +19,7 @@ package love.forte.simbot.component.miyoushe.event
 
 import love.forte.simbot.ID
 import love.forte.simbot.JST
+import love.forte.simbot.JSTP
 import love.forte.simbot.component.miyoushe.VillaMember
 import love.forte.simbot.component.miyoushe.VillaRoom
 import love.forte.simbot.component.miyoushe.message.VillaReceivedMessageContent
@@ -95,40 +96,43 @@ public abstract class VillaSendMessageEvent : VillaEvent<SendMessage>(), Channel
     /**
      * 消息的发送者
      */
-    @JST
+    @JSTP
     abstract override suspend fun author(): VillaMember
 
     /**
      * 回复此消息。会自动附加针对当前消息的引用回复
      */
+    @JST
     abstract override suspend fun reply(message: Message): VillaSendMessageReceipt
 
     /**
      * 回复此消息。会自动附加针对当前消息的引用回复
      */
+    @JST
     abstract override suspend fun reply(message: MessageContent): VillaSendMessageReceipt
 
     /**
      * 回复此消息。会自动附加针对当前消息的引用回复
      */
+    @JST
     abstract override suspend fun reply(text: String): VillaSendMessageReceipt
 
     /**
      * 事件发生的子频道（大别野房间）
      */
-    @JST
+    @JSTP
     abstract override suspend fun channel(): VillaRoom
 
     /**
      * 事件发生的子频道（大别野房间）
      */
-    @JST
+    @JSTP
     override suspend fun source(): VillaRoom = channel()
 
     /**
      * 事件发生的子频道（大别野房间）
      */
-    @JST
+    @JSTP
     override suspend fun organization(): VillaRoom = channel()
 
     override val key: Event.Key<VillaSendMessageEvent>

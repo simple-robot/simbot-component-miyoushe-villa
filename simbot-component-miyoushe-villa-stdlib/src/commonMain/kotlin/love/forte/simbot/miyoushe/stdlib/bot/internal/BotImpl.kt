@@ -59,6 +59,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.random.nextULong
+import kotlinx.coroutines.CancellationException as CreateCancellationException
 
 
 /**
@@ -224,7 +225,7 @@ internal class BotImpl(
 
     override fun cancel(reason: Throwable?) {
         if (reason != null) {
-            job.cancel(CancellationException(reason.message, reason))
+            job.cancel(CreateCancellationException(reason.message, reason))
         } else {
             job.cancel()
         }
@@ -394,7 +395,7 @@ internal class BotImpl(
                 // TODO Not Active? try reconnect?
                 logger.error("Bot session is not active. Cancel the bot {}", bot)
                 val reason = session.closeReason.await()
-                bot.cancel(CancellationException("reason: $reason", null))
+                bot.cancel(CreateCancellationException("reason: $reason", null))
                 // done.
                 return null
             }
@@ -463,7 +464,7 @@ internal class BotImpl(
                                 logoutReply,
                                 bot
                             )
-                            bot.cancel(CancellationException("PLogoutReply received: $logoutReply", null))
+                            bot.cancel(CreateCancellationException("PLogoutReply received: $logoutReply", null))
                             return null
                         } else {
                             bot.logger.error(
@@ -486,7 +487,7 @@ internal class BotImpl(
                             BizType.SHUTDOWN,
                             session
                         )
-                        session.cancel(CancellationException(BizType.SHUTDOWN.toString(), null))
+                        session.cancel(CreateCancellationException(BizType.SHUTDOWN.toString(), null))
                         return GetWebsocketInfo(bot)
                     }
                     // KICK_OFF
@@ -497,8 +498,8 @@ internal class BotImpl(
                             session,
                             bot
                         )
-                        session.cancel(CancellationException(BizType.KICK_OFF.toString(), null))
-                        bot.cancel(CancellationException(BizType.KICK_OFF.toString(), null))
+                        session.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
+                        bot.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
                         return null
                     }
 

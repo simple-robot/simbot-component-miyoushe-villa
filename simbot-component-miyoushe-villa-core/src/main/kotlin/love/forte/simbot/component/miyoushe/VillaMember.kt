@@ -112,7 +112,7 @@ public interface VillaMember : GuildMember, DeleteSupport {
         throw UnsupportedActionException("VillaMember.send")
     }
 
-    @JST
+    @JvmSynthetic
     @Deprecated(MUTE_OPERATOR_UNSUPPORTED, ReplaceWith("false"))
     override suspend fun mute(duration: Duration): Boolean = false
 

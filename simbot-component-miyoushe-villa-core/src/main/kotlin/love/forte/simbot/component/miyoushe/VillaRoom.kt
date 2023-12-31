@@ -86,7 +86,7 @@ public interface VillaRoom : Channel {
     /**
      * 等同于 [VillaGuild.member]
      */
-    @JST
+    @JST(blockingBaseName = "getMember", blockingSuffix = "", asyncBaseName = "getMember")
     override suspend fun member(id: ID): VillaMember? = guild().member(id)
 
     /**

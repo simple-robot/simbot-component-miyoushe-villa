@@ -130,7 +130,7 @@ public abstract class VillaBot : Bot, GuildBot {
     override val guilds: Items<VillaGuild>
         get() = Items.emptyItems()
 
-    @JST
+    @JST(blockingBaseName = "getGuild", blockingSuffix = "", asyncBaseName = "getGuild")
     abstract override suspend fun guild(id: ID): VillaGuild?
 
     override fun toString(): String {
@@ -153,7 +153,7 @@ public abstract class VillaBot : Bot, GuildBot {
     override val groups: Items<Group> get() = Items.emptyItems()
 
     @Deprecated(GROUP_UNSUPPORTED_MESSAGE, ReplaceWith("null"))
-    @JST
+    @JST(blockingBaseName = "getGroup", blockingSuffix = "", asyncBaseName = "getGroup")
     override suspend fun group(id: ID): Group? = null
 
     /**
@@ -170,7 +170,7 @@ public abstract class VillaBot : Bot, GuildBot {
     override suspend fun contactCount(): Int = SocialRelationsContainer.COUNT_NOT_SUPPORTED
 
     @Deprecated(CONTACT_UNSUPPORTED_MESSAGE, ReplaceWith("null"))
-    @JST
+    @JST(blockingBaseName = "getContact", blockingSuffix = "", asyncBaseName = "getContact")
     override suspend fun contact(id: ID): Contact? = null
 
 
