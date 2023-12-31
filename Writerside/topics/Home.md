@@ -1,8 +1,8 @@
 # 前言&简介
 
-<tldr>
-    <p>文档当前目标版本: <a href="https://github.com/simple-robot/simbot-component-miyoushe-villa/releases/v%version%"><b>v%version%</b></a></p>
-</tldr>
+<note>
+<include from="snippets.md" element-id="doc-desc-version" />
+</note>
 
 欢迎来到 [<tooltip term="Simple Robot">Simple Robot</tooltip>](https://github.com/simple-robot/simpler-robot)
 （下文简称 <tooltip term="simbot">simbot</tooltip> ）

@@ -1,3 +1,3 @@
 # 使用核心库
 
-Start typing here...
+你可以先参考 [使用 Spring Boot](use-spring-boot.md)。

@@ -2,66 +2,31 @@
 switcher-label: JavaAPI风格
 ---
 
+<!--suppress XmlDeprecatedElement -->
 <var name="jb" value="阻塞"/>
 <var name="ja" value="异步"/>
 
 # 使用API
 
+
+<tldr>
+本章节介绍如何使用 API 模块来构建、请求一个米游社大别野的API。
+</tldr>
+
+<note>
+<include from="snippets.md" element-id="doc-desc-version" />
+</note>
+
 ## 安装
 
-<tabs group="Build">
-<tab title="Gradle Kotlin DSL">
+<include from="snippets.md" element-id="component-install">
+    <var name="name" value="api" />
+    <var name="maven-name-suffix" value="-jvm" />
+</include>
 
-```kotlin
-plugins {
-    // 或使用 kotlin("multiplatform")
-    // 但是不管是什么，你都需要 kotlin 插件来支持自动选择对应平台的依赖。
-    kotlin("jvm") version "%kt-version%"
-    // 其他一些插件, 随你喜欢
-    [[[java|https://docs.gradle.org/current/userguide/java_plugin.html#header]]] // 你依旧可以使用 Java 编写代码
-    [[[application|https://docs.gradle.org/current/userguide/application_plugin.html]]] // 使用 application 可以打包你的应用程序
-}
-// 其他配置...
-dependencies {
-    implementation 'love.forte.simbot.component:simbot-component-miyoushe-villa-api:%version%'
-    // 其他依赖..
-}
-```
+然后选择一个合适的 Ktor 引擎。
 
-</tab>
-<tab title="Gradle Groovy">
-
-```groovy
-plugins {
-    // 或使用 org.jetbrains.kotlin.multiplatform，
-    // 但是不管是什么，你都需要 kotlin 插件来支持自动选择对应平台的依赖。
-    id 'org.jetbrains.kotlin.jvm' version '%kt-version%'
-    // 其他一些插件, 随你喜欢
-    id '[[[java|https://docs.gradle.org/current/userguide/java_plugin.html#header]]]' // 你依旧可以使用 Java 编写代码
-    id '[[[application|https://docs.gradle.org/current/userguide/application_plugin.html]]]' // 使用 application 可以打包你的应用程序
-}
-// 其他配置...
-dependencies {
-    implementation 'love.forte.simbot.component:simbot-component-miyoushe-villa-api:%version%'
-    // 其他依赖..
-}
-
-```
-
-</tab>
-<tab title="Maven">
-
-```xml
-<dependency>
-    <groupId>love.forte.simbot.component</groupId>
-    <!-- Maven 需要添加 `-jvm` 后缀来选择使用 JVM 平台 -->
-    <artifactId>simbot-component-miyoushe-villa-api-jvm</artifactId>
-    <version>%version%</version>
-</dependency>
-```
-
-</tab>
-</tabs>
+<include from="snippets.md" element-id="engine-choose"></include>
 
 ## 使用
 
@@ -70,7 +35,7 @@ dependencies {
 
 API封装的命名与API具有一定关联，例如 [`获取大别野信息`](https://webstatic.mihoyo.com/vila/bot/doc/villa_api/get_villa.html)：
 
-<compare first-title="API" second-title="API封装">
+<compare first-title="API" second-title="API封装" style="top-bottom">
 
 ```HTTP
 GET /vila/api/bot/platform/getVilla
@@ -87,7 +52,7 @@ API的应用大差不差，因此此处仅使用部分类型作为示例，
 不会演示所有API。
 
 <tabs group="Code">
-<tab title="Kotlin">
+<tab title="Kotlin" group-key="Kotlin">
 
 ```kotlin
 // 准备 bot 的必要信息
@@ -119,7 +84,7 @@ val requestData: GetRoomResult = api.requestData(httpClient, token)
 ```
 
 </tab>
-<tab title="Java">
+<tab title="Java" group-key="Java">
 
 ```java
 // 准备 bot 的必要信息

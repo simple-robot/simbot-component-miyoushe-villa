@@ -24,17 +24,17 @@
         <!--    Add up to 2 topics that you want to promote. Use the "type" attribute to select an icon.    -->
         <spotlight>
 <!--            <a href="" type="account" summary="This overrides the card summary of the topic">Custom card title</a>-->
-            <a type="account" summary="欢迎来到米游社大别野组件应用&amp;开发手册！">欢迎！</a>
+            <a type="account" summary="欢迎来到米游社大别野组件应用&amp;开发手册！手册仍在完善中，期待您的反馈或贡献！">欢迎！</a>
             <a href="Home.md" type="search" summary="米游社大别野组件的概述以及各个模块的简介" />
         </spotlight>
 
         <!--    Add several topics that are most important for this section.    -->
         <primary>
             <title>快速开始</title>
-            <a href="use-api.md"/>
-            <a href="use-stdlib.md"/>
-            <a href="use-core.md"/>
-            <a href="use-spring-boot.md"/>
+            <a href="use-api.md" summary="使用 API模块 请求大别野API的说明与示例" />
+            <a href="use-stdlib.md" summary="使用 标准库模块 请求大别野API的说明与示例"/>
+            <a href="use-core.md" summary="使用 核心模块 请求大别野API的说明与示例"/>
+            <a href="use-spring-boot.md" summary="使用 核心模块 配合Spring Boot的说明与示例"/>
         </primary>
 
         <!--    Add several topics that are less important or are relevant only for advanced/experienced users.    -->
