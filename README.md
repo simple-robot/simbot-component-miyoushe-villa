@@ -9,6 +9,7 @@
 
 了解**simbot3**: [simbot3官网](https://simbot.forte.love)
 
+文档手册：https://simple-robot.github.io/simbot-component-miyoushe-villa/
 
 ## 风格预览
 
