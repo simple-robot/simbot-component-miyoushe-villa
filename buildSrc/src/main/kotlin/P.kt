@@ -46,17 +46,15 @@ object P : ProjectDetail() {
     override val homepage: String
         get() = HOMEPAGE
 
-    private val baseVersion = v(
-        "${simbotVersion.major}.${simbotVersion.minor}",
-        0, 0
-    )
+    private val baseVersion = v(0, 0, 1)
 
-    private val alphaSuffix = v("alpha", 1)
+//    private val alphaSuffix = v("alpha", 1)
+    // baseVersion - alphaSuffix
 
-    override val version: Version = baseVersion - alphaSuffix
+    override val version: Version = baseVersion // version(0, 0, 1)
 
     val snapshotVersion: Version =
-        baseVersion - (alphaSuffix - Version.SNAPSHOT)
+        baseVersion - Version.SNAPSHOT
 
     override val group: String get() = GROUP
     override val description: String get() = DESCRIPTION

@@ -3,46 +3,12 @@
 此为 [Simple Robot v3][simbot3] （以下简称为 `simbot3` ）
 下基于simbot标准API对 [米游社 API](https://webstatic.mihoyo.com/vila/bot/doc/) 的组件支持。
 
-> [!warning]
-> ⚠️ 仍在努力建设！欢迎协助、反馈或提出宝贵的建议意见。
-
 [simbot3]: https://github.com/simple-robot/simpler-robot
 
 ## 文档
 
 了解**simbot3**: [simbot3官网](https://simbot.forte.love)
 
-目标：
-
-- 全部API的定义于实现
-    - 所有定义中，文档描述的无符号长整型 (`uint64`) 将会被对应为字符串类型。（无法直接使用 `ULong`，因为 API 对此类型的字段必须要求字符串格式的JSON）。 
-- 基于 WS 的事件订阅
-- 实现 simbot3 API
-
-API 进度：
-
-- [x] WebSocket API
-- [x] 鉴权 API
-- [x] 大别野 API
-- [x] 用户 API
-- [x] 消息 API
-- [x] 房间 API
-- [x] 身份组 API
-- [x] 表态表情 API
-- [x] 审核 API
-- [x] 图片 API
-
-Stdlib 进度：
-
-- [x] 创建连接
-- [x] 处理事件
-
-core（simbot组件）进度：
-
-- [ ] 事件定义
-- [ ] Bot 定义
-- [ ] 事件处理
-- [ ] 消息元素与处理
 
 ## 风格预览
 

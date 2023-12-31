@@ -145,7 +145,14 @@ public interface Bot : CoroutineScope {
     /**
      * 关闭当前 bot 所处协程任务。也会使得 bot 与服务器的连接断开。
      */
-    public fun cancel(reason: Throwable? = null)
+    public fun cancel(reason: Throwable?)
+
+    /**
+     * 关闭当前 bot 所处协程任务。也会使得 bot 与服务器的连接断开。
+     */
+    public fun cancel() {
+        cancel(null)
+    }
 }
 
 /**

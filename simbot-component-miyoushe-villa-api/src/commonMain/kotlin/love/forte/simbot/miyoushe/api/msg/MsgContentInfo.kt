@@ -20,17 +20,14 @@
 
 package love.forte.simbot.miyoushe.api.msg
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.StringFormat
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import love.forte.simbot.ExperimentalSimbotApi
+import love.forte.simbot.miyoushe.MiyousheVilla
 import love.forte.simbot.miyoushe.event.Event
 import love.forte.simbot.miyoushe.event.QuoteMessage
 import love.forte.simbot.miyoushe.event.SendMessage
-import kotlin.jvm.JvmMultifileClass
-import kotlin.jvm.JvmName
-import kotlin.jvm.JvmStatic
+import kotlin.jvm.*
 
 /**
  * [消息 api](https://webstatic.mihoyo.com/vila/bot/doc/message_api/).
@@ -50,8 +47,11 @@ public data class MsgContentInfo<C : MsgContent>(
     val panel: Panel? = null
 ) {
     public companion object {
+        @JvmField
         public val TextSerializer: KSerializer<MsgContentInfo<TextMsgContent>> = serializer(TextMsgContent.serializer())
+        @JvmField
         public val PostSerializer: KSerializer<MsgContentInfo<PostMsgContent>> = serializer(PostMsgContent.serializer())
+        @JvmField
         public val ImgSerializer: KSerializer<MsgContentInfo<ImgMsgContent>> = serializer(ImgMsgContent.serializer())
 
         @JvmStatic
@@ -65,6 +65,17 @@ public data class MsgContentInfo<C : MsgContent>(
         @JvmStatic
         public fun postBuilder(): MsgContentInfoBuilder<PostMsgContentBuilder, PostMsgContent> =
             MsgContentInfoBuilder(MsgContent.postBuilder())
+
+        /**
+         * 解析一个 [content] 为目标类型的结果 [C]。
+         *
+         * @param deserializationStrategy 可以参考 [TextSerializer], [PostSerializer], [ImgSerializer]
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun <C : MsgContent> decode(json: Json = MiyousheVilla.DefaultJson, content: String, deserializationStrategy: DeserializationStrategy<MsgContentInfo<C>>): MsgContentInfo<C> {
+            return json.decodeFromString(deserializationStrategy, content)
+        }
     }
 }
 

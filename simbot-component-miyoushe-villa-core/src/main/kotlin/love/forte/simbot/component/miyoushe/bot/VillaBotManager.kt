@@ -23,6 +23,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import love.forte.simbot.*
 import love.forte.simbot.application.ApplicationConfiguration
+import love.forte.simbot.application.EventProviderAutoRegistrarFactory
 import love.forte.simbot.application.EventProviderFactory
 import love.forte.simbot.bot.Bot
 import love.forte.simbot.bot.BotManager
@@ -178,3 +179,10 @@ public inline fun VillaBotManager.register(
     block: VillaBotConfiguration.() -> Unit = {}
 ): VillaBot =
     register(love.forte.simbot.miyoushe.stdlib.bot.Bot.Ticket(botId, botSecret), VillaBotConfiguration().also(block))
+
+
+public class VillaBotManagerAutoRegistrarFactory :
+    EventProviderAutoRegistrarFactory<VillaBotManager, VillaBotManagerConfiguration> {
+    override val registrar: EventProviderFactory<VillaBotManager, VillaBotManagerConfiguration>
+        get() = VillaBotManager
+}

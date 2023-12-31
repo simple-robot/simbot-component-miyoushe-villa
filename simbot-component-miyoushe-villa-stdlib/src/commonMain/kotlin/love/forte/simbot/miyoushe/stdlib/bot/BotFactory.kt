@@ -19,6 +19,8 @@ package love.forte.simbot.miyoushe.stdlib.bot
 
 import love.forte.simbot.miyoushe.stdlib.bot.internal.BotImpl
 import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
 /**
  * 用于构建 [Bot] 的工厂。
@@ -29,6 +31,7 @@ public object BotFactory {
     /**
      * 提供所需票据信息与配置，构建一个 [Bot]。
      */
+    @JvmStatic
     @JvmOverloads
     public fun create(ticket: Bot.Ticket, configuration: BotConfiguration = BotConfiguration()): Bot {
         return BotImpl(ticket, configuration)
@@ -37,21 +40,24 @@ public object BotFactory {
     /**
      * 提供所需票据信息与配置，构建一个 [Bot]。
      */
+    @JvmStatic
     @JvmOverloads
     public fun create(botId: String, botSecret: String, configuration: BotConfiguration = BotConfiguration()): Bot {
         return BotImpl(Bot.Ticket(botId, botSecret), configuration)
     }
 
+    /**
+     * 提供所需票据信息与配置，构建一个 [Bot]。
+     */
+    @JvmSynthetic
+    public inline fun create(ticket: Bot.Ticket, configBlock: BotConfiguration.() -> Unit): Bot =
+        create(ticket, BotConfiguration().also(configBlock))
+
+    /**
+     * 提供所需票据信息与配置，构建一个 [Bot]。
+     */
+    @JvmSynthetic
+    public inline fun create(botId: String, botSecret: String, configBlock: BotConfiguration.() -> Unit): Bot =
+        create(botId, botSecret, BotConfiguration().also(configBlock))
 }
 
-/**
- * 提供所需票据信息与配置，构建一个 [Bot]。
- */
-public inline fun BotFactory.create(ticket: Bot.Ticket, configBlock: BotConfiguration.() -> Unit): Bot =
-    create(ticket, BotConfiguration().also(configBlock))
-
-/**
- * 提供所需票据信息与配置，构建一个 [Bot]。
- */
-public inline fun BotFactory.create(botId: String, botSecret: String, configBlock: BotConfiguration.() -> Unit): Bot =
-    create(botId, botSecret, BotConfiguration().also(configBlock))

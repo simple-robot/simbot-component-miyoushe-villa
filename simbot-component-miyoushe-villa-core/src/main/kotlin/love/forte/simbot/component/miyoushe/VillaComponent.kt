@@ -89,3 +89,12 @@ public class VillaComponent : Component {
 
 public class MiyousheVillaComponentConfiguration
 // nothing now.
+
+/**
+ * Auto configurer
+ */
+public class MiyousheVillaComponentAutoRegistrarFactory :
+    ComponentAutoRegistrarFactory<VillaComponent, MiyousheVillaComponentConfiguration> {
+    override val registrar: ComponentFactory<VillaComponent, MiyousheVillaComponentConfiguration>
+        get() = VillaComponent
+}
