@@ -35,20 +35,21 @@
             <a href="use-stdlib.md" summary="使用 标准库模块 请求大别野API的说明与示例"/>
             <a href="use-core.md" summary="使用 核心模块 请求大别野API的说明与示例"/>
             <a href="use-spring-boot.md" summary="使用 核心模块 配合Spring Boot的说明与示例"/>
+            <a href="bot-config.md" summary="Spring Boot 中的自动加载的配置文件介绍"/>
         </primary>
 
         <!--    Add several topics that are less important or are relevant only for advanced/experienced users.    -->
         <secondary>
-            <title>组件能力</title>
-            <a href=""/>
-            <a href=""/>
+            <title>基础内容</title>
+            <a href="API.md"/>
+            <a href="message-element.md"/>
 <!--            <a href="" summary="With a custom card summary"/>-->
 <!--            <a href="">Custom card title</a>-->
 <!--            <a href="" summary="With a custom card summary">Custom card title</a>-->
         </secondary>
 
         <!--    Optionally add additional cards and links to topics that are not in this section but may be relevant.    -->
-<!--        <misc>-->
+        <misc>
 <!--            <cards>-->
 <!--                <title>Other relevant topics as wide cards</title>-->
 <!--                <a href=""/>-->
@@ -84,30 +85,26 @@
 <!--                </group>-->
 <!--            </links>-->
 
-<!--            <links narrow="true">-->
-<!--                <group>-->
-<!--                    <title>More related topics</title>-->
-<!--                    <a href=""/>-->
-<!--                    <a href="" summary="With a custom card summary"/>-->
-<!--                    <a href="">Custom card title</a>-->
-<!--                    <a href="" summary="With a custom card summary">Custom card title</a>-->
-<!--                </group>-->
-<!--                <group>-->
-<!--                    <title>Three in a row</title>-->
-<!--                    <a href=""/>-->
-<!--                    <a href=""/>-->
-<!--                    <a href="">Custom card title</a>-->
-<!--                    <a href="">Custom card title</a>-->
-<!--                </group>-->
-<!--                <group>-->
-<!--                    <title>Each group is narrow</title>-->
-<!--                    <a href=""/>-->
-<!--                    <a href=""/>-->
-<!--                    <a href="">Custom card title</a>-->
-<!--                    <a href="">Custom card title</a>-->
-<!--                </group>-->
-<!--            </links>-->
-<!--        </misc>-->
+            <links narrow="true">
+                <a href="https://github.com/simple-robot">组织库</a>
+                <a href="https://github.com/simple-robot/simpler-robot">核心库仓库</a>
+                <group>
+                    <title>仓库</title>
+                    <a href="https://github.com/simple-robot">组织库</a>
+                    <a href="https://github.com/simple-robot/simpler-robot">核心库仓库</a>
+                </group>
+                <group>
+                    <title>手册&站点</title>
+                    <a href="https://simbot.forte.love/" summary="simbot的核心库应用手册">核心库手册</a>
+                    <a href="https://docs.simbot.forte.love/" summary="simbot相关内容的引导站点">文档引导站</a>
+                </group>
+                <group>
+                    <title>社区</title>
+                    <a href="https://github.com/orgs/simple-robot/discussions">社区</a>
+                    <a href="https://github.com/simple-robot/simpler-robot/issues">反馈</a>
+                </group>
+            </links>
+        </misc>
     </section-starting-page>
 
 </topic>
