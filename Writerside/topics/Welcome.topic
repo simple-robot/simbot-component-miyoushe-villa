@@ -24,12 +24,12 @@
         <!--    Add up to 2 topics that you want to promote. Use the "type" attribute to select an icon.    -->
         <spotlight>
 <!--            <a href="" type="account" summary="This overrides the card summary of the topic">Custom card title</a>-->
-            <a type="account" summary="欢迎来到米游社大别野组件应用&amp;开发手册！手册仍在完善中，期待您的反馈或贡献！">欢迎！</a>
+            <a anchor="primary" type="account" summary="欢迎来到米游社大别野组件应用&amp;开发手册！手册仍在完善中，期待您的反馈或贡献！">欢迎！</a>
             <a href="Home.md" type="search" summary="米游社大别野组件的概述以及各个模块的简介" />
         </spotlight>
 
         <!--    Add several topics that are most important for this section.    -->
-        <primary>
+        <primary id="primary">
             <title>快速开始</title>
             <a href="use-api.md" summary="使用 API模块 请求大别野API的说明与示例" />
             <a href="use-stdlib.md" summary="使用 标准库模块 请求大别野API的说明与示例"/>
@@ -86,22 +86,20 @@
 <!--            </links>-->
 
             <links narrow="true">
-                <a href="https://github.com/simple-robot">组织库</a>
-                <a href="https://github.com/simple-robot/simpler-robot">核心库仓库</a>
                 <group>
                     <title>仓库</title>
-                    <a href="https://github.com/simple-robot">组织库</a>
-                    <a href="https://github.com/simple-robot/simpler-robot">核心库仓库</a>
+                    <a href="https://github.com/simple-robot" summary="组织库">组织库</a>
+                    <a href="https://github.com/simple-robot/simpler-robot" summary="核心库仓库">核心库仓库</a>
                 </group>
                 <group>
-                    <title>手册&站点</title>
+                    <title>手册/站点</title>
                     <a href="https://simbot.forte.love/" summary="simbot的核心库应用手册">核心库手册</a>
                     <a href="https://docs.simbot.forte.love/" summary="simbot相关内容的引导站点">文档引导站</a>
                 </group>
                 <group>
                     <title>社区</title>
-                    <a href="https://github.com/orgs/simple-robot/discussions">社区</a>
-                    <a href="https://github.com/simple-robot/simpler-robot/issues">反馈</a>
+                    <a href="https://github.com/orgs/simple-robot/discussions" summary="社区">社区</a>
+                    <a href="https://github.com/simple-robot/simpler-robot/issues" summary="反馈">反馈</a>
                 </group>
             </links>
         </misc>
