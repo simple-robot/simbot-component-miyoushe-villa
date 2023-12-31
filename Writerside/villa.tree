@@ -3,7 +3,7 @@
         SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
 
 <instance-profile id="villa"
-                  name="米游社大别野组件"
+                  name="Simple Robot | 米游社大别野组件"
                   start-page="Welcome.topic">
 
     <toc-element topic="Welcome.topic"/>

@@ -3,7 +3,7 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <variables>
-<!--        <primary-color>aqua</primary-color>-->
+        <primary-color>ruby</primary-color>
         <custom-favicons>logo-icon.svg</custom-favicons>
         <header-logo>logo-icon.svg</header-logo>
         <product-web-url>https://github.com/simple-robot/simbot-component-miyoushe-villa</product-web-url>
@@ -12,6 +12,8 @@
         <showDownloadButton>true</showDownloadButton>
         <browser-edits-url>https://github.com/simple-robot/simbot-component-miyoushe-villa/tree/main/Writerside/</browser-edits-url>
         <enable-browser-edits>true</enable-browser-edits>
+        <locale-code>zh</locale-code>
+        <noindex-content>false</noindex-content>
     </variables>
 
     <build-profile instance="villa" >
