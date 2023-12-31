@@ -1,0 +1,32 @@
+name: "📑文档反馈"
+description: "反馈你在文档中遇到的问题、错误或者建议、意见"
+labels: [ "文档" ]
+assignees: [ "ForteScarlet" ]
+# https://docs.github.com/cn/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 须知
+        ### 知悉
+        请**知悉**以下内容：
+        1. 请注意反馈内容格式，与**代码**或**日志**相关的内容请使用**多行代码块**包裹。
+        
+        <hr />
+
+  - type: input
+    id: url
+    attributes:
+      label: 文档地址
+      description: 存在问题的文档页的相关链接。
+      placeholder: "例如: https://doc.example.com/xxx"
+
+  - type: textarea
+    id: content
+    attributes:
+      label: 问题描述
+      description: 对遇到的问题的详细描述
+      placeholder: "例如: 图中位置存在错别字/文档某处表述不清"
+    validations:
+      required: true
+
