@@ -164,5 +164,5 @@ public suspend fun uploadToOssData(
     ext: String,
     decoder: Json = MiyousheVilla.DefaultJson
 ): OSSResponse {
-    return uploadToOssResult(client, token, data, ext).dataIfSuccess
+    return uploadToOssResult(client, token, data, ext, decoder).dataIfSuccess
 }

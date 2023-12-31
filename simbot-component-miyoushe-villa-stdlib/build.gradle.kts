@@ -54,13 +54,11 @@ kotlin {
     js(IR) {
         useEsModules()
         nodejs()
-        generateTypeScriptDefinitions()
+        //generateTypeScriptDefinitions()
         binaries.library()
         compilations.all {
             // Enables ES6 classes generation
             kotlinOptions {
-                suppressWarnings
-                freeCompilerArgs = freeCompilerArgs + listOf("-Xsuppress:NON_EXPORTABLE_TYPE")
                 useEsClasses = true
             }
         }
@@ -123,6 +121,7 @@ kotlin {
             dependencies {
                 api(simbotAnnotations)
                 api(libs.ktor.client.js)
+                implementation("love.forte.plugin.suspend-transform:suspend-transform-annotation:${suspendTransform.annotationDependencyVersion}")
             }
         }
         jsTest {
