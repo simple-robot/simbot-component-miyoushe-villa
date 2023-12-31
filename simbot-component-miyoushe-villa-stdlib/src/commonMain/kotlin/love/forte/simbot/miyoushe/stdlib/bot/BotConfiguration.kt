@@ -59,7 +59,7 @@ public class BotConfiguration {
     public var loginMeta: Map<String, String> = emptyMap()
 
     /**
-     * 应用在 [PLogin.meta] 上的属性。如果为 `null` 则会使用一个随机值。
+     * 应用在 [PLogin.region] 上的属性。如果为 `null` 则会使用一个随机值。
      */
     public var loginRegion: String? = null
 

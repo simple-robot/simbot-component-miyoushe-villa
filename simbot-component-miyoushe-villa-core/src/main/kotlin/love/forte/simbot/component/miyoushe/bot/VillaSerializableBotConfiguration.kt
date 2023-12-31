@@ -70,7 +70,7 @@ public data class VillaSerializableBotConfiguration(
         val loginMeta: Map<String, String>? = null,
 
         /**
-         * 应用在 [PLogin.meta] 上的属性。如果为 `null` 则会使用一个随机值。
+         * 应用在 [PLogin.region] 上的属性。如果为 `null` 则会使用一个随机值。
          * @see BotConfiguration.loginRegion
          */
         val loginRegion: String? = null,
