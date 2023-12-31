@@ -229,3 +229,12 @@ botAsFuture.join();
 </tabs>
 
 > 封装的事件的结构、属性以及属性类型都基本与大别野文档中的一致或具有对应关系。
+
+
+<seealso>
+<category ref="related">
+    <a href="https://simbot.forte.love/" summary="前往simbot3官网来了解simbot3的各通用能力。">simbot3官网</a>
+    <a href="https://docs.simbot.forte.love/" summary="前往API文档或通过源码翻阅、搜索并了解具体的功能。">API文档</a>
+    <a href="https://github.com/orgs/simple-robot/discussions" summary="前往社区提出疑惑。">社区</a>
+</category>
+</seealso>

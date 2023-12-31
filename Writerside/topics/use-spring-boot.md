@@ -15,7 +15,8 @@ switcher-label: JavaAPI风格
 
 ## 安装
 
-首先你需要选择使用一个 [`simboot-core-spring-boot-starter`](https://central.sonatype.com/artifact/love.forte.simbot.boot/simboot-core-spring-boot-starter/versions) 
+首先你需要选择使用一个 
+[`simboot-core-spring-boot-starter`](https://central.sonatype.com/artifact/love.forte.simbot.boot/simboot-core-spring-boot-starter/versions)
 的 3.x 版本（下文以 `simbot_version` 代表之）。
 
 <tabs group="Build">
@@ -36,6 +37,7 @@ implementation 'love.forte.simbot.boot:simboot-core-spring-boot-starter:$simbot_
 <tab title="Maven" group-key="maven">
 
 ```xml
+
 <dependency>
     <groupId>love.forte.simbot.boot</groupId>
     <!-- Maven 需要添加 `-jvm` 后缀来选择使用 JVM 平台 -->
@@ -67,6 +69,7 @@ implementation 'love.forte.simbot.component:simbot-component-miyoushe-villa-core
 <tab title="Maven" group-key="maven">
 
 ```xml
+
 <dependency>
     <groupId>love.forte.simbot.component</groupId>
     <!-- Maven 需要添加 `-jvm` 后缀来选择使用 JVM 平台 -->
@@ -86,7 +89,7 @@ implementation 'love.forte.simbot.component:simbot-component-miyoushe-villa-core
 
 ## BOT配置
 
-接下来，在项目资源文件目录下的 `simbot-bots` 文件夹中创建一个用于配置bot的配置文件 `xxx.bot.json` 
+接下来，在项目资源文件目录下的 `simbot-bots` 文件夹中创建一个用于配置bot的配置文件 `xxx.bot.json`
 (文件名随意，扩展名应为 `.bot` 或 `.bot.json`)，
 而配置文件的内容则参考章节 [BOT配置文件](bot-config.md) 。
 
@@ -106,10 +109,11 @@ ${PROJECT_SRC}/main/resources/simbot-bots/xxx.bot.json
 # 如果要使用本地文件可以使用 `file:` 开头
 simbot.bot-configuration-resources[0]=classpath:simbot-bots/*.bot*
 ```
+
 {noinject=true}
 
 </tab>
-<tab title="Second tab">
+<tab title="yaml">
 
 ```yaml
 simbot:
@@ -221,6 +225,7 @@ public class ExampleListener {
     }
 }
 ```
+
 {switcher-key="%jb%"}
 
 ```java
@@ -240,6 +245,7 @@ public class ExampleListener {
     }
 }
 ```
+
 {switcher-key="%ja%"}
 
 ```java
@@ -261,12 +267,15 @@ public class ExampleListener {
 
 }
 ```
+
 {switcher-key="%jr%"}
 
 <note switcher-key="%jr%">
 
 如果返回值是需要第三方库的响应式类型，那么你的项目环境依赖中必须存在 `Kotlin Coroutines` 对其的支持库才可使用。
-你可以参考文档中 [响应式的处理结果](https://simbot.forte.love/docs/basic/event-listener#可响应式的处理结果) 的内容。
+你可以参考文档中
+[响应式的处理结果](https://simbot.forte.love/docs/basic/event-listener#可响应式的处理结果)
+的内容。
 
 </note>
 
@@ -275,3 +284,18 @@ public class ExampleListener {
 
 ## 启动
 
+接下来，启动程序并在你的测试别野中@它试试看吧。
+
+当然，如果遇到了预期外的问题也不要慌，积极反馈问题才能使我们变得更好，可以前往
+[Issues](https://github.com/simple-robot/simpler-robot/issues)
+反馈问题或在
+[社区](https://github.com/orgs/simple-robot/discussions)
+提出疑问。
+
+<seealso>
+<category ref="related">
+    <a href="https://simbot.forte.love/" summary="前往simbot3官网来了解simbot3的各通用能力。">simbot3官网</a>
+    <a href="https://docs.simbot.forte.love/" summary="前往API文档或通过源码翻阅、搜索并了解具体的功能。">API文档</a>
+    <a href="https://github.com/orgs/simple-robot/discussions" summary="前往社区提出疑惑。">社区</a>
+</category>
+</seealso>
