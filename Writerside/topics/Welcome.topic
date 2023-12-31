@@ -87,12 +87,8 @@
 
             <links narrow="true">
                 <group>
-                    <title>仓库</title>
-                    <a href="https://github.com/simple-robot" summary="组织库">组织库</a>
-                    <a href="https://github.com/simple-robot/simpler-robot" summary="核心库仓库">核心库仓库</a>
-                </group>
-                <group>
                     <title>手册/站点</title>
+                    <a href="https://docs.simbot.forte.love/components/miyoushe-villa/" summary="大别野组件的API文档">API文档</a>
                     <a href="https://simbot.forte.love/" summary="simbot的核心库应用手册">核心库手册</a>
                     <a href="https://docs.simbot.forte.love/" summary="simbot相关内容的引导站点">文档引导站</a>
                 </group>
@@ -100,6 +96,11 @@
                     <title>社区</title>
                     <a href="https://github.com/orgs/simple-robot/discussions" summary="社区">社区</a>
                     <a href="https://github.com/simple-robot/simpler-robot/issues" summary="反馈">反馈</a>
+                </group>
+                <group>
+                    <title>仓库</title>
+                    <a href="https://github.com/simple-robot" summary="组织库">组织库</a>
+                    <a href="https://github.com/simple-robot/simpler-robot" summary="核心库仓库">核心库仓库</a>
                 </group>
             </links>
         </misc>

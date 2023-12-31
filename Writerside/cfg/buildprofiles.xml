@@ -12,24 +12,25 @@
         <showDownloadButton>true</showDownloadButton>
         <browser-edits-url>https://github.com/simple-robot/simbot-component-miyoushe-villa/tree/main/Writerside/</browser-edits-url>
         <enable-browser-edits>true</enable-browser-edits>
-        <locale-code>zh</locale-code>
+        <locale-code>zh-CN</locale-code>
         <noindex-content>false</noindex-content>
     </variables>
 
     <build-profile instance="villa" >
         <variables>
-            <noindex-content>true</noindex-content>
+            <noindex-content>false</noindex-content>
         </variables>
     </build-profile>
 
     <footer>
         <copyright>%copyright-year% Forte Scarlet.</copyright>
-        <link href="https://simbot.forte.love/">核心库手册</link>
-        <link href="https://github.com/simple-robot">组织库</link>
-        <link href="https://github.com/simple-robot/simpler-robot">核心库仓库</link>
+        <link href="https://docs.simbot.forte.love/components/miyoushe-villa/">API文档</link>
         <link href="https://docs.simbot.forte.love/">文档引导站</link>
         <link href="https://github.com/orgs/simple-robot/discussions">社区</link>
         <link href="https://github.com/simple-robot/simpler-robot/issues">反馈</link>
+        <link href="https://github.com/simple-robot">组织库</link>
+        <link href="https://simbot.forte.love/">核心库手册</link>
+        <link href="https://github.com/simple-robot/simpler-robot">核心库仓库</link>
         <social type="bilibili" href="https://space.bilibili.com/2714954" />
         <social type="email" href="ForteScarlet@163.com" />
     </footer>
