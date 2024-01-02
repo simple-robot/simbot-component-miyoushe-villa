@@ -3,7 +3,6 @@
 > Release & Pull Notes: [v0.0.2](https://github.com/simple-robot/simpler-robot/releases/tag/v0.0.2) 
 
 
-# v0.0.1
 
 > Release & Pull Notes: [v0.0.1](https://github.com/simple-robot/simpler-robot/releases/tag/v0.0.1) 
 
