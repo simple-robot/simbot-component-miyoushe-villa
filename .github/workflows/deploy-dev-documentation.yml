@@ -104,4 +104,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          name: documentation-dev
+          artifact_name: documentation-dev
