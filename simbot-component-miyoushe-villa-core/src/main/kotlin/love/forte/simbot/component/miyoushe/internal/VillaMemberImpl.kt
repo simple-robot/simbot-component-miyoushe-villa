@@ -44,4 +44,6 @@ internal class VillaMemberImpl(
         // TODO("Not yet implemented")
         return false
     }
+
+    override fun toString(): String = "VillaMember(source=$source, villaId=$villaId)"
 }

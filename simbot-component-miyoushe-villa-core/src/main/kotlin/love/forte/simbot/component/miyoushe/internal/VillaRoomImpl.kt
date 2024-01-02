@@ -96,4 +96,6 @@ internal class VillaRoomImpl(
 
         return result.toReceipt(bot, villaId, roomId, System.currentTimeMillis())
     }
+
+    override fun toString(): String = "VillaRoom(room=$room, villaId=$villaId)"
 }

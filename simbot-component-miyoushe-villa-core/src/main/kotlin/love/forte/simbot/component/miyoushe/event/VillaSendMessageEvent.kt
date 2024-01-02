@@ -27,7 +27,6 @@ import love.forte.simbot.component.miyoushe.message.VillaSendMessageReceipt
 import love.forte.simbot.event.BaseEventKey
 import love.forte.simbot.event.ChannelMessageEvent
 import love.forte.simbot.event.Event
-import love.forte.simbot.event.MessageEvent
 import love.forte.simbot.message.Message
 import love.forte.simbot.message.MessageContent
 import love.forte.simbot.message.doSafeCast
@@ -138,8 +137,10 @@ public abstract class VillaSendMessageEvent : VillaEvent<SendMessage>(), Channel
     override val key: Event.Key<VillaSendMessageEvent>
         get() = Key
 
+    override fun toString(): String = "VillaSendMessageEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaSendMessageEvent>(
-        "villa.send_message", VillaEvent, MessageEvent
+        "villa.send_message", VillaEvent, ChannelMessageEvent
     ) {
         override fun safeCast(value: Any): VillaSendMessageEvent? = doSafeCast(value)
     }

@@ -130,6 +130,8 @@ public abstract class VillaJoinVillaEvent : VillaEvent<JoinVilla>(), GuildMember
     override val key: Event.Key<VillaJoinVillaEvent>
         get() = Key
 
+    override fun toString(): String = "VillaJoinVillaEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaJoinVillaEvent>(
         "villa.join", VillaEvent, GuildMemberIncreaseEvent
     ) {

@@ -77,6 +77,8 @@ public abstract class VillaClickMsgComponentEvent : VillaEvent<ClickMsgComponent
     override val key: Event.Key<VillaClickMsgComponentEvent>
         get() = Key
 
+    override fun toString(): String = "VillaClickMsgComponentEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaClickMsgComponentEvent>(
         "villa.click_msg_component", VillaEvent
     ) {
