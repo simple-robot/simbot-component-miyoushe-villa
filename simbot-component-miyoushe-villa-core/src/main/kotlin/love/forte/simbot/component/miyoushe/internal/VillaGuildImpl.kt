@@ -71,4 +71,6 @@ internal class VillaGuildImpl(
 
     override val members: Items<VillaMember>
         get() = bot.effectedItemsByFlow { bot.memberFlowInternal(source.villaIdStrValue) }
+
+    override fun toString(): String = "VillaGuild(source=$source)"
 }

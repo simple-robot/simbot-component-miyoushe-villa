@@ -47,6 +47,8 @@ public abstract class VillaEvent<E : EventExtendData> : Event {
     override val timestamp: Timestamp
         get() = Timestamp.byMillisecond(sourceEvent.sendAt)
 
+    override fun toString(): String = "VillaEvent(sourceEvent=$sourceEvent)"
+
     abstract override val key: Event.Key<out VillaEvent<*>>
 
     public companion object Key : BaseEventKey<VillaEvent<*>>(

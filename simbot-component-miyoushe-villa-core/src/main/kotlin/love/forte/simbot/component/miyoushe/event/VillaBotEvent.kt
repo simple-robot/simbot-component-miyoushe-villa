@@ -81,6 +81,8 @@ public abstract class VillaCreateRobotEvent : VillaBotEvent<CreateRobot>() {
     override val key: Event.Key<out VillaCreateRobotEvent>
         get() = Key
 
+    override fun toString(): String = "VillaCreateRobotEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaCreateRobotEvent>(
         "villa.bot.create", VillaBotEvent
     ) {
@@ -100,6 +102,8 @@ public abstract class VillaDeleteRobotEvent : VillaBotEvent<DeleteRobot>() {
 
     override val key: Event.Key<out VillaDeleteRobotEvent>
         get() = Key
+
+    override fun toString(): String = "VillaDeleteRobotEvent(sourceEvent=$sourceEvent)"
 
     public companion object Key : BaseEventKey<VillaDeleteRobotEvent>(
         "villa.bot.delete", VillaBotEvent

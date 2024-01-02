@@ -119,6 +119,8 @@ public abstract class VillaAuditCallbackEvent : VillaEvent<AuditCallback>(), Gui
     override val key: Event.Key<VillaAuditCallbackEvent>
         get() = Key
 
+    override fun toString(): String = "VillaAuditCallbackEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaAuditCallbackEvent>(
         "villa.audit.callback", VillaEvent, GuildEvent
     ) {

@@ -28,4 +28,6 @@ import love.forte.simbot.component.miyoushe.VillaRoomGroup
 internal class VillaRoomGroupImpl(private val groupId: ULong, override val name: String = "") : VillaRoomGroup {
     override val id: ID
         get() = groupId.ID
+
+    override fun toString(): String = "VillaRoomGroup(groupId=$groupId, name=$name)"
 }

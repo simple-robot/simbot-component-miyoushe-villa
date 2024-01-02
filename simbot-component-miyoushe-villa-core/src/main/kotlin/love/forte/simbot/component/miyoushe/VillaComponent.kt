@@ -42,6 +42,8 @@ public class VillaComponent : Component {
     override val id: String
         get() = ID_VALUE
 
+    override fun toString(): String = "VillaComponent(id=$ID_VALUE)"
+
     public companion object Factory : ComponentFactory<VillaComponent, MiyousheVillaComponentConfiguration> {
         /**
          * 组件的ID标识常量。
