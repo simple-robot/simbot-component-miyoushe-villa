@@ -137,6 +137,8 @@ public abstract class VillaSendMessageEvent : VillaEvent<SendMessage>(), Channel
     override val key: Event.Key<VillaSendMessageEvent>
         get() = Key
 
+    override fun toString(): String = "VillaSendMessageEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaSendMessageEvent>(
         "villa.send_message", VillaEvent, ChannelMessageEvent
     ) {

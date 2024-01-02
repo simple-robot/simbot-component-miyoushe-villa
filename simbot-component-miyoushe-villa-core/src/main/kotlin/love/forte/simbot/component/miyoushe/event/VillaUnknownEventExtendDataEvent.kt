@@ -39,6 +39,8 @@ public abstract class VillaUnknownEventExtendDataEvent : VillaEvent<UnknownEvent
     override val key: Event.Key<VillaUnknownEventExtendDataEvent>
         get() = Key
 
+    override fun toString(): String = "VillaUnknownEventExtendDataEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaUnknownEventExtendDataEvent>(
         "villa.unknown", VillaEvent
     ) {

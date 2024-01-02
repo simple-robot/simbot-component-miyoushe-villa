@@ -48,6 +48,8 @@ public abstract class VillaUnsupportedYetEvent : VillaEvent<EventExtendData>() {
     override val key: Event.Key<VillaUnsupportedYetEvent>
         get() = Key
 
+    override fun toString(): String = "VillaUnsupportedYetEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaUnsupportedYetEvent>("villa.unsupported_yet") {
         override fun safeCast(value: Any): VillaUnsupportedYetEvent? = doSafeCast(value)
     }

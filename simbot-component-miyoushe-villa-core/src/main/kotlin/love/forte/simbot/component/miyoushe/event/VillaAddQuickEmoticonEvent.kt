@@ -118,6 +118,8 @@ public abstract class VillaAddQuickEmoticonEvent : VillaEvent<AddQuickEmoticon>(
     override val key: Event.Key<VillaAddQuickEmoticonEvent>
         get() = Key
 
+    override fun toString(): String = "VillaAddQuickEmoticonEvent(sourceEvent=$sourceEvent)"
+
     public companion object Key : BaseEventKey<VillaAddQuickEmoticonEvent>(
         "villa.add_quick_emoticon", VillaEvent, ChannelEvent
     ) {
