@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -46,7 +46,7 @@ object P : ProjectDetail() {
     override val homepage: String
         get() = HOMEPAGE
 
-    private val baseVersion = v(0, 0, 2)
+    private val baseVersion = v(0, 1, 0)
 
 //    private val alphaSuffix = v("alpha", 1)
     // baseVersion - alphaSuffix
