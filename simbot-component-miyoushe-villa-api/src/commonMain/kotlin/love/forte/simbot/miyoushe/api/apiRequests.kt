@@ -25,8 +25,44 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.serialization.json.Json
+import love.forte.simbot.logger.Logger
+import love.forte.simbot.logger.LoggerFactory
 import love.forte.simbot.miyoushe.MiyousheVilla
+import love.forte.simbot.miyoushe.api.ApiLoggers.REQUEST_NAME
+import love.forte.simbot.miyoushe.api.ApiLoggers.RESPONSE_NAME
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmSynthetic
+
+/**
+ * 针对 API 调用的日志组件容器。
+ *
+ * 主要包含两个命名：
+ * - [`"love.forte.simbot.miyoushe.api.API.REQ"`][REQUEST_NAME]
+ * - [`"love.forte.simbot.miyoushe.api.API.RES"`][RESPONSE_NAME]
+ *
+ * 分别会在 `DEBUG` 级别下输出API请求/响应时的详细信息。
+ *
+ * 注意：有可能会输出敏感信息，请注意信息安全。
+ *
+ */
+@Suppress("MemberVisibilityCanBePrivate")
+public object ApiLoggers {
+    public const val BASE_NAME: String = "love.forte.simbot.miyoushe.api.API"
+    public const val REQUEST_NAME: String = "$BASE_NAME.REQ"
+    public const val RESPONSE_NAME: String = "$BASE_NAME.RES"
+
+    /**
+     * API 请求相关日志
+     */
+    @JvmField
+    public val Request : Logger = LoggerFactory.getLogger(REQUEST_NAME)
+
+    /**
+     * API 响应相关日志
+     */
+    @JvmField
+    public val Response : Logger = LoggerFactory.getLogger(RESPONSE_NAME)
+}
 
 
 /**
@@ -86,6 +122,10 @@ public suspend inline fun MiyousheVillaApi<*>.request(
         }
 
         postRequestBuilder(this)
+
+        ApiLoggers.Request.debug("[bot:{}] ===> [{} {}] villaId: {}, body: {}, api: {}, engine: {}", token.botId, method, api.path, token.botVillaId, body, api, client.engine)
+    }.also { resp ->
+        ApiLoggers.Response.debug("[bot:{}] <=== [{} {}] response: {}", token.botId, method, api.path, resp)
     }
 }
 
@@ -111,6 +151,8 @@ public suspend inline fun <R : Any> MiyousheVillaApi<R>.requestResult(
         throw HttpStatusException(response)
     }
     val text = response.bodyAsText()
+    ApiLoggers.Response.debug("[bot:{}] <=== [{} {}] response.body: {}", token.botId, method, this.path, text)
+
     return decoder.decodeFromString(apiResultSerializer, text)
 }
 
