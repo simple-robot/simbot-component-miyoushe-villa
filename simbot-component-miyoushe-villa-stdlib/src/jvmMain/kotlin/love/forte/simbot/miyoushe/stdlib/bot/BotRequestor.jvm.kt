@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -16,6 +16,7 @@
  */
 
 @file:JvmName("BotRequests")
+@file:JvmMultifileClass
 
 package love.forte.simbot.miyoushe.stdlib.bot
 

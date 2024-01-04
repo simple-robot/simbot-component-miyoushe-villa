@@ -1,3 +1,8 @@
+# v0.1.0
+
+> Release & Pull Notes: [v0.1.0](https://github.com/simple-robot/simpler-robot/releases/tag/v0.1.0) 
+
+
 # v0.0.2
 
 > Release & Pull Notes: [v0.0.2](https://github.com/simple-robot/simpler-robot/releases/tag/v0.0.2) 

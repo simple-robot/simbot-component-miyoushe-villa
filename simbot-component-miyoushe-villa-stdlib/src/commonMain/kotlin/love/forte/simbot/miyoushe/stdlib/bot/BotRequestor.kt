@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -21,10 +21,12 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import love.forte.simbot.miyoushe.api.*
+import kotlin.jvm.JvmSynthetic
 
 /**
  * 使用 API 通过 [Bot] 发起一个请求，并得到一个[HTTP响应][HttpResponse].
  */
+@JvmSynthetic
 public suspend inline fun MiyousheVillaApi<*>.requestBy(
     bot: Bot,
     villaId: String?,
@@ -46,6 +48,7 @@ public suspend inline fun MiyousheVillaApi<*>.requestBy(
  * @receiver 需要请求的 API
  * @throws HttpStatusException 如果 http 结果不是成功 ([HttpStatusCode.isSuccess] == false)
  */
+@JvmSynthetic
 public suspend inline fun <R : Any> MiyousheVillaApi<R>.requestResultBy(
     bot: Bot,
     villaId: String?,
@@ -70,6 +73,7 @@ public suspend inline fun <R : Any> MiyousheVillaApi<R>.requestResultBy(
  * @throws HttpStatusException 如果 http 结果不是成功 ([HttpStatusCode.isSuccess] == false)
  * @throws ApiResultNotSuccessException 如果结果不是成功 (see [ApiResult.dataIfSuccess])
  */
+@JvmSynthetic
 public suspend inline fun <R : Any> MiyousheVillaApi<R>.requestDataBy(
     bot: Bot,
     villaId: String?,

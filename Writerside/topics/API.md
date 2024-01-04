@@ -3,6 +3,7 @@
 针对一些 API 的描述与介绍。
 
 ## 通用特征
+{id="common"}
 
 在
 <tooltip term="大别野组件">大别野组件</tooltip>

@@ -138,13 +138,13 @@ var api = GetRoomApi.create("1234");
 
 // 发起请求并得到结果。在 API 模块中有三种请求方式（均使用 `APIRequests` 的静态方法）：
 // 1️⃣ 使用 api.request, 得到 Ktor 进行 HTTP 请求的原始响应类型 HttpResponse
-CompletableFuture<? extends HttpResponse> response = APIRequests.requestAsync(api, client, token);
+CompletableFuture<HttpResponse> response = APIRequests.requestAsync(api, client, token);
 
 // 2️⃣ 使用 api.requestResult, 得到请求结果的统一响应体结构。假如此响应代表成功(result.retcode == 0), 则可以通过 result.data 获取响应结果。
-CompletableFuture<? extends ApiResult<GetRoomResult>> result = APIRequests.requestResultAsync(api, client, token);
+CompletableFuture<ApiResult<GetRoomResult>> result = APIRequests.requestResultAsync(api, client, token);
 
 // 3️⃣ 使用 api.requestData, 得到当响应体代表成功时的响应数据。如果响应体不为成功则会抛出异常。
-CompletableFuture<? extends GetRoomResult> requestData = APIRequests.requestDataAsync(api, client, token);
+CompletableFuture<GetRoomResult> requestData = APIRequests.requestDataAsync(api, client, token);
 ```
 {switcher-key="%ja%"}
 

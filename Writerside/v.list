@@ -2,7 +2,7 @@
 <!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
 <vars>
     <var name="product" value="Writerside"/>
-    <var instance="villa" name="version" value="0.0.2"/>
+    <var instance="villa" name="version" value="0.1.0"/>
     <var instance="villa" name="kt-version" value="1.9.21"/>
     <var name="copyright-year" value="2023-2024"/>
 </vars>

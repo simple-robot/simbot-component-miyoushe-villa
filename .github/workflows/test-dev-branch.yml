@@ -1,8 +1,8 @@
-name: Test Branch
+name: Test Dev Branch
 on:
   pull_request:
     branches:
-      - 'dev/**'
+      - 'dev'
     paths:
       - '**.java'
       - '**.kt'
@@ -11,17 +11,13 @@ on:
       - '*/src/*/java/**'
       - '*/src/*/resource/**'
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   IS_CI: true
   GRADLE_OPTS: "-Dfile.encoding=UTF-8"
 
 jobs:
   build-test:
-    name: Build and test
+    name: Build and test dev
     strategy:
       matrix:
         os: [ macos-latest, windows-latest, ubuntu-latest ]
