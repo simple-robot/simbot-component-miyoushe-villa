@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -109,6 +109,6 @@ public fun <R : Any> MiyousheVillaApi<R>.requestDataAsync(
     token: MiyousheVillaApiToken,
     decoder: Json = MiyousheVilla.DefaultJson,
     scope: CoroutineScope? = null
-): CompletableFuture<out R> = runInAsync(scope ?: client) {
+): CompletableFuture<R> = runInAsync(scope ?: client) {
     requestData(client, token, decoder)
 }
