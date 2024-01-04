@@ -3,7 +3,17 @@ on:
   pull_request:
     branches:
       - 'main'
-
+    paths:
+      - 'gradle/**'
+      - 'buildSrc/**'
+      - 'kotlin-js-store/**'
+      - '**.java'
+      - '**.kt'
+      - '**.kts'
+      - '*.properties'
+      - '*/src/*/kotlin/**'
+      - '*/src/*/java/**'
+      - '*/src/*/resource/**'
 env:
   IS_CI: true
   GRADLE_OPTS: "-Dfile.encoding=UTF-8"
