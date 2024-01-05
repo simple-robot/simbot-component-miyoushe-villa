@@ -155,10 +155,12 @@ fun Project.generateChangelog(tag: String) {
                 }
             }
 
-        val tmpDir = rootProject.buildDir.resolve("tmp/changelog").apply { mkdirs() }
+        val tmpDir = rootProject.layout.buildDirectory.dir("tmp/changelog").get().asFile
+        tmpDir.mkdirs()
 
         val tmpFile =
             Files.createTempFile(tmpDir.toPath(), "changelog", "tmp").toFile()
+        tmpFile.deleteOnExit()
 
         // copy source file to tmp file
         RandomAccessFile(rootChangelogFile, "r").channel.use { srcChannel ->
@@ -172,7 +174,7 @@ fun Project.generateChangelog(tag: String) {
             writer.appendLine(
                 """
                 
-                > Release & Pull Notes: [$tag](https://github.com/simple-robot/simpler-robot/releases/tag/$tag) 
+                > Release & Pull Notes: [$tag](https://github.com/simple-robot/simbot-component-miyoushe-villa/releases/tag/$tag) 
                 
             """.trimIndent()
             )
