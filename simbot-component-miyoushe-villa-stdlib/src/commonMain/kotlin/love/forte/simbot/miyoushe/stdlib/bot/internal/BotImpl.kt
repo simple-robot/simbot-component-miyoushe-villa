@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -436,6 +436,21 @@ internal class BotImpl(
 
             logger.trace("Receiving next frame...")
             val frameCatching = session.incoming.receiveCatching()
+
+            frameCatching.onFailure { e ->
+                logger.error(
+                    "Bot({}) session receive on failure: {}.", bot, e?.message, e
+                )
+                session.cancel(CreateCancellationException("Session receive frame on failure", e))
+                if (bot.isActive) {
+                    logger.debug("Bot is active now, try to reconnect.")
+                    return GetWebsocketInfo(bot)
+                } else {
+                    logger.debug("Bot is not active now, just cancel the session and bot.")
+                    return null
+                }
+            }
+
             frameCatching.onClosed { e ->
                 logger.error(
                     "Bot({}) session receive failed: session closed and reason: {}.",
@@ -443,29 +458,14 @@ internal class BotImpl(
                     e?.message,
                     e
                 )
+                session.cancel(CreateCancellationException("Session receive frame on closed", e))
                 if (bot.isActive) {
                     logger.debug("Bot is active now, try to reconnect.")
                     return GetWebsocketInfo(bot)
                 } else {
                     logger.debug("Bot is not active now, just cancel the session and bot.")
+                    return null
                 }
-//                bot.cancel(CancellationException(e?.message?.let { "Session closed: $it" } ?: "Session closed", e))
-                return null
-            }
-
-            frameCatching.onFailure { e ->
-                logger.error(
-                    "Bot({}) session receive failed: {}.", bot, e?.message, e
-                )
-                if (bot.isActive) {
-                    logger.debug("Bot is active now, try to reconnect.")
-                    return GetWebsocketInfo(bot)
-                } else {
-                    logger.debug("Bot is not active now, just cancel the session and bot.")
-                }
-//                bot.cancel(CancellationException(e?.message?.let { "Session receive onFailure: $it" }
-//                    ?: "Session receive onFailure", e))
-                return null
             }
 
             try {
@@ -498,7 +498,9 @@ internal class BotImpl(
                                 logoutReply,
                                 bot
                             )
-                            bot.cancel(CreateCancellationException("PLogoutReply received: $logoutReply", null))
+                            val cancelCause = CreateCancellationException("PLogoutReply received: $logoutReply", null)
+                            session.cancel(cancelCause)
+                            bot.cancel(cancelCause)
                             return null
                         } else {
                             bot.logger.error(
@@ -532,8 +534,9 @@ internal class BotImpl(
                             session,
                             bot
                         )
-                        session.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
-                        bot.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
+                        val cancelReason = CreateCancellationException(BizType.KICK_OFF.toString(), null)
+                        session.cancel(cancelReason)
+                        bot.cancel(cancelReason)
                         return null
                     }
 
@@ -554,8 +557,14 @@ internal class BotImpl(
 
             } catch (serEx: SerializationException) {
                 // ser e?
+                logger.error(
+                    "Unexpected serialization exception when receiving and processing frames: {}",
+                    serEx.message,
+                    serEx
+                )
             } catch (e: Throwable) {
                 // e?
+                logger.error("Unexpected exception when receiving and processing frames: {}", e.message, e)
             }
 
 
