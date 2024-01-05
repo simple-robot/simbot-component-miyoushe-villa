@@ -6,7 +6,7 @@ on:
   pull_request:
     branches:
       - dev
-    path:
+    paths:
       - 'Writerside/**'
   # Specify to run a workflow manually from the Actions tab on GitHub
   workflow_dispatch:
