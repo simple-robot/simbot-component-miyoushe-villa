@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -242,20 +242,40 @@ internal class BotImpl(
     @Volatile
     private var stateJob: Job? = null
 
+    @Volatile
+    private var session: DefaultClientWebSocketSession? = null
+
     override suspend fun start(): Unit = startingLock.withLock {
         checkState()
         stateJob?.cancel()
         stateJob = null
+        // TODO cancel session.
+        session?.cancel("Restart")
+        session = null
 
         val state = GetWebsocketInfo(this).loop(onEach = { it !is ReceiveEvent })
         if (state !is ReceiveEvent) {
             throw IllegalStateException("The 'ReceiveEvent' state has not been reached")
         }
 
+        session = state.session
+
         // is receiveEvent. loop async
         stateJob = launch {
-            state.loop()
-            logger.info("State loop done.")
+            try {
+                state.loop()
+                logger.info("Bot internal state loop done.")
+            } catch (e: Throwable) {
+                val cancelException = CreateCancellationException(
+                    "Bot internal state loop done with an exception, bot will be cancelled",
+                    e
+                )
+                logger.error("Bot internal state loop done with an exception, bot will be cancelled", cancelException)
+                // receive loop 过程中抛出异常则视为非正常终止，
+                // 关闭bot
+                this@BotImpl.cancel(cancelException)
+                throw e
+            }
         }
 
         started()
@@ -267,7 +287,7 @@ internal class BotImpl(
     private class GetWebsocketInfo(val bot: BotImpl) : BotLinkState() {
         override suspend fun invoke(): BotLinkState {
             val wsInfo = GetWebsocketInfoApi.create().requestDataBy(bot, bot.configuration.loginVillaId)
-            bot.logger.debug("Got WebsocketInfo: $wsInfo")
+            bot.logger.debug("Got WebsocketInfo: {}", wsInfo)
             return Connect(bot, wsInfo)
         }
     }
@@ -319,7 +339,7 @@ internal class BotImpl(
                 body = bot.protoBuf.encodeToByteArray(PLogin.serializer(), pl)
             )
 
-            bot.logger.debug("Send PLogin packet: {}, {}", pl, packet)
+            bot.logger.debug("Send PLogin packet: {}, {} to session {}", pl, packet, session)
 
             session.outgoing.sendPacket(packet)
 
@@ -335,6 +355,7 @@ internal class BotImpl(
 
                         bot.logger.debug("Received PLoginReply: {}", loginReply)
                         if (!loginReply.isSuccess) {
+                            // throw exception, and will cancel bot
                             throw PLoginFailedException(loginReply)
                         }
 
@@ -369,9 +390,9 @@ internal class BotImpl(
                     )
 
                     session.outgoing.sendPacket(hbPacket)
-                    bot.logger.debug("Send PHeartBeat: {}", hb)
+                    bot.logger.debug("Send PHeartBeat {} to session {}", hb, session)
                 } catch (e: Throwable) {
-                    bot.logger.error("Send PHeartBeat failed: {}", e.message, e)
+                    bot.logger.error("Send PHeartBeat failed: {} on session: {}", e.message, session, e)
                 }
             }
 
@@ -392,16 +413,44 @@ internal class BotImpl(
         override suspend fun invoke(): BotLinkState? {
 
             if (!session.isActive) {
-                // TODO Not Active? try reconnect?
-                logger.error("Bot session is not active. Cancel the bot {}", bot)
                 val reason = session.closeReason.await()
-                bot.cancel(CreateCancellationException("reason: $reason", null))
-                // done.
-                return null
+                // Not active, try to reconnect?
+                if (!bot.isActive) {
+                    logger.error(
+                        "Bot session is not active: {}, reason: {}, and bot is not active, just stop.",
+                        session,
+                        reason
+                    )
+                    bot.cancel(CreateCancellationException("reason: $reason", null))
+                    // done.
+                    return null
+                } else {
+                    logger.error(
+                        "Bot session is active: {}, reason: {}, but bot is active now, try reconnect.",
+                        session,
+                        reason
+                    )
+                    return GetWebsocketInfo(bot)
+                }
             }
 
             logger.trace("Receiving next frame...")
             val frameCatching = session.incoming.receiveCatching()
+
+            frameCatching.onFailure { e ->
+                logger.error(
+                    "Bot({}) session receive on failure: {}.", bot, e?.message, e
+                )
+                session.cancel(CreateCancellationException("Session receive frame on failure", e))
+                if (bot.isActive) {
+                    logger.debug("Bot is active now, try to reconnect.")
+                    return GetWebsocketInfo(bot)
+                } else {
+                    logger.debug("Bot is not active now, just cancel the session and bot.")
+                    return null
+                }
+            }
+
             frameCatching.onClosed { e ->
                 logger.error(
                     "Bot({}) session receive failed: session closed and reason: {}.",
@@ -409,29 +458,14 @@ internal class BotImpl(
                     e?.message,
                     e
                 )
+                session.cancel(CreateCancellationException("Session receive frame on closed", e))
                 if (bot.isActive) {
                     logger.debug("Bot is active now, try to reconnect.")
                     return GetWebsocketInfo(bot)
                 } else {
                     logger.debug("Bot is not active now, just cancel the session and bot.")
+                    return null
                 }
-//                bot.cancel(CancellationException(e?.message?.let { "Session closed: $it" } ?: "Session closed", e))
-                return null
-            }
-
-            frameCatching.onFailure { e ->
-                logger.error(
-                    "Bot({}) session receive failed: {}.", bot, e?.message, e
-                )
-                if (bot.isActive) {
-                    logger.debug("Bot is active now, try to reconnect.")
-                    return GetWebsocketInfo(bot)
-                } else {
-                    logger.debug("Bot is not active now, just cancel the session and bot.")
-                }
-//                bot.cancel(CancellationException(e?.message?.let { "Session receive onFailure: $it" }
-//                    ?: "Session receive onFailure", e))
-                return null
             }
 
             try {
@@ -464,7 +498,9 @@ internal class BotImpl(
                                 logoutReply,
                                 bot
                             )
-                            bot.cancel(CreateCancellationException("PLogoutReply received: $logoutReply", null))
+                            val cancelCause = CreateCancellationException("PLogoutReply received: $logoutReply", null)
+                            session.cancel(cancelCause)
+                            bot.cancel(cancelCause)
                             return null
                         } else {
                             bot.logger.error(
@@ -498,8 +534,9 @@ internal class BotImpl(
                             session,
                             bot
                         )
-                        session.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
-                        bot.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
+                        val cancelReason = CreateCancellationException(BizType.KICK_OFF.toString(), null)
+                        session.cancel(cancelReason)
+                        bot.cancel(cancelReason)
                         return null
                     }
 
@@ -520,8 +557,14 @@ internal class BotImpl(
 
             } catch (serEx: SerializationException) {
                 // ser e?
+                logger.error(
+                    "Unexpected serialization exception when receiving and processing frames: {}",
+                    serEx.message,
+                    serEx
+                )
             } catch (e: Throwable) {
                 // e?
+                logger.error("Unexpected exception when receiving and processing frames: {}", e.message, e)
             }
 
 
