@@ -204,8 +204,42 @@ internal class BotImpl(
         return RegisterHandle(wrapper, processorQueue)
     }
 
-    override fun logout() {
-        TODO("Not yet implemented")
+    override fun logout(onRequestFailure: OnLogoutRequestFailure?) {
+        if (!isActive) {
+            throw BotWasCancelledException("Bot was cancelled", null)
+        }
+
+        val state = this.receiveEventState
+            ?: throw IllegalStateException("No active sessions available")
+
+        val session = state.session
+
+        val logout = PLogout(
+            uid = state.info.uid.toULong(),
+            platform = state.info.platform,
+            appId = state.info.appId,
+            deviceId = state.info.deviceId,
+            region = state.info.deviceId
+        )
+
+        val packet = ProtoPacket.request(
+            BizType.LONG_CONN_LOGOUT,
+            state.id.value,
+            state.info.appId.toUInt(),
+            protoBuf.encodeToByteArray(PLogout.serializer(), logout)
+        )
+
+        launch {
+            try {
+                session.send(Frame.Binary(true, packet.toPacket()))
+            } catch (e: Throwable) {
+                if (onRequestFailure != null) {
+                    onRequestFailure.invoke(e)
+                } else {
+                    logger.error("Bot request logout failed: {}", e.message, e)
+                }
+            }
+        }
     }
 
     private fun started() {
@@ -243,22 +277,26 @@ internal class BotImpl(
     private var stateJob: Job? = null
 
     @Volatile
-    private var session: DefaultClientWebSocketSession? = null
+    private var receiveEventState: ReceiveEvent? = null
+
+    private fun clearReceiveEventState(cause: CancellationException?) {
+        receiveEventState?.session?.cancel(cause)
+        receiveEventState = null
+    }
 
     override suspend fun start(): Unit = startingLock.withLock {
         checkState()
         stateJob?.cancel()
         stateJob = null
-        // TODO cancel session.
-        session?.cancel("Restart")
-        session = null
+        // cancel session.
+        clearReceiveEventState(CreateCancellationException("Restart", null))
 
         val state = GetWebsocketInfo(this).loop(onEach = { it !is ReceiveEvent })
         if (state !is ReceiveEvent) {
             throw IllegalStateException("The 'ReceiveEvent' state has not been reached")
         }
 
-        session = state.session
+        receiveEventState = state
 
         // is receiveEvent. loop async
         stateJob = launch {
@@ -274,6 +312,7 @@ internal class BotImpl(
                 // receive loop 过程中抛出异常则视为非正常终止，
                 // 关闭bot
                 this@BotImpl.cancel(cancelException)
+                clearReceiveEventState(CreateCancellationException("State loop on failure", null))
                 throw e
             }
         }
@@ -319,13 +358,15 @@ internal class BotImpl(
             val id = atomicULong(0u)
             val configuration = bot.configuration
 
+            val region = configuration.loginRegion ?: Random.nextULong().toString()
+
             val pl = PLogin(
                 uid = info.uid.toULong(),
                 token = "${configuration.loginVillaId}.${bot.ticket.botSecret}.${bot.ticket.botId}",
                 platform = info.platform,
                 appId = info.appId,
                 deviceId = info.deviceId,
-                region = configuration.loginRegion ?: Random.nextULong().toString(),
+                region = region,
                 meta = configuration.loginMeta
             )
 
@@ -364,7 +405,7 @@ internal class BotImpl(
                 }
             }
 
-            return InitHB(bot, info, session, id)
+            return InitHB(bot, info, region, session, id)
         }
     }
 
@@ -374,6 +415,7 @@ internal class BotImpl(
     private class InitHB(
         val bot: BotImpl,
         val info: WebsocketInfo,
+        val region: String,
         val session: DefaultClientWebSocketSession,
         val id: AtomicULong
     ) : BotLinkState() {
@@ -396,7 +438,7 @@ internal class BotImpl(
                 }
             }
 
-            return ReceiveEvent(bot, info, session, id, hbJob)
+            return ReceiveEvent(bot, info, region, session, id, hbJob)
         }
     }
 
@@ -404,6 +446,7 @@ internal class BotImpl(
     private class ReceiveEvent(
         val bot: BotImpl,
         val info: WebsocketInfo,
+        val region: String,
         val session: DefaultClientWebSocketSession,
         val id: AtomicULong,
         val hbJob: HBJob
@@ -488,6 +531,7 @@ internal class BotImpl(
                     }
 
                     // logout
+                    // TODO 到底要不要关闭 bot ？
                     BizType.LONG_CONN_LOGOUT.value -> {
                         val logoutReply =
                             bot.protoBuf.decodeFromByteArray(PLogoutReply.serializer(), packet.bodyData)

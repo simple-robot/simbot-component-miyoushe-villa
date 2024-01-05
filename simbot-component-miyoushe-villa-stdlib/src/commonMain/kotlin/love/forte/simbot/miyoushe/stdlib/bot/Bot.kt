@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -132,8 +132,29 @@ public interface Bot : CoroutineScope {
      * 向服务器发出 [登出](https://webstatic.mihoyo.com/vila/bot/doc/websocket/websocket_package.html#%E7%99%BB%E5%87%BA) ([PLogout]) 数据包。
      * bot 会继续运行直到服务器响应了 [PLogoutReply]。
      * 如果希望直接终止 bot，则考虑使用 [cancel] 以协程的方式关闭。
+     *
+     * @throws IllegalStateException 如果当前无活跃会话或 bot 已经结束生命
+     * @throws BotWasCancelledException 如果 bot 已经结束生命
      */
-    public fun logout()
+    public fun logout() {
+        logout(null)
+    }
+
+    /**
+     * 向服务器发出
+     * [登出](https://webstatic.mihoyo.com/vila/bot/doc/websocket/websocket_package.html#%E7%99%BB%E5%87%BA)
+     * ([PLogout])
+     * 数据包。
+     * bot 会继续运行直到服务器响应了 [PLogoutReply]。
+     * 如果希望直接终止 bot，则考虑使用 [cancel] 以协程的方式关闭。
+     *
+     * 可以通过 [onRequestFailure] 在 bot 异步发送数据包但发送失败时进行回调处理。
+     * 如果 [onRequestFailure] 为 null 则默认会使用 bot 的 logger 输出异常日志。
+     *
+     * @throws IllegalStateException 如果当前无活跃会话或 bot 已经结束生命
+     * @throws BotWasCancelledException 如果 bot 已经结束生命
+     */
+    public fun logout(onRequestFailure: OnLogoutRequestFailure?)
 
     /**
      * 挂起直到此 bot 的协程被终止。
@@ -228,4 +249,11 @@ public inline fun <reified S : EventSource> Bot.processSource(crossinline proces
 public fun interface EventProcessor {
     @JvmSynthetic
     public suspend fun Event<EventExtendData>.process(source: EventSource)
+}
+
+/**
+ * @see Bot.logout
+ */
+public fun interface OnLogoutRequestFailure {
+    public operator fun invoke(cause: Throwable)
 }
