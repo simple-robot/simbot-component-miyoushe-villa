@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -17,10 +17,19 @@
 
 package love.forte.simbot.miyoushe.stdlib.bot
 
+import love.forte.simbot.miyoushe.ws.PLogin
 import love.forte.simbot.miyoushe.ws.PLoginReply
 
+/**
+ * WS中使用 [PLogin] 登录失败
+ */
 @Suppress("CanBeParameter", "MemberVisibilityCanBePrivate")
 public class PLoginFailedException(
     public val reply: PLoginReply,
     message: String? = null, cause: Throwable? = null
 ) : RuntimeException(message ?: reply.toString(), cause)
+
+/**
+ * 当 Bot 已经被关闭
+ */
+public class BotWasCancelledException(message: String?, cause: Throwable?) : IllegalStateException(message, cause)
