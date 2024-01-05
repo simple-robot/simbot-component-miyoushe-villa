@@ -1,11 +1,13 @@
-name: Test documentation
+name: Test DEV documentation
 
 on:
   # If specified, the workflow will be triggered automatically once you push to the `main` branch.
   # Replace `main` with your branch’s name
   pull_request:
     branches:
-      - main
+      - dev
+    paths:
+      - 'Writerside/**'
   # Specify to run a workflow manually from the Actions tab on GitHub
   workflow_dispatch:
 
@@ -41,11 +43,11 @@ jobs:
           path: |
             artifacts/${{ env.ARTIFACT }}
             artifacts/report.json
-          retention-days: 7
+          retention-days: 3
 
   # Add the job below and artifacts/report.json on Upload documentation step above if you want to fail the build when documentation contains errors
   test:
-    name: Test documentation built
+    name: Test dev documentation built
     # Requires build job results
     needs: build
     runs-on: ubuntu-latest

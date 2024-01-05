@@ -46,7 +46,7 @@ object P : ProjectDetail() {
     override val homepage: String
         get() = HOMEPAGE
 
-    private val baseVersion = v(0, 1, 0)
+    private val baseVersion = v(0, 2, 0)
 
 //    private val alphaSuffix = v("alpha", 1)
     // baseVersion - alphaSuffix

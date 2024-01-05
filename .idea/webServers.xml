@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="5b98b7ed-80a4-4609-8040-8b2a833a1b7c" name="forte.love">
+        <fileTransfer accessType="SFTP" host="forte.love" port="22" sshConfigId="c997a4ce-cbfb-4e2e-9efa-dc6f756a4b77" sshConfig="ecs-user@forte.love:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" isUseSudo="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

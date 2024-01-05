@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -47,7 +47,7 @@ fun Project.generateChangelog(tag: String) {
                 
             > [!warning]
             > 目前版本尚处于 **早期** 阶段，代表仍然可能存在大量已知问题或未知问题，
-            以及未完善的内容和落后于官方更新的内容。**
+            以及未完善的内容和落后于官方更新的内容。
             
             我们欢迎并期望着您的的[反馈](https://github.com/simple-robot/simbot-component-miyoushe/issues)或[协助](https://github.com/simple-robot/simbot-component-miyoushe/pulls)，
             感谢您的贡献与支持！

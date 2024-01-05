@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. ForteScarlet.
+ * Copyright (c) 2023-2024. ForteScarlet.
  *
  * This file is part of simbot-component-miyoushe.
  *
@@ -204,8 +204,42 @@ internal class BotImpl(
         return RegisterHandle(wrapper, processorQueue)
     }
 
-    override fun logout() {
-        TODO("Not yet implemented")
+    override fun logout(onRequestFailure: OnLogoutRequestFailure?) {
+        if (!isActive) {
+            throw BotWasCancelledException("Bot was cancelled", null)
+        }
+
+        val state = this.receiveEventState
+            ?: throw IllegalStateException("No active sessions available")
+
+        val session = state.session
+
+        val logout = PLogout(
+            uid = state.info.uid.toULong(),
+            platform = state.info.platform,
+            appId = state.info.appId,
+            deviceId = state.info.deviceId,
+            region = state.info.deviceId
+        )
+
+        val packet = ProtoPacket.request(
+            BizType.LONG_CONN_LOGOUT,
+            state.id.value,
+            state.info.appId.toUInt(),
+            protoBuf.encodeToByteArray(PLogout.serializer(), logout)
+        )
+
+        launch {
+            try {
+                session.send(Frame.Binary(true, packet.toPacket()))
+            } catch (e: Throwable) {
+                if (onRequestFailure != null) {
+                    onRequestFailure.invoke(e)
+                } else {
+                    logger.error("Bot request logout failed: {}", e.message, e)
+                }
+            }
+        }
     }
 
     private fun started() {
@@ -242,20 +276,45 @@ internal class BotImpl(
     @Volatile
     private var stateJob: Job? = null
 
+    @Volatile
+    private var receiveEventState: ReceiveEvent? = null
+
+    private fun clearReceiveEventState(cause: CancellationException?) {
+        receiveEventState?.session?.cancel(cause)
+        receiveEventState = null
+    }
+
     override suspend fun start(): Unit = startingLock.withLock {
         checkState()
         stateJob?.cancel()
         stateJob = null
+        // cancel session.
+        clearReceiveEventState(CreateCancellationException("Restart", null))
 
         val state = GetWebsocketInfo(this).loop(onEach = { it !is ReceiveEvent })
         if (state !is ReceiveEvent) {
             throw IllegalStateException("The 'ReceiveEvent' state has not been reached")
         }
 
+        receiveEventState = state
+
         // is receiveEvent. loop async
         stateJob = launch {
-            state.loop()
-            logger.info("State loop done.")
+            try {
+                state.loop()
+                logger.info("Bot internal state loop done.")
+            } catch (e: Throwable) {
+                val cancelException = CreateCancellationException(
+                    "Bot internal state loop done with an exception, bot will be cancelled",
+                    e
+                )
+                logger.error("Bot internal state loop done with an exception, bot will be cancelled", cancelException)
+                // receive loop 过程中抛出异常则视为非正常终止，
+                // 关闭bot
+                this@BotImpl.cancel(cancelException)
+                clearReceiveEventState(CreateCancellationException("State loop on failure", null))
+                throw e
+            }
         }
 
         started()
@@ -267,7 +326,7 @@ internal class BotImpl(
     private class GetWebsocketInfo(val bot: BotImpl) : BotLinkState() {
         override suspend fun invoke(): BotLinkState {
             val wsInfo = GetWebsocketInfoApi.create().requestDataBy(bot, bot.configuration.loginVillaId)
-            bot.logger.debug("Got WebsocketInfo: $wsInfo")
+            bot.logger.debug("Got WebsocketInfo: {}", wsInfo)
             return Connect(bot, wsInfo)
         }
     }
@@ -299,13 +358,15 @@ internal class BotImpl(
             val id = atomicULong(0u)
             val configuration = bot.configuration
 
+            val region = configuration.loginRegion ?: Random.nextULong().toString()
+
             val pl = PLogin(
                 uid = info.uid.toULong(),
                 token = "${configuration.loginVillaId}.${bot.ticket.botSecret}.${bot.ticket.botId}",
                 platform = info.platform,
                 appId = info.appId,
                 deviceId = info.deviceId,
-                region = configuration.loginRegion ?: Random.nextULong().toString(),
+                region = region,
                 meta = configuration.loginMeta
             )
 
@@ -319,7 +380,7 @@ internal class BotImpl(
                 body = bot.protoBuf.encodeToByteArray(PLogin.serializer(), pl)
             )
 
-            bot.logger.debug("Send PLogin packet: {}, {}", pl, packet)
+            bot.logger.debug("Send PLogin packet: {}, {} to session {}", pl, packet, session)
 
             session.outgoing.sendPacket(packet)
 
@@ -335,6 +396,7 @@ internal class BotImpl(
 
                         bot.logger.debug("Received PLoginReply: {}", loginReply)
                         if (!loginReply.isSuccess) {
+                            // throw exception, and will cancel bot
                             throw PLoginFailedException(loginReply)
                         }
 
@@ -343,7 +405,7 @@ internal class BotImpl(
                 }
             }
 
-            return InitHB(bot, info, session, id)
+            return InitHB(bot, info, region, session, id)
         }
     }
 
@@ -353,6 +415,7 @@ internal class BotImpl(
     private class InitHB(
         val bot: BotImpl,
         val info: WebsocketInfo,
+        val region: String,
         val session: DefaultClientWebSocketSession,
         val id: AtomicULong
     ) : BotLinkState() {
@@ -369,13 +432,13 @@ internal class BotImpl(
                     )
 
                     session.outgoing.sendPacket(hbPacket)
-                    bot.logger.debug("Send PHeartBeat: {}", hb)
+                    bot.logger.debug("Send PHeartBeat {} to session {}", hb, session)
                 } catch (e: Throwable) {
-                    bot.logger.error("Send PHeartBeat failed: {}", e.message, e)
+                    bot.logger.error("Send PHeartBeat failed: {} on session: {}", e.message, session, e)
                 }
             }
 
-            return ReceiveEvent(bot, info, session, id, hbJob)
+            return ReceiveEvent(bot, info, region, session, id, hbJob)
         }
     }
 
@@ -383,6 +446,7 @@ internal class BotImpl(
     private class ReceiveEvent(
         val bot: BotImpl,
         val info: WebsocketInfo,
+        val region: String,
         val session: DefaultClientWebSocketSession,
         val id: AtomicULong,
         val hbJob: HBJob
@@ -392,16 +456,44 @@ internal class BotImpl(
         override suspend fun invoke(): BotLinkState? {
 
             if (!session.isActive) {
-                // TODO Not Active? try reconnect?
-                logger.error("Bot session is not active. Cancel the bot {}", bot)
                 val reason = session.closeReason.await()
-                bot.cancel(CreateCancellationException("reason: $reason", null))
-                // done.
-                return null
+                // Not active, try to reconnect?
+                if (!bot.isActive) {
+                    logger.error(
+                        "Bot session is not active: {}, reason: {}, and bot is not active, just stop.",
+                        session,
+                        reason
+                    )
+                    bot.cancel(CreateCancellationException("reason: $reason", null))
+                    // done.
+                    return null
+                } else {
+                    logger.error(
+                        "Bot session is active: {}, reason: {}, but bot is active now, try reconnect.",
+                        session,
+                        reason
+                    )
+                    return GetWebsocketInfo(bot)
+                }
             }
 
             logger.trace("Receiving next frame...")
             val frameCatching = session.incoming.receiveCatching()
+
+            frameCatching.onFailure { e ->
+                logger.error(
+                    "Bot({}) session receive on failure: {}.", bot, e?.message, e
+                )
+                session.cancel(CreateCancellationException("Session receive frame on failure", e))
+                if (bot.isActive) {
+                    logger.debug("Bot is active now, try to reconnect.")
+                    return GetWebsocketInfo(bot)
+                } else {
+                    logger.debug("Bot is not active now, just cancel the session and bot.")
+                    return null
+                }
+            }
+
             frameCatching.onClosed { e ->
                 logger.error(
                     "Bot({}) session receive failed: session closed and reason: {}.",
@@ -409,29 +501,14 @@ internal class BotImpl(
                     e?.message,
                     e
                 )
+                session.cancel(CreateCancellationException("Session receive frame on closed", e))
                 if (bot.isActive) {
                     logger.debug("Bot is active now, try to reconnect.")
                     return GetWebsocketInfo(bot)
                 } else {
                     logger.debug("Bot is not active now, just cancel the session and bot.")
+                    return null
                 }
-//                bot.cancel(CancellationException(e?.message?.let { "Session closed: $it" } ?: "Session closed", e))
-                return null
-            }
-
-            frameCatching.onFailure { e ->
-                logger.error(
-                    "Bot({}) session receive failed: {}.", bot, e?.message, e
-                )
-                if (bot.isActive) {
-                    logger.debug("Bot is active now, try to reconnect.")
-                    return GetWebsocketInfo(bot)
-                } else {
-                    logger.debug("Bot is not active now, just cancel the session and bot.")
-                }
-//                bot.cancel(CancellationException(e?.message?.let { "Session receive onFailure: $it" }
-//                    ?: "Session receive onFailure", e))
-                return null
             }
 
             try {
@@ -454,6 +531,7 @@ internal class BotImpl(
                     }
 
                     // logout
+                    // TODO 到底要不要关闭 bot ？
                     BizType.LONG_CONN_LOGOUT.value -> {
                         val logoutReply =
                             bot.protoBuf.decodeFromByteArray(PLogoutReply.serializer(), packet.bodyData)
@@ -464,7 +542,9 @@ internal class BotImpl(
                                 logoutReply,
                                 bot
                             )
-                            bot.cancel(CreateCancellationException("PLogoutReply received: $logoutReply", null))
+                            val cancelCause = CreateCancellationException("PLogoutReply received: $logoutReply", null)
+                            session.cancel(cancelCause)
+                            bot.cancel(cancelCause)
                             return null
                         } else {
                             bot.logger.error(
@@ -498,8 +578,9 @@ internal class BotImpl(
                             session,
                             bot
                         )
-                        session.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
-                        bot.cancel(CreateCancellationException(BizType.KICK_OFF.toString(), null))
+                        val cancelReason = CreateCancellationException(BizType.KICK_OFF.toString(), null)
+                        session.cancel(cancelReason)
+                        bot.cancel(cancelReason)
                         return null
                     }
 
@@ -520,8 +601,14 @@ internal class BotImpl(
 
             } catch (serEx: SerializationException) {
                 // ser e?
+                logger.error(
+                    "Unexpected serialization exception when receiving and processing frames: {}",
+                    serEx.message,
+                    serEx
+                )
             } catch (e: Throwable) {
                 // e?
+                logger.error("Unexpected exception when receiving and processing frames: {}", e.message, e)
             }
 
 
