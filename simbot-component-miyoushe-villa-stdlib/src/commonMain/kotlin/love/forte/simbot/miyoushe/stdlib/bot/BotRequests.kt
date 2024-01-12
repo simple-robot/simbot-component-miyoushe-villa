@@ -15,12 +15,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:JvmName("BotRequests")
+@file:JvmMultifileClass
 package love.forte.simbot.miyoushe.stdlib.bot
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import love.forte.simbot.miyoushe.api.*
+import kotlin.jvm.JvmMultifileClass
+import kotlin.jvm.JvmName
 import kotlin.jvm.JvmSynthetic
 
 /**
