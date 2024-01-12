@@ -24,11 +24,10 @@ import io.ktor.client.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.future.future
 import kotlinx.serialization.json.Json
 import love.forte.simbot.Api4J
-import love.forte.simbot.InternalSimbotApi
 import love.forte.simbot.miyoushe.MiyousheVilla
-import love.forte.simbot.utils.runInAsync
 import love.forte.simbot.utils.runInNoScopeBlocking
 import java.util.concurrent.CompletableFuture
 
@@ -80,35 +79,32 @@ public fun <R : Any> MiyousheVillaApi<R>.requestDataBlocking(
 
 @Api4J
 @JvmOverloads
-@OptIn(InternalSimbotApi::class)
 public fun <R : Any> MiyousheVillaApi<R>.requestAsync(
     client: HttpClient,
     token: MiyousheVillaApiToken,
     scope: CoroutineScope? = null
-): CompletableFuture<HttpResponse> = runInAsync(scope ?: client) {
+): CompletableFuture<HttpResponse> = (scope ?: client).future {
     request(client, token)
 }
 
 @Api4J
 @JvmOverloads
-@OptIn(InternalSimbotApi::class)
 public fun <R : Any> MiyousheVillaApi<R>.requestResultAsync(
     client: HttpClient,
     token: MiyousheVillaApiToken,
     decoder: Json = MiyousheVilla.DefaultJson,
     scope: CoroutineScope? = null
-): CompletableFuture<ApiResult<R>> = runInAsync(scope ?: client) {
+): CompletableFuture<ApiResult<R>> = (scope ?: client).future {
     requestResult(client, token, decoder)
 }
 
 @Api4J
 @JvmOverloads
-@OptIn(InternalSimbotApi::class)
 public fun <R : Any> MiyousheVillaApi<R>.requestDataAsync(
     client: HttpClient,
     token: MiyousheVillaApiToken,
     decoder: Json = MiyousheVilla.DefaultJson,
     scope: CoroutineScope? = null
-): CompletableFuture<R> = runInAsync(scope ?: client) {
+): CompletableFuture<R> = (scope ?: client).future {
     requestData(client, token, decoder)
 }

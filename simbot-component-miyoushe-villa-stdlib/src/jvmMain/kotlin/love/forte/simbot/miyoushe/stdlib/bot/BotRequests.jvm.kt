@@ -24,12 +24,11 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
-import love.forte.simbot.InternalSimbotApi
+import kotlinx.coroutines.future.future
 import love.forte.simbot.miyoushe.api.ApiResult
 import love.forte.simbot.miyoushe.api.ApiResultNotSuccessException
 import love.forte.simbot.miyoushe.api.HttpStatusException
 import love.forte.simbot.miyoushe.api.MiyousheVillaApi
-import love.forte.simbot.utils.runInAsync
 import love.forte.simbot.utils.runInNoScopeBlocking
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -97,14 +96,13 @@ public fun <R : Any> MiyousheVillaApi<R>.requestDataByBlocking(
 /**
  * 使用 API 通过 [Bot] 发起一个请求，并得到一个[HTTP响应][HttpResponse].
  */
-@OptIn(InternalSimbotApi::class)
 @JvmOverloads
 public fun MiyousheVillaApi<*>.requestByAsync(
     bot: Bot,
     villaId: String?,
     scope: CoroutineScope? = null,
     postRequestBuilder: Consumer<HttpRequestBuilder>? = null
-): CompletableFuture<HttpResponse> = runInAsync(scope ?: bot) {
+): CompletableFuture<HttpResponse> = (scope ?: bot).future {
     requestBy(bot, villaId) {
         postRequestBuilder?.accept(this)
     }
@@ -120,14 +118,13 @@ public fun MiyousheVillaApi<*>.requestByAsync(
  * @receiver 需要请求的 API
  * @throws HttpStatusException 如果 http 结果不是成功 ([HttpStatusCode.isSuccess] == false)
  */
-@OptIn(InternalSimbotApi::class)
 @JvmOverloads
 public fun <R : Any> MiyousheVillaApi<R>.requestResultByAsync(
     bot: Bot,
     villaId: String?,
     scope: CoroutineScope? = null,
     postRequestBuilder: Consumer<HttpRequestBuilder>? = null
-): CompletableFuture<ApiResult<R>> = runInAsync(scope ?: bot) {
+): CompletableFuture<ApiResult<R>> = (scope ?: bot).future {
     requestResultBy(bot, villaId) {
         postRequestBuilder?.accept(this)
     }
@@ -143,14 +140,13 @@ public fun <R : Any> MiyousheVillaApi<R>.requestResultByAsync(
  * @throws HttpStatusException 如果 http 结果不是成功 ([HttpStatusCode.isSuccess] == false)
  * @throws ApiResultNotSuccessException 如果结果不是成功 (see [ApiResult.dataIfSuccess])
  */
-@OptIn(InternalSimbotApi::class)
 @JvmOverloads
 public fun <R : Any> MiyousheVillaApi<R>.requestDataByAsync(
     bot: Bot,
     villaId: String?,
     scope: CoroutineScope? = null,
     postRequestBuilder: Consumer<HttpRequestBuilder>? = null
-): CompletableFuture<R> = runInAsync(scope ?: bot) {
+): CompletableFuture<R> = (scope ?: bot).future {
     requestDataBy(bot, villaId) {
         postRequestBuilder?.accept(this)
     }
