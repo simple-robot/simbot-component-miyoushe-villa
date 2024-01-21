@@ -4,7 +4,7 @@
 <p>在使用 <b>Spring Boot</b> 时自动注册 bot 所需的配置文件。</p>
 </tldr>
 
-## 简单示例
+## 示例
 
 ```json
 {
