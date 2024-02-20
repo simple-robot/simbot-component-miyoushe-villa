@@ -18,6 +18,19 @@
 > 对于simbot绝大多数的标准、基本功能的介绍都在 [simbot官网](https://simbot.forte.love/) 中。
 > {style="note"}
 
+## R.I.P
+
+<warning>
+
+米游社大别野已经走向它生命的尽头。
+
+公告原帖: [【公告】大别野聊天室下线说明](https://www.miyoushe.com/dby/article/49502845)
+
+</warning>
+
+![RIP.jpg](RIP.jpg)
+
+
 ## 模块简介
 
 simbot的大别野机器人组件整个项目分为三个主要模块。它们分别是 **API模块**、**stdlib（标准库）模块**和**core（核心库）模块**。
