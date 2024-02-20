@@ -5,6 +5,15 @@
 
 [simbot3]: https://github.com/simple-robot/simpler-robot
 
+## R.I.P
+
+> [!CAUTION]
+> 米游社大别野已经走向生命尽头。
+> 
+> 公告原帖: [【公告】大别野聊天室下线说明](https://www.miyoushe.com/dby/article/49502845)
+
+![](Writerside/images/RIP.jpg)
+
 ## 文档
 
 了解**simbot3**: [simbot3官网](https://simbot.forte.love)
